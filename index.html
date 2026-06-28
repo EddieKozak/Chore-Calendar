@@ -1,6 +1,3 @@
-Here it is — complete script, paste and replace everything in GitHub:
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,9 +13,10 @@ Here it is — complete script, paste and replace everything in GitHub:
   .header h1 { font-size: 22px; color: #e94560; }
   .header .date { font-size: 13px; color: #aaa; margin-top: 4px; }
   .tabs { display: flex; background: #16213e; border-bottom: 2px solid #0f3460; }
-  .tab { flex: 1; padding: 12px 4px; text-align: center; font-size: 11px; cursor: pointer; color: #aaa; border-bottom: 3px solid transparent; }
+  .tab { flex: 1; padding: 12px 4px; text-align: center; font-size: 11px; cursor: pointer; color: #aaa; border-bottom: 3px solid transparent; position: relative; }
   .tab.active { color: #e94560; border-bottom-color: #e94560; }
   .tab .icon { font-size: 18px; display: block; }
+  .tab-badge { position: absolute; top: 6px; right: 6px; background: #e94560; color: white; font-size: 10px; font-weight: 700; border-radius: 10px; padding: 1px 5px; min-width: 16px; text-align: center; }
   .content { flex: 1; overflow-y: auto; padding: 16px; }
   .btn { padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; }
   .btn-primary { background: #e94560; color: white; }
@@ -44,12 +42,14 @@ Here it is — complete script, paste and replace everything in GitHub:
   .chore-item { display: flex; align-items: center; gap: 12px; padding: 12px; background: #1a1a2e; border-radius: 10px; margin-bottom: 8px; border: 1px solid #0f3460; }
   .chore-item.done { opacity: 0.5; }
   .chore-item.done .chore-name { text-decoration: line-through; }
+  .chore-item.pending { opacity: 0.7; border-color: #f39c12; }
   .chore-item.overdue { border-color: #c0392b; background: #2a1a1a; }
   .chore-item.warning { border-color: #f39c12; background: #2a2210; }
   .chore-item.exempted { border-color: #f39c12; background: #2a2210; }
   .chore-item.urgent { border-color: #9b59b6; background: #1e1a2e; }
   .checkbox { width: 24px; height: 24px; border: 2px solid #e94560; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .checkbox.checked { background: #e94560; }
+  .checkbox.pending { background: #f39c12; border-color: #f39c12; }
   .chore-info { flex: 1; }
   .chore-name { font-size: 15px; font-weight: 500; }
   .chore-meta { font-size: 11px; color: #aaa; margin-top: 2px; }
@@ -62,6 +62,7 @@ Here it is — complete script, paste and replace everything in GitHub:
   .person-earnings { font-size: 13px; color: #27ae60; }
   .person-rank { font-size: 24px; font-weight: 700; color: #e94560; }
   .history-item { padding: 10px; background: #1a1a2e; border-radius: 8px; margin-bottom: 6px; border-left: 3px solid #27ae60; display: flex; justify-content: space-between; align-items: center; }
+  .history-item.pending { border-left-color: #f39c12; background: #2a2210; }
   .history-item.urgent-history { border-left-color: #9b59b6; }
   .history-item.debit { border-left-color: #e94560; }
   .history-item.transfer { border-left-color: #3498db; }
@@ -86,6 +87,7 @@ Here it is — complete script, paste and replace everything in GitHub:
   .tag.admin { background: #3d1f1f; color: #e94560; }
   .tag.locked { background: #3d1f1f; color: #e94560; }
   .tag.urgent { background: #2d1f3d; color: #9b59b6; }
+  .tag.pending { background: #3d2e00; color: #f39c12; }
   .empty-state { text-align: center; padding: 40px 20px; color: #555; }
   .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
   .row { display: flex; gap: 10px; align-items: center; }
@@ -105,9 +107,7 @@ Here it is — complete script, paste and replace everything in GitHub:
   .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #27ae60; color: white; padding: 10px 20px; border-radius: 20px; font-size: 14px; z-index: 200; animation: fadeInOut 2.2s ease; pointer-events: none; white-space: nowrap; }
   @keyframes fadeInOut { 0%,100%{opacity:0;} 15%,85%{opacity:1;} }
   .lock-banner { background: #2a1a1a; border: 1px solid #c0392b; border-radius: 10px; padding: 12px; margin-bottom: 12px; font-size: 13px; color: #e94560; }
-  .avatar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 12px; }
-  .avatar-option { border: 3px solid transparent; border-radius: 12px; cursor: pointer; padding: 4px; text-align: center; }
-  .avatar-option.selected { border-color: #e94560; }
+  .pending-banner { background: #2a2210; border: 1px solid #f39c12; border-radius: 10px; padding: 12px; margin-bottom: 12px; font-size: 13px; color: #f39c12; }
   .balance-card { border-radius: 12px; padding: 20px; margin-bottom: 12px; text-align: center; }
   .balance-card.account { background: linear-gradient(135deg, #1e3a2e, #27ae60); border: 1px solid #27ae60; }
   .balance-card.savings { background: linear-gradient(135deg, #1a2a3e, #3498db); border: 1px solid #3498db; }
@@ -117,8 +117,10 @@ Here it is — complete script, paste and replace everything in GitHub:
   .txn-item.credit { border-left-color: #27ae60; }
   .txn-item.debit { border-left-color: #e94560; }
   .txn-item.transfer-out { border-left-color: #3498db; }
-  .txn-item.transfer-in { border-left-color: #9b59b6; }
-  .profile-header { text-align: center; padding: 24px 16px 16px; background: #16213e; border-bottom: 1px solid #0f3460; }
+  .txn-item.pending-txn { border-left-color: #f39c12; }
+  .profile-header { text-align: center; padding: 24px 16px 16px; background: #16213e; border-bottom: 1px solid #0f3460; position: relative; }
+  .approve-btn { background: #27ae60; color: white; border: none; border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 700; cursor: pointer; margin-left: 4px; }
+  .reject-btn { background: #c0392b; color: white; border: none; border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 700; cursor: pointer; margin-left: 4px; }
 </style>
 </head>
 <body>
@@ -143,32 +145,15 @@ const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp);
 const DEFAULT_PIN = '1234';
 
-// ── AVATARS ───────────────────────────────────────────────────────────────────
-const AVATARS = [
-  // Boy (blue tones)
-  { id:'b1', label:'Boy 1', svg:`<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="30" fill="#1a6eb5"/><circle cx="30" cy="22" r="11" fill="#fcd5b0"/><path d="M10 52c0-11 9-18 20-18s20 7 20 18" fill="#fcd5b0"/><rect x="18" y="10" width="24" height="10" rx="5" fill="#1a3a6e"/><circle cx="25" cy="22" r="2" fill="#333"/><circle cx="35" cy="22" r="2" fill="#333"/><path d="M26 28 q4 4 8 0" stroke="#c0392b" stroke-width="1.5" fill="none"/></svg>` },
-  { id:'b2', label:'Boy 2', svg:`<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="30" fill="#27ae60"/><circle cx="30" cy="22" r="11" fill="#fcd5b0"/><path d="M10 52c0-11 9-18 20-18s20 7 20 18" fill="#fcd5b0"/><path d="M19 14 q11-8 22 0" fill="#5d3a1a"/><circle cx="25" cy="22" r="2" fill="#333"/><circle cx="35" cy="22" r="2" fill="#333"/><path d="M26 28 q4 4 8 0" stroke="#c0392b" stroke-width="1.5" fill="none"/><path d="M24 18 q6-4 12 0" fill="#5d3a1a"/></svg>` },
-  { id:'b3', label:'Boy 3', svg:`<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="30" fill="#8e44ad"/><circle cx="30" cy="22" r="11" fill="#ffe0bd"/><path d="M10 52c0-11 9-18 20-18s20 7 20 18" fill="#ffe0bd"/><rect x="17" y="11" width="26" height="8" rx="4" fill="#2c1a0e"/><circle cx="25" cy="22" r="2" fill="#333"/><circle cx="35" cy="22" r="2" fill="#333"/><path d="M26 28 q4 3 8 0" stroke="#e74c3c" stroke-width="1.5" fill="none"/><path d="M30 11 v-4 M24 12 l-2-4 M36 12 l2-4" stroke="#2c1a0e" stroke-width="2"/></svg>` },
-  { id:'b4', label:'Boy 4', svg:`<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="30" fill="#e67e22"/><circle cx="30" cy="22" r="11" fill="#f5cba7"/><path d="M10 52c0-11 9-18 20-18s20 7 20 18" fill="#f5cba7"/><path d="M19 15 q11-6 22 2 q-3-10-22-2z" fill="#c0392b"/><circle cx="25" cy="22" r="2" fill="#333"/><circle cx="35" cy="22" r="2" fill="#333"/><path d="M26 28 q4 4 8 0" stroke="#922b21" stroke-width="1.5" fill="none"/></svg>` },
-  // Girl (warm tones)
-  { id:'g1', label:'Girl 1', svg:`<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="30" fill="#e91e8c"/><circle cx="30" cy="22" r="11" fill="#fcd5b0"/><path d="M10 52c0-11 9-18 20-18s20 7 20 18" fill="#fcd5b0"/><path d="M19 14 q11-10 22 0 q0 4-11 2 q-11 2-11-2z" fill="#f39c12"/><circle cx="25" cy="22" r="2" fill="#333"/><circle cx="35" cy="22" r="2" fill="#333"/><path d="M26 28 q4 4 8 0" stroke="#e91e8c" stroke-width="1.5" fill="none"/><circle cx="24" cy="24" r="2" fill="#f1948a" opacity="0.6"/><circle cx="36" cy="24" r="2" fill="#f1948a" opacity="0.6"/></svg>` },
-  { id:'g2', label:'Girl 2', svg:`<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="30" fill="#9b59b6"/><circle cx="30" cy="22" r="11" fill="#fdebd0"/><path d="M10 52c0-11 9-18 20-18s20 7 20 18" fill="#fdebd0"/><path d="M19 22 q0-12 11-10 q11-2 11 10" fill="#8B4513"/><path d="M19 22 q-2 4 0 8 q2-6 11-4 q9-2 11 4 q2-4 0-8" fill="#6B3410"/><circle cx="25" cy="22" r="2" fill="#333"/><circle cx="35" cy="22" r="2" fill="#333"/><path d="M26 28 q4 4 8 0" stroke="#9b59b6" stroke-width="1.5" fill="none"/><circle cx="24" cy="24" r="2" fill="#f1948a" opacity="0.5"/><circle cx="36" cy="24" r="2" fill="#f1948a" opacity="0.5"/></svg>` },
-  { id:'g3', label:'Girl 3', svg:`<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="30" fill="#e74c3c"/><circle cx="30" cy="22" r="11" fill="#fcd5b0"/><path d="M10 52c0-11 9-18 20-18s20 7 20 18" fill="#fcd5b0"/><path d="M18 16 q12-8 24 0 l2 8 q-14-6-28 0z" fill="#f4d03f"/><circle cx="25" cy="22" r="2" fill="#333"/><circle cx="35" cy="22" r="2" fill="#333"/><path d="M26 28 q4 4 8 0" stroke="#e74c3c" stroke-width="1.5" fill="none"/><path d="M30 8 q-8 0-12 6 M30 8 q8 0 12 6" stroke="#f4d03f" stroke-width="3" fill="none"/></svg>` },
-  { id:'g4', label:'Girl 4', svg:`<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="30" fill="#16a085"/><circle cx="30" cy="22" r="11" fill="#fdebd0"/><path d="M10 52c0-11 9-18 20-18s20 7 20 18" fill="#fdebd0"/><path d="M20 20 q0-10 10-10 q10 0 10 10" fill="#2c1a0e"/><path d="M20 20 l-3 10 M40 20 l3 10" stroke="#2c1a0e" stroke-width="3"/><circle cx="25" cy="22" r="2" fill="#333"/><circle cx="35" cy="22" r="2" fill="#333"/><path d="M26 28 q4 4 8 0" stroke="#16a085" stroke-width="1.5" fill="none"/><circle cx="24" cy="24" r="1.5" fill="#e8a0a0" opacity="0.7"/><circle cx="36" cy="24" r="1.5" fill="#e8a0a0" opacity="0.7"/></svg>` },
-  // Neutral
-  { id:'n1', label:'Neutral 1', svg:`<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="30" fill="#2c3e50"/><circle cx="30" cy="22" r="11" fill="#fcd5b0"/><path d="M10 52c0-11 9-18 20-18s20 7 20 18" fill="#fcd5b0"/><circle cx="25" cy="22" r="2" fill="#333"/><circle cx="35" cy="22" r="2" fill="#333"/><path d="M25 28 h10" stroke="#777" stroke-width="1.5"/><path d="M22 14 q8-6 16 0 q0 3-8 2 q-8 1-8-2z" fill="#555"/></svg>` },
-  { id:'n2', label:'Neutral 2', svg:`<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="30" fill="#27ae60"/><circle cx="30" cy="22" r="11" fill="#ffe0bd"/><path d="M10 52c0-11 9-18 20-18s20 7 20 18" fill="#ffe0bd"/><circle cx="25" cy="22" r="2" fill="#333"/><circle cx="35" cy="22" r="2" fill="#333"/><path d="M26 28 q4 3 8 0" stroke="#555" stroke-width="1.5" fill="none"/><rect x="20" y="10" width="20" height="7" rx="3.5" fill="#1a5c34"/><path d="M20 13 h20" stroke="#27ae60" stroke-width="1"/></svg>` },
-  { id:'n3', label:'Neutral 3', svg:`<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="30" fill="#d35400"/><circle cx="30" cy="22" r="11" fill="#f5cba7"/><path d="M10 52c0-11 9-18 20-18s20 7 20 18" fill="#f5cba7"/><circle cx="25" cy="22" r="2" fill="#333"/><circle cx="35" cy="22" r="2" fill="#333"/><path d="M26 28 q4 4 8 0" stroke="#d35400" stroke-width="1.5" fill="none"/><path d="M18 15 q12-7 24 0" fill="none" stroke="#8B4513" stroke-width="4"/></svg>` },
-  { id:'n4', label:'Neutral 4', svg:`<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="30" fill="#7f8c8d"/><circle cx="30" cy="22" r="11" fill="#fdebd0"/><path d="M10 52c0-11 9-18 20-18s20 7 20 18" fill="#fdebd0"/><circle cx="25" cy="22" r="2" fill="#333"/><circle cx="35" cy="22" r="2" fill="#333"/><path d="M26 28 q4 3 8 0" stroke="#555" stroke-width="1.5" fill="none"/><circle cx="30" cy="13" r="5" fill="none" stroke="#555" stroke-width="2"/><path d="M25 13 h10" stroke="#555" stroke-width="1.5"/></svg>` },
-];
-
-function getAvatar(avatarId, size) {
+function getDiceBearUrl(seed, size) {
   const s = size || 44;
-  const av = AVATARS.find(a => a.id === avatarId);
-  if (!av) {
-    return `<div style="width:${s}px;height:${s}px;border-radius:50%;background:#e94560;display:flex;align-items:center;justify-content:center;font-size:${Math.round(s*0.4)}px;font-weight:700;color:white;flex-shrink:0;">?</div>`;
-  }
-  return `<div style="width:${s}px;height:${s}px;border-radius:50%;overflow:hidden;flex-shrink:0;">${av.svg}</div>`;
+  return `https://api.dicebear.com/7.x/fun-emoji/svg?seed=${encodeURIComponent(seed)}&size=${s}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`;
+}
+
+function getAvatar(seed, size) {
+  const s = size || 44;
+  const url = getDiceBearUrl(seed || 'default', s);
+  return `<img src="${url}" width="${s}" height="${s}" style="border-radius:50%;flex-shrink:0;background:#16213e;" onerror="this.style.display='none'">`;
 }
 
 const PROVERBS = {
@@ -219,11 +204,9 @@ let state={
   showAddChore:false,showAddPerson:false,showAddRoom:false,
   showChoreList:false,showCashOutConfirm:null,showChangePinModal:false,
   showAdminFundsModal:null,showTransferModal:false,showOverdraftModal:null,
-  showAvatarPicker:false,
   selectedDate:new Date(),calendarDate:new Date(),
   editingChore:null,editingPerson:null,editingRoom:null,
-  loading:true,
-  profilePersonId:null,
+  loading:true,profilePersonId:null,
 };
 
 function todayKey(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
@@ -271,10 +254,10 @@ async function initData(){
 function getDefaultRooms(){return [{id:1,name:'Kitchen',owner:null},{id:2,name:'Living Room',owner:null},{id:3,name:'Bathrooms',owner:null},{id:4,name:'Bedrooms',owner:null},{id:5,name:'Outdoors',owner:null}];}
 function getDefaultPeople(){
   return [
-    {id:0,name:'Admin',isAdmin:true,totalEarned:0,account:0,savings:0,avatarId:'n1'},
-    {id:10,name:'Eli',isAdmin:false,totalEarned:0,account:0,savings:0,avatarId:'b1'},
-    {id:11,name:'Kid 2',isAdmin:false,totalEarned:0,account:0,savings:0,avatarId:'g1'},
-    {id:12,name:'Kid 3',isAdmin:false,totalEarned:0,account:0,savings:0,avatarId:'n2'},
+    {id:0,name:'Admin',isAdmin:true,totalEarned:0,account:0,savings:0},
+    {id:10,name:'Eli',isAdmin:false,totalEarned:0,account:0,savings:0},
+    {id:11,name:'Kid 2',isAdmin:false,totalEarned:0,account:0,savings:0},
+    {id:12,name:'Kid 3',isAdmin:false,totalEarned:0,account:0,savings:0},
   ];
 }
 function getDefaultChores(){
@@ -287,23 +270,48 @@ function getDefaultChores(){
   ];
 }
 
+// ── PENDING APPROVALS ─────────────────────────────────────────────────────────
+function getPendingCount(){return state.history.filter(h=>h.pending).length;}
+
+async function approveChore(historyId){
+  const h=state.history.find(x=>x.id===historyId);if(!h)return;
+  const person=state.people.find(p=>p.name===h.who);
+  if(person&&h.value>0){
+    person.account=(person.account||0)+h.value;
+    person.totalEarned=(person.totalEarned||0)+h.value;
+    addTransaction(person.id,'chore_earn',h.value,h.choreName,'account');
+  }
+  h.pending=false;
+  await Promise.all([saveToFirebase('history',state.history),saveToFirebase('people',state.people),saveToFirebase('transactions',state.transactions)]);
+  showToast(`✓ Approved — $${h.value} credited to ${h.who}`,'#27ae60');render();
+}
+
+async function rejectChore(historyId){
+  const h=state.history.find(x=>x.id===historyId);if(!h)return;
+  // Uncheck the chore
+  const chore=state.chores.find(c=>c.id===h.choreId);
+  if(chore&&chore.doneBy){delete chore.doneBy[h.date];chore.lastCompleted=null;}
+  // If urgent restore it
+  if(h.urgent&&h.choreSnapshot){
+    const exists=state.chores.find(c=>c.id===h.choreId);
+    if(!exists){const r=JSON.parse(JSON.stringify(h.choreSnapshot));r.doneBy={};r.lastCompleted=null;state.chores.push(r);}
+  }
+  // Remove from history completely
+  state.history=state.history.filter(x=>x.id!==historyId);
+  processOverdue();
+  await Promise.all([saveToFirebase('history',state.history),saveToFirebase('chores',state.chores),saveToFirebase('locks',state.locks)]);
+  showToast('✗ Rejected — chore returned to list','#e94560');render();
+}
+
 // ── TRANSACTIONS ──────────────────────────────────────────────────────────────
 function addTransaction(personId,type,amount,note,account){
-  // type: 'chore_earn'|'admin_credit'|'admin_debit'|'transfer_to_savings'|'transfer_from_savings'
-  // account: 'account'|'savings'
-  const txn={
-    id:Date.now(),personId,type,amount,note:note||'',
-    account:account||'account',date:todayKey(),
-  };
+  const txn={id:Date.now(),personId,type,amount,note:note||'',account:account||'account',date:todayKey()};
   state.transactions.unshift(txn);
   if(state.transactions.length>500)state.transactions=state.transactions.slice(0,500);
 }
+function getPersonTransactions(personId){return state.transactions.filter(t=>t.personId===personId);}
 
-function getPersonTransactions(personId){
-  return state.transactions.filter(t=>t.personId===personId);
-}
-
-// ── OVERDUE LOGIC ─────────────────────────────────────────────────────────────
+// ── OVERDUE ───────────────────────────────────────────────────────────────────
 function getChoreStatus(chore){
   if(chore.urgent)return 'urgent';
   if(chore.freq===1)return 'normal';
@@ -331,8 +339,7 @@ function getChoresForDate(date){
 }
 
 function processOverdue(){
-  const kids=state.people.filter(p=>!p.isAdmin);
-  if(!kids.length)return;
+  const kids=state.people.filter(p=>!p.isAdmin);if(!kids.length)return;
   const dk=todayKey();let changed=false;
   const overdueChores=state.chores.filter(chore=>{
     if(chore.urgent||chore.freq===1)return false;
@@ -375,47 +382,61 @@ function isChoreAvailableToUser(chore){
   if(room&&room.owner&&room.owner!==state.currentUser.id)return false;
   return true;
 }
-function isDoneToday(chore){return chore.doneBy&&chore.doneBy[todayKey()];}
+function isDoneToday(chore){
+  const dk=todayKey();
+  if(!(chore.doneBy&&chore.doneBy[dk]))return false;
+  // Check if pending approval
+  return true;
+}
+function isPendingToday(chore){
+  const dk=todayKey();
+  if(!(chore.doneBy&&chore.doneBy[dk]))return false;
+  return state.history.some(h=>h.choreId===chore.id&&h.date===dk&&h.pending);
+}
 function canUndo(h){if(state.isAdmin)return true;if(!state.currentUser)return false;return h.who===state.currentUser.name;}
 
 // ── TOGGLE CHORE ──────────────────────────────────────────────────────────────
 async function toggleChore(choreId){
   const dk=todayKey();
-  const chore=state.chores.find(c=>c.id===choreId);
-  if(!chore)return;
+  const chore=state.chores.find(c=>c.id===choreId);if(!chore)return;
   if(!isChoreAvailableToUser(chore)){showToast('This room belongs to someone else','#e94560');return;}
   if(!chore.doneBy)chore.doneBy={};
 
   if(isDoneToday(chore)){
-    if(!state.isAdmin&&chore.doneBy[dk]!==state.currentUser?.name){showToast('Only the person who did this (or admin) can uncheck it','#e94560');return;}
-    const entry=state.history.find(h=>h.choreId===choreId&&h.date===dk);
-    if(entry){
-      const person=state.people.find(p=>p.name===entry.who);
-      if(person&&entry.value>0){
-        person.account=Math.max(0,(person.account||0)-entry.value);
-        person.totalEarned=Math.max(0,(person.totalEarned||0)-entry.value);
+    // Allow unchecking only if pending and same user, or admin
+    const pendingEntry=state.history.find(h=>h.choreId===choreId&&h.date===dk&&h.pending);
+    if(pendingEntry){
+      if(!state.isAdmin&&pendingEntry.who!==state.currentUser?.name){showToast('Only the person who submitted this can undo it','#e94560');return;}
+      delete chore.doneBy[dk];chore.lastCompleted=null;
+      state.history=state.history.filter(h=>!(h.choreId===choreId&&h.date===dk));
+    } else {
+      if(!state.isAdmin){showToast('Awaiting admin approval','#f39c12');return;}
+      // Admin can uncheck approved chores
+      const entry=state.history.find(h=>h.choreId===choreId&&h.date===dk);
+      if(entry){
+        const person=state.people.find(p=>p.name===entry.who);
+        if(person&&entry.value>0){person.account=Math.max(0,(person.account||0)-entry.value);person.totalEarned=Math.max(0,(person.totalEarned||0)-entry.value);}
       }
+      delete chore.doneBy[dk];chore.lastCompleted=null;
+      state.history=state.history.filter(h=>!(h.choreId===choreId&&h.date===dk));
     }
-    delete chore.doneBy[dk];chore.lastCompleted=null;
-    state.history=state.history.filter(h=>!(h.choreId===choreId&&h.date===dk));
-    state.transactions=state.transactions.filter(t=>!(t.type==='chore_earn'&&t.personId===state.currentUser?.id&&t.date===dk&&t.note===chore.name));
   } else {
     const who=state.currentUser?state.currentUser.name:'Someone';
     const personId=state.currentUser?state.currentUser.id:null;
     const earnedValue=personId!==null?getChoreValueForUser(chore,personId):chore.value;
     chore.doneBy[dk]=who;chore.lastCompleted=dk;
-    state.history.unshift({id:Date.now(),choreId,choreName:chore.name,date:dk,who,value:earnedValue,room:chore.room,urgent:chore.urgent||false,choreSnapshot:chore.urgent?JSON.parse(JSON.stringify(chore)):null});
+
+    // Add as PENDING — no money yet
+    state.history.unshift({
+      id:Date.now(),choreId,choreName:chore.name,date:dk,who,
+      value:earnedValue,room:chore.room,urgent:chore.urgent||false,
+      choreSnapshot:chore.urgent?JSON.parse(JSON.stringify(chore)):null,
+      pending:true,
+      personId:personId,
+    });
     if(state.history.length>200)state.history=state.history.slice(0,200);
-    if(state.currentUser&&state.currentUser.id!==0&&earnedValue>0){
-      const person=state.people.find(p=>p.id===state.currentUser.id);
-      if(person){
-        person.account=(person.account||0)+earnedValue;
-        person.totalEarned=(person.totalEarned||0)+earnedValue;
-        addTransaction(person.id,'chore_earn',earnedValue,chore.name,'account');
-      }
-    }
-    if(earnedValue===0)showToast('Completed (Restricted Pay) — $0','#e94560');
-    else showToast(`+$${earnedValue} earned! 🎉`);
+    showToast('⏳ Submitted for approval!','#f39c12');
+
     if(chore.urgent){
       setTimeout(async()=>{
         state.chores=state.chores.filter(c=>c.id!==choreId);
@@ -426,16 +447,16 @@ async function toggleChore(choreId){
     }
   }
   processOverdue();
-  await Promise.all([saveToFirebase('chores',state.chores),saveToFirebase('history',state.history),saveToFirebase('people',state.people),saveToFirebase('locks',state.locks),saveToFirebase('transactions',state.transactions)]);
+  await Promise.all([saveToFirebase('chores',state.chores),saveToFirebase('history',state.history),saveToFirebase('people',state.people),saveToFirebase('locks',state.locks)]);
   render();
 }
 
 async function undoHistory(id){
   const h=state.history.find(x=>x.id===id);if(!h)return;
   if(!canUndo(h)){showToast("You can't undo someone else's chore",'#e94560');return;}
-  if(h.who!=='Someone'&&h.value>0){
+  if(!h.pending){
     const person=state.people.find(p=>p.name===h.who);
-    if(person){person.account=Math.max(0,(person.account||0)-h.value);person.totalEarned=Math.max(0,(person.totalEarned||0)-h.value);}
+    if(person&&h.value>0){person.account=Math.max(0,(person.account||0)-h.value);person.totalEarned=Math.max(0,(person.totalEarned||0)-h.value);}
   }
   if(h.urgent&&h.choreSnapshot){
     const exists=state.chores.find(c=>c.id===h.choreId);
@@ -446,38 +467,33 @@ async function undoHistory(id){
   }
   state.history=state.history.filter(x=>x.id!==id);
   processOverdue();
-  await Promise.all([saveToFirebase('chores',state.chores),saveToFirebase('history',state.history),saveToFirebase('people',state.people),saveToFirebase('locks',state.locks),saveToFirebase('transactions',state.transactions)]);
+  await Promise.all([saveToFirebase('chores',state.chores),saveToFirebase('history',state.history),saveToFirebase('people',state.people),saveToFirebase('locks',state.locks)]);
   showToast('Undone!');render();
 }
 
 // ── BANKING ───────────────────────────────────────────────────────────────────
 async function adminAdjustFunds(personId,accountType,amount,note,isCredit){
   const person=state.people.find(p=>p.id===personId);if(!person)return;
-  const field=accountType;
   if(isCredit){
-    person[field]=(person[field]||0)+amount;
+    person[accountType]=(person[accountType]||0)+amount;
     if(accountType==='account')person.totalEarned=(person.totalEarned||0)+amount;
     addTransaction(personId,'admin_credit',amount,note||'Admin credit',accountType);
     showToast(`+$${amount} added to ${person.name}'s ${accountType}`,'#27ae60');
   } else {
-    const balance=person[field]||0;
+    const balance=person[accountType]||0;
     if(amount>balance){
-      // Check overdraft from savings if deducting from account
       if(accountType==='account'){
         const savingsBalance=person.savings||0;
         const shortfall=amount-balance;
         if(shortfall>savingsBalance){showToast('Not enough funds in account or savings','#e94560');return;}
-        // Show overdraft confirm
         state.showOverdraftModal={personId,amount,note,shortfall,accountBalance:balance,savingsBalance};
         render();return;
-      } else {
-        showToast('Not enough funds in savings','#e94560');return;
-      }
+      } else {showToast('Not enough funds in savings','#e94560');return;}
     }
-    person[field]=Math.max(0,(person[field]||0)-amount);
+    person[accountType]=Math.max(0,(person[accountType]||0)-amount);
     if(accountType==='account')person.totalEarned=Math.max(0,(person.totalEarned||0)-amount);
     addTransaction(personId,'admin_debit',amount,note||'Admin debit',accountType);
-    showToast(`-$${amount} removed from ${person.name}'s ${accountType}`,'#e94560');
+    showToast(`-$${amount} removed`,'#e94560');
   }
   await Promise.all([saveToFirebase('people',state.people),saveToFirebase('transactions',state.transactions)]);
   state.showAdminFundsModal=null;render();
@@ -486,15 +502,12 @@ async function adminAdjustFunds(personId,accountType,amount,note,isCredit){
 async function confirmOverdraft(){
   const od=state.showOverdraftModal;if(!od)return;
   const person=state.people.find(p=>p.id===od.personId);if(!person)return;
-  // Zero account, pull shortfall from savings
   addTransaction(od.personId,'admin_debit',od.accountBalance,od.note||'Admin debit','account');
-  addTransaction(od.personId,'admin_debit',od.shortfall,od.note+' (from savings)','savings');
-  person.account=0;
-  person.savings=Math.max(0,(person.savings||0)-od.shortfall);
+  addTransaction(od.personId,'admin_debit',od.shortfall,(od.note||'Admin debit')+' (from savings)','savings');
+  person.account=0;person.savings=Math.max(0,(person.savings||0)-od.shortfall);
   person.totalEarned=Math.max(0,(person.totalEarned||0)-od.accountBalance);
   await Promise.all([saveToFirebase('people',state.people),saveToFirebase('transactions',state.transactions)]);
-  state.showOverdraftModal=null;state.showAdminFundsModal=null;
-  showToast('Withdrawal complete','#27ae60');render();
+  state.showOverdraftModal=null;state.showAdminFundsModal=null;showToast('Withdrawal complete','#27ae60');render();
 }
 
 async function transferToSavings(personId,amount){
@@ -503,24 +516,9 @@ async function transferToSavings(personId,amount){
   person.account=Math.max(0,(person.account||0)-amount);
   person.savings=(person.savings||0)+amount;
   addTransaction(personId,'transfer_to_savings',amount,'Transfer to savings','account');
-  addTransaction(personId,'transfer_from_savings',-amount,'Transfer from account','savings');
-  // Fix: use positive for savings
-  state.transactions=state.transactions.map(t=>{
-    if(t.type==='transfer_from_savings'&&t.amount===-amount&&t.personId===personId)return {...t,amount,type:'savings_deposit'};
-    return t;
-  });
+  addTransaction(personId,'savings_deposit',amount,'Transfer from account','savings');
   await Promise.all([saveToFirebase('people',state.people),saveToFirebase('transactions',state.transactions)]);
-  state.showTransferModal=false;
-  showToast(`$${amount} moved to savings 💰`,'#3498db');render();
-}
-
-async function selectAvatar(avatarId){
-  if(!state.currentUser||state.isAdmin)return;
-  const person=state.people.find(p=>p.id===state.currentUser.id);
-  if(person){person.avatarId=avatarId;state.currentUser.avatarId=avatarId;}
-  await saveToFirebase('people',state.people);
-  state.showAvatarPicker=false;
-  showToast('Avatar updated!');render();
+  state.showTransferModal=false;showToast(`$${amount} moved to savings 💰`,'#3498db');render();
 }
 
 // ── PIN ───────────────────────────────────────────────────────────────────────
@@ -537,9 +535,7 @@ function checkPin(){
     state.pinBuffer='';
     state.currentUser=state.people.find(p=>p.isAdmin)||{id:0,name:'Admin',isAdmin:true};
     state.isAdmin=true;state.screen=SCREEN.MAIN;showToast('Welcome, Admin!');
-  } else {
-    showToast('Wrong PIN','#e94560');state.pinBuffer='';state.screen=SCREEN.USER_SELECT;
-  }
+  } else {showToast('Wrong PIN','#e94560');state.pinBuffer='';state.screen=SCREEN.USER_SELECT;}
   render();
 }
 
@@ -551,12 +547,13 @@ function render(){
   if(state.screen===SCREEN.PIN){app.innerHTML=renderPinScreen();return;}
   if(state.screen===SCREEN.PROFILE){app.innerHTML=renderProfileScreen();return;}
 
+  const pendingCount=getPendingCount();
   let html=`
     <div class="header">
       <h1>🧹 Chore Store</h1>
       <div class="date">${formatDate(new Date())}</div>
       <div class="text-sm mt-8" style="cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;" onclick="switchUser()">
-        ${getAvatar(state.currentUser.avatarId,24)} ${state.currentUser.name}${state.isAdmin?' <span class="tag admin">Admin</span>':''} &nbsp;(switch)
+        ${getAvatar(state.currentUser.name,24)} ${state.currentUser.name}${state.isAdmin?' <span class="tag admin">Admin</span>':''} &nbsp;(switch)
       </div>
     </div>
     <div class="tabs">
@@ -564,6 +561,7 @@ function render(){
         <div class="tab ${state.tab===t?'active':''}" onclick="setTab('${t}')">
           <span class="icon">${{calendar:'📅',chores:'✅',people:'👥',history:'📋',settings:'⚙️'}[t]}</span>
           ${t.charAt(0).toUpperCase()+t.slice(1)}
+          ${t==='history'&&pendingCount>0?`<span class="tab-badge">${pendingCount}</span>`:''}
         </div>`).join('')}
     </div>
     <div class="content">`;
@@ -584,7 +582,6 @@ function render(){
   if(state.showAdminFundsModal)html+=renderAdminFundsModal();
   if(state.showTransferModal)html+=renderTransferModal();
   if(state.showOverdraftModal)html+=renderOverdraftModal();
-  if(state.showAvatarPicker)html+=renderAvatarPicker();
   app.innerHTML=html;
 }
 
@@ -601,7 +598,7 @@ function renderUserSelectScreen(){
         <p style="color:#aaa;font-size:12px;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Who are you?</p>
         ${kids.map(p=>`
           <div class="person-card" style="cursor:pointer;" onclick="loginAsKid(${p.id})">
-            ${getAvatar(p.avatarId,44)}
+            ${getAvatar(p.name,44)}
             <div class="person-info">
               <div class="person-name">${p.name}</div>
               <div class="text-sm">Tap to enter</div>
@@ -640,22 +637,20 @@ function renderPinScreen(){
 
 function renderProfileScreen(){
   const personId=state.profilePersonId||state.currentUser?.id;
-  const person=state.people.find(p=>p.id===personId);
-  if(!person)return'';
+  const person=state.people.find(p=>p.id===personId);if(!person)return'';
   const txns=getPersonTransactions(personId);
   const isOwnProfile=state.currentUser?.id===personId;
   const isAdminViewing=state.isAdmin;
+  const pendingForPerson=state.history.filter(h=>h.pending&&h.personId===personId);
 
   return `
     <div style="min-height:100vh;background:#1a1a2e;">
       <div class="profile-header">
         <button class="btn btn-secondary btn-sm" style="position:absolute;left:16px;top:16px;" onclick="closeProfile()">← Back</button>
-        <div style="cursor:${isOwnProfile&&!isAdminViewing?'pointer':'default'}" onclick="${isOwnProfile&&!isAdminViewing?'openAvatarPicker()':''}">
-          ${getAvatar(person.avatarId,80)}
-          ${isOwnProfile&&!isAdminViewing?'<div style="font-size:11px;color:#aaa;margin-top:4px;">Tap to change avatar</div>':''}
-        </div>
+        ${getAvatar(person.name,80)}
         <h2 style="margin-top:12px;font-size:22px;">${person.name}</h2>
         <div style="font-size:13px;color:#aaa;">Total earned: $${(person.totalEarned||0).toFixed(2)}</div>
+        ${pendingForPerson.length?`<div style="font-size:12px;color:#f39c12;margin-top:4px;">⏳ ${pendingForPerson.length} pending approval${pendingForPerson.length>1?'s':''}</div>`:''}
       </div>
       <div style="padding:16px;">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
@@ -668,20 +663,14 @@ function renderProfileScreen(){
             <div class="balance-label">🏦 Savings</div>
           </div>
         </div>
-
-        ${isOwnProfile&&!isAdminViewing?`
-          <button class="btn btn-secondary w-full mb-8" onclick="openTransferModal()">💰 Transfer to Savings</button>
-        `:''}
-
+        ${isOwnProfile&&!isAdminViewing?`<button class="btn btn-secondary w-full mb-8" onclick="openTransferModal()">💰 Transfer to Savings</button>`:''}
         ${isAdminViewing?`
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
             <button class="btn btn-success btn-sm" onclick="openAdminFunds(${personId},'account',true)">+ Account</button>
             <button class="btn btn-danger btn-sm" onclick="openAdminFunds(${personId},'account',false)">- Account</button>
             <button class="btn btn-purple btn-sm" onclick="openAdminFunds(${personId},'savings',true)">+ Savings</button>
             <button class="btn btn-warning btn-sm" onclick="openAdminFunds(${personId},'savings',false)">- Savings</button>
-          </div>
-        `:''}
-
+          </div>`:''}
         <div class="section-title">Transaction History</div>
         ${txns.length===0?'<div class="empty-state"><div class="icon">📊</div><p>No transactions yet</p></div>':''}
         ${txns.slice(0,50).map(t=>{
@@ -701,7 +690,6 @@ function renderProfileScreen(){
             </div>`;
         }).join('')}
       </div>
-      ${state.showAvatarPicker?renderAvatarPicker():''}
       ${state.showTransferModal?renderTransferModal():''}
       ${state.showAdminFundsModal?renderAdminFundsModal():''}
       ${state.showOverdraftModal?renderOverdraftModal():''}
@@ -752,7 +740,9 @@ function renderCalendar(){
 }
 
 function renderChoreItem(chore,showEditBtn,isToday){
+  const dk=todayKey();
   const done=isDoneToday(chore);
+  const pending=isPendingToday(chore);
   const status=done?'normal':getChoreStatus(chore);
   const personId=state.currentUser?.id;
   const earnedValue=(personId!==undefined&&personId!==null)?getChoreValueForUser(chore,personId):chore.value;
@@ -760,22 +750,24 @@ function renderChoreItem(chore,showEditBtn,isToday){
   const lock=state.locks[chore.id];
   const assignedPerson=lock?state.people.find(p=>p.id===lock.personId):null;
   let statusLabel='';
-  if(status==='urgent')statusLabel=`<span style="font-size:10px;color:#9b59b6;font-weight:700;">🚨 URGENT — one time</span>`;
+  if(pending)statusLabel=`<span style="font-size:10px;color:#f39c12;font-weight:700;">⏳ Pending approval</span>`;
+  else if(status==='urgent')statusLabel=`<span style="font-size:10px;color:#9b59b6;font-weight:700;">🚨 URGENT — one time</span>`;
   else if(status==='overdue')statusLabel=`<span style="font-size:10px;color:#e94560;font-weight:700;">🔴 OVERDUE${assignedPerson?' — Assigned: '+assignedPerson.name:''}</span>`;
   else if(status==='warning')statusLabel=`<span style="font-size:10px;color:#f39c12;font-weight:700;">⚠️ Due Soon</span>`;
   else if(status==='exempted')statusLabel=`<span style="font-size:10px;color:#f39c12;font-weight:700;">🟡 Exempt Today</span>`;
-  const canCheck=available&&(isToday!==false);
+  const canCheck=available&&(isToday!==false)&&!pending;
+  const itemClass=pending?'pending':(done?'done':status);
   return `
-    <div class="chore-item ${done?'done':status}">
-      <div class="checkbox ${done?'checked':''}" onclick="${canCheck?`toggleChore(${chore.id})`:''}">
-        ${done?'✓':''}
+    <div class="chore-item ${itemClass}">
+      <div class="checkbox ${pending?'pending':(done?'checked':'')}" onclick="${canCheck?`toggleChore(${chore.id})`:pending?`toggleChore(${chore.id})`:''}">
+        ${pending?'⏳':(done?'✓':'')}
       </div>
       <div class="chore-info">
         <div class="chore-name">${chore.name}</div>
         <div class="chore-meta">${chore.urgent?'Urgent — complete once':chore.freq===1?'Daily':`Every ${chore.freq} days`} • ${chore.room}</div>
         ${statusLabel}
       </div>
-      <div class="chore-value ${earnedValue===0&&!done?'zero':''}">$${done?chore.value:earnedValue}</div>
+      <div class="chore-value ${earnedValue===0&&!done?'zero':''}">$${done||pending?chore.value:earnedValue}</div>
       ${showEditBtn&&state.isAdmin?`<button class="btn btn-secondary btn-sm" onclick="editChore(${chore.id})">✏️</button>`:''}
     </div>`;
 }
@@ -787,13 +779,12 @@ function renderChores(){
   if(state.currentUser&&!state.isAdmin){
     const lockedChores=getLockedChoresForPerson(state.currentUser.id);
     if(lockedChores.length)html+=`<div class="lock-banner">🔒 Restricted Pay Mode — Complete: ${lockedChores.map(c=>c.name).join(', ')}</div>`;
+    const myPending=state.history.filter(h=>h.pending&&h.who===state.currentUser.name);
+    if(myPending.length)html+=`<div class="pending-banner">⏳ ${myPending.length} chore${myPending.length>1?'s':''} awaiting admin approval</div>`;
   }
   const urgentChores=todayChores.filter(c=>c.urgent);
   const regularChores=todayChores.filter(c=>!c.urgent);
-  if(urgentChores.length){
-    html+=`<div class="section-title" style="color:#9b59b6;">🚨 Urgent</div>`;
-    urgentChores.forEach(c=>{html+=renderChoreItem(c,true,true);});
-  }
+  if(urgentChores.length){html+=`<div class="section-title" style="color:#9b59b6;">🚨 Urgent</div>`;urgentChores.forEach(c=>{html+=renderChoreItem(c,true,true);});}
   const rooms=[...new Set(regularChores.map(c=>c.room))];
   rooms.forEach(room=>{
     html+=`<div class="section-title">${room}</div>`;
@@ -810,12 +801,13 @@ function renderPeople(){
   sorted.forEach((person,i)=>{
     const locked=isPersonLocked(person.id);
     const lockedChores=getLockedChoresForPerson(person.id);
+    const pendingCount=state.history.filter(h=>h.pending&&h.personId===person.id).length;
     html+=`
       <div class="person-card ${locked?'locked':''}" style="cursor:pointer;" onclick="openProfile(${person.id})">
         <div class="person-rank">${['🥇','🥈','🥉'][i]||`#${i+1}`}</div>
-        ${getAvatar(person.avatarId,44)}
+        ${getAvatar(person.name,44)}
         <div class="person-info">
-          <div class="person-name">${person.name}${locked?'<span class="tag locked">🔒</span>':''}</div>
+          <div class="person-name">${person.name}${locked?'<span class="tag locked">🔒</span>':''}${pendingCount?`<span class="tag pending">⏳${pendingCount}</span>`:''}</div>
           <div class="person-earnings">💵 $${(person.account||0).toFixed(2)} &nbsp; 🏦 $${(person.savings||0).toFixed(2)}</div>
           ${locked&&lockedChores.length?`<div style="font-size:11px;color:#e94560;margin-top:4px;">Overdue: ${lockedChores.map(c=>c.name).join(', ')}</div>`:''}
         </div>
@@ -829,22 +821,49 @@ function renderPeople(){
 }
 
 function renderHistory(){
-  if(!state.history.length)return`<div class="empty-state"><div class="icon">📋</div><p>No history yet!</p></div>`;
-  let html='<div class="section-title">Recent Activity</div>';
-  state.history.slice(0,50).forEach(h=>{
-    const canU=canUndo(h);
-    html+=`
-      <div class="history-item ${h.urgent?'urgent-history':''}">
-        <div>
-          <div style="font-weight:500">${h.choreName}${h.urgent?'<span class="tag urgent">🚨</span>':''}</div>
-          <div class="text-sm">${h.who} • ${h.date} • ${h.room}</div>
-        </div>
-        <div style="display:flex;gap:8px;align-items:center">
-          <span class="${h.value===0?'text-red':'text-green'}">$${h.value}</span>
-          ${canU?`<button class="btn btn-danger btn-sm" onclick="undoHistory(${h.id})">↩</button>`:''}
-        </div>
-      </div>`;
-  });
+  const pending=state.history.filter(h=>h.pending);
+  const approved=state.history.filter(h=>!h.pending);
+  let html='';
+
+  if(pending.length){
+    html+=`<div class="section-title" style="color:#f39c12;">⏳ Pending Approval (${pending.length})</div>`;
+    pending.forEach(h=>{
+      html+=`
+        <div class="history-item pending">
+          <div style="flex:1;">
+            <div style="font-weight:500;">${h.choreName}${h.urgent?'<span class="tag urgent">🚨</span>':''}</div>
+            <div class="text-sm">${h.who} • ${h.date} • ${h.room}</div>
+            <div style="font-size:12px;color:#f39c12;margin-top:2px;">Will earn: $${h.value}</div>
+          </div>
+          ${state.isAdmin?`
+            <div style="display:flex;gap:6px;align-items:center;flex-shrink:0;">
+              <button class="approve-btn" onclick="approveChore(${h.id})">✓ Approve</button>
+              <button class="reject-btn" onclick="rejectChore(${h.id})">✗ Reject</button>
+            </div>
+          `:'<span class="text-orange" style="font-size:12px;">Waiting...</span>'}
+        </div>`;
+    });
+  }
+
+  if(approved.length){
+    html+=`<div class="section-title">Recent Activity</div>`;
+    approved.slice(0,50).forEach(h=>{
+      const canU=canUndo(h);
+      html+=`
+        <div class="history-item ${h.urgent?'urgent-history':''}">
+          <div>
+            <div style="font-weight:500;">${h.choreName}${h.urgent?'<span class="tag urgent">🚨</span>':''}</div>
+            <div class="text-sm">${h.who} • ${h.date} • ${h.room}</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span class="${h.value===0?'text-red':'text-green'}">$${h.value}</span>
+            ${canU?`<button class="btn btn-danger btn-sm" onclick="undoHistory(${h.id})">↩</button>`:''}
+          </div>
+        </div>`;
+    });
+  }
+
+  if(!pending.length&&!approved.length)return`<div class="empty-state"><div class="icon">📋</div><p>No history yet!</p></div>`;
   return html;
 }
 
@@ -897,12 +916,11 @@ function renderDayModal(){
 function renderAdminFundsModal(){
   const m=state.showAdminFundsModal;if(!m)return'';
   const person=state.people.find(p=>p.id===m.personId);if(!person)return'';
-  const isCredit=m.isCredit;
   const accountLabel=m.accountType==='account'?'Account':'Savings';
   return `
     <div class="modal-overlay">
       <div class="modal">
-        <h2>${isCredit?'➕ Add':'➖ Deduct'} ${accountLabel} — ${person.name}</h2>
+        <h2>${m.isCredit?'➕ Add':'➖ Deduct'} ${accountLabel} — ${person.name}</h2>
         <div class="text-sm mb-8">Current ${accountLabel}: $${(person[m.accountType]||0).toFixed(2)}</div>
         <div class="form-group"><label>Amount ($)</label>
           <input class="input" type="number" id="fundAmount" placeholder="0.00" min="0.01" step="0.01">
@@ -912,9 +930,7 @@ function renderAdminFundsModal(){
         </div>
         <div class="row mt-16" style="gap:10px">
           <button class="btn btn-secondary" style="flex:1" onclick="state.showAdminFundsModal=null;render()">Cancel</button>
-          <button class="btn ${isCredit?'btn-success':'btn-danger'}" style="flex:1" onclick="submitAdminFunds()">
-            ${isCredit?'Add Funds':'Deduct'}
-          </button>
+          <button class="btn ${m.isCredit?'btn-success':'btn-danger'}" style="flex:1" onclick="submitAdminFunds()">${m.isCredit?'Add Funds':'Deduct'}</button>
         </div>
       </div>
     </div>`;
@@ -947,10 +963,9 @@ function renderOverdraftModal(){
         <h2>⚠️ Overdraft</h2>
         <p style="margin-bottom:16px;line-height:1.6;">
           <strong>${person.name}'s</strong> account has <span class="text-green">$${od.accountBalance.toFixed(2)}</span>.<br>
-          This $${(od.accountBalance+od.shortfall).toFixed(2)} withdrawal will zero the account and pull 
-          <span class="text-blue">$${od.shortfall.toFixed(2)}</span> from savings 
-          ($${od.savingsBalance.toFixed(2)} → $${(od.savingsBalance-od.shortfall).toFixed(2)}).<br><br>
-          Proceed?
+          This $${(od.accountBalance+od.shortfall).toFixed(2)} withdrawal will zero the account and pull
+          <span class="text-blue">$${od.shortfall.toFixed(2)}</span> from savings
+          ($${od.savingsBalance.toFixed(2)} → $${(od.savingsBalance-od.shortfall).toFixed(2)}).<br><br>Proceed?
         </p>
         <div class="row" style="gap:10px">
           <button class="btn btn-secondary" style="flex:1" onclick="state.showOverdraftModal=null;render()">Cancel</button>
@@ -968,14 +983,10 @@ function renderAddChoreModal(){
         <h2>${e?'Edit':'Add'} Chore</h2>
         <div class="form-group"><label>Chore Name</label><input class="input" id="choreName" placeholder="e.g. Wash Dishes" value="${e?e.name:''}"></div>
         <div class="form-group"><label>Room</label>
-          <select class="input" id="choreRoom">
-            ${state.rooms.map(r=>`<option value="${r.name}" ${e&&e.room===r.name?'selected':''}>${r.name}</option>`).join('')}
-          </select>
+          <select class="input" id="choreRoom">${state.rooms.map(r=>`<option value="${r.name}" ${e&&e.room===r.name?'selected':''}>${r.name}</option>`).join('')}</select>
         </div>
         <div class="form-group"><label>Dollar Value</label>
-          <select class="input" id="choreValue">
-            ${[1,2,3,4,5].map(v=>`<option value="${v}" ${e&&e.value===v?'selected':v===2&&!e?'selected':''}>$${v}</option>`).join('')}
-          </select>
+          <select class="input" id="choreValue">${[1,2,3,4,5].map(v=>`<option value="${v}" ${e&&e.value===v?'selected':v===2&&!e?'selected':''}>$${v}</option>`).join('')}</select>
         </div>
         <div class="form-group"><label>Frequency</label>
           <select class="input" id="choreFreq">
@@ -1063,79 +1074,54 @@ function renderChangePinModal(){
     </div>`;
 }
 
-function renderAvatarPicker(){
-  const boyAvatars=AVATARS.filter(a=>a.id.startsWith('b'));
-  const girlAvatars=AVATARS.filter(a=>a.id.startsWith('g'));
-  const neutralAvatars=AVATARS.filter(a=>a.id.startsWith('n'));
-  const currentAvatarId=state.currentUser?.avatarId;
-  const renderGroup=(label,avatars)=>`
-    <div style="font-size:12px;color:#aaa;margin-bottom:8px;margin-top:12px;">${label}</div>
-    <div class="avatar-grid">
-      ${avatars.map(av=>`
-        <div class="avatar-option ${currentAvatarId===av.id?'selected':''}" onclick="selectAvatar('${av.id}')">
-          ${getAvatar(av.id,52)}
-        </div>`).join('')}
-    </div>`;
-  return `
-    <div class="modal-overlay">
-      <div class="modal">
-        <h2>Choose Avatar</h2>
-        ${renderGroup('👦 Boy',boyAvatars)}
-        ${renderGroup('👧 Girl',girlAvatars)}
-        ${renderGroup('🧑 Neutral',neutralAvatars)}
-        <button class="btn btn-secondary w-full mt-16" onclick="state.showAvatarPicker=false;render()">Cancel</button>
-      </div>
-    </div>`;
-}
-
 // ── GLOBAL FUNCTIONS ──────────────────────────────────────────────────────────
-window.loginAsKid     = id=>{state.currentUser=state.people.find(p=>p.id===id);state.isAdmin=false;state.screen=SCREEN.MAIN;render();};
-window.startPin       = startPin;
-window.handlePinKey   = handlePinKey;
-window.cancelPin      = ()=>{state.screen=SCREEN.USER_SELECT;state.pinBuffer='';render();};
-window.switchUser     = ()=>{state.currentUser=null;state.isAdmin=false;state.screen=SCREEN.USER_SELECT;render();};
-window.setTab         = t=>{state.tab=t;render();};
-window.prevMonth      = ()=>{state.calendarDate=new Date(state.calendarDate.getFullYear(),state.calendarDate.getMonth()-1,1);render();};
-window.nextMonth      = ()=>{state.calendarDate=new Date(state.calendarDate.getFullYear(),state.calendarDate.getMonth()+1,1);render();};
-window.openDay        = (y,m,d)=>{state.selectedDate=new Date(y,m,d);state.showChoreList=true;render();};
-window.closeDayModal  = e=>{if(e.target.classList.contains('modal-overlay')){state.showChoreList=false;render();}};
-window.toggleChore    = toggleChore;
-window.undoHistory    = undoHistory;
-window.adminExemptChore = async id=>{
+window.loginAsKid     =id=>{state.currentUser=state.people.find(p=>p.id===id);state.isAdmin=false;state.screen=SCREEN.MAIN;render();};
+window.startPin       =startPin;
+window.handlePinKey   =handlePinKey;
+window.cancelPin      =()=>{state.screen=SCREEN.USER_SELECT;state.pinBuffer='';render();};
+window.switchUser     =()=>{state.currentUser=null;state.isAdmin=false;state.screen=SCREEN.USER_SELECT;render();};
+window.setTab         =t=>{state.tab=t;render();};
+window.prevMonth      =()=>{state.calendarDate=new Date(state.calendarDate.getFullYear(),state.calendarDate.getMonth()-1,1);render();};
+window.nextMonth      =()=>{state.calendarDate=new Date(state.calendarDate.getFullYear(),state.calendarDate.getMonth()+1,1);render();};
+window.openDay        =(y,m,d)=>{state.selectedDate=new Date(y,m,d);state.showChoreList=true;render();};
+window.closeDayModal  =e=>{if(e.target.classList.contains('modal-overlay')){state.showChoreList=false;render();}};
+window.toggleChore    =toggleChore;
+window.approveChore   =approveChore;
+window.rejectChore    =rejectChore;
+window.undoHistory    =undoHistory;
+window.adminExemptChore=async id=>{
   if(state.locks[id])state.locks[id].exemptToday=todayKey();
   await saveToFirebase('locks',state.locks);showToast('Restriction lifted for today','#f39c12');render();
 };
-window.openProfile    = id=>{state.profilePersonId=id;state.screen=SCREEN.PROFILE;render();};
-window.closeProfile   = ()=>{state.screen=SCREEN.MAIN;state.profilePersonId=null;state.showTransferModal=false;state.showAdminFundsModal=null;state.showOverdraftModal=null;render();};
-window.openAvatarPicker = ()=>{state.showAvatarPicker=true;render();};
-window.selectAvatar   = selectAvatar;
-window.openAdminFunds = (personId,accountType,isCredit)=>{state.showAdminFundsModal={personId,accountType,isCredit};render();};
-window.submitAdminFunds = ()=>{
+window.openProfile    =id=>{state.profilePersonId=id;state.screen=SCREEN.PROFILE;render();};
+window.closeProfile   =()=>{state.screen=SCREEN.MAIN;state.profilePersonId=null;state.showTransferModal=false;state.showAdminFundsModal=null;state.showOverdraftModal=null;render();};
+window.openAdminFunds =( personId,accountType,isCredit)=>{state.showAdminFundsModal={personId,accountType,isCredit};render();};
+window.submitAdminFunds=()=>{
   const amount=parseFloat(document.getElementById('fundAmount')?.value);
   const note=document.getElementById('fundNote')?.value||'';
   const m=state.showAdminFundsModal;
   if(!amount||amount<=0){showToast('Enter a valid amount','#e94560');return;}
   adminAdjustFunds(m.personId,m.accountType,amount,note,m.isCredit);
 };
-window.openTransferModal = ()=>{state.showTransferModal=true;render();};
-window.submitTransfer = ()=>{
+window.openTransferModal=()=>{state.showTransferModal=true;render();};
+window.submitTransfer =()=>{
   const amount=parseFloat(document.getElementById('transferAmount')?.value);
   if(!amount||amount<=0){showToast('Enter a valid amount','#e94560');return;}
   transferToSavings(state.currentUser.id,amount);
 };
-window.confirmOverdraft = confirmOverdraft;
-window.confirmCashOut = id=>{state.showCashOutConfirm=id;render();};
-window.cashOut = async id=>{
+window.confirmOverdraft=confirmOverdraft;
+window.confirmCashOut =id=>{state.showCashOutConfirm=id;render();};
+window.cashOut        =async id=>{
   const person=state.people.find(p=>p.id===id);if(!person)return;
   addTransaction(id,'admin_debit',person.account||0,'Cash out','account');
   person.account=0;
   await Promise.all([saveToFirebase('people',state.people),saveToFirebase('transactions',state.transactions)]);
   state.showCashOutConfirm=null;showToast(`${person.name} cashed out! 💸`);render();
 };
-window.addChore       = ()=>{state.editingChore=null;state.showAddChore=true;render();};
-window.editChore      = id=>{state.editingChore=state.chores.find(c=>c.id===id);state.showAddChore=true;render();};
-window.closeChoreModal= ()=>{state.showAddChore=false;state.editingChore=null;render();};
-window.saveChore      = async()=>{
+window.addChore       =()=>{state.editingChore=null;state.showAddChore=true;render();};
+window.editChore      =id=>{state.editingChore=state.chores.find(c=>c.id===id);state.showAddChore=true;render();};
+window.closeChoreModal=()=>{state.showAddChore=false;state.editingChore=null;render();};
+window.saveChore      =async()=>{
   const name=document.getElementById('choreName').value.trim();
   const room=document.getElementById('choreRoom').value;
   const value=parseInt(document.getElementById('choreValue').value);
@@ -1147,31 +1133,31 @@ window.saveChore      = async()=>{
   await saveToFirebase('chores',state.chores);
   state.showAddChore=false;state.editingChore=null;showToast('Chore saved!');render();
 };
-window.deleteChore    = async id=>{
+window.deleteChore    =async id=>{
   state.chores=state.chores.filter(c=>c.id!==id);delete state.locks[id];
   await Promise.all([saveToFirebase('chores',state.chores),saveToFirebase('locks',state.locks)]);
   state.showAddChore=false;state.editingChore=null;showToast('Chore deleted');render();
 };
-window.addPerson      = ()=>{state.editingPerson=null;state.showAddPerson=true;render();};
-window.editPerson     = id=>{state.editingPerson=state.people.find(p=>p.id===id);state.showAddPerson=true;render();};
+window.addPerson      =()=>{state.editingPerson=null;state.showAddPerson=true;render();};
+window.editPerson     =id=>{state.editingPerson=state.people.find(p=>p.id===id);state.showAddPerson=true;render();};
 window.closePersonModal=()=>{state.showAddPerson=false;state.editingPerson=null;render();};
-window.savePerson     = async()=>{
+window.savePerson     =async()=>{
   const name=document.getElementById('personName').value.trim();
   if(!name){showToast('Enter a name','#e94560');return;}
   if(state.editingPerson){state.editingPerson.name=name;}
-  else{state.people.push({id:Date.now(),name,isAdmin:false,totalEarned:0,account:0,savings:0,avatarId:'n1'});}
+  else{state.people.push({id:Date.now(),name,isAdmin:false,totalEarned:0,account:0,savings:0});}
   await saveToFirebase('people',state.people);
   state.showAddPerson=false;state.editingPerson=null;showToast('Saved!');render();
 };
-window.deletePerson   = async id=>{
+window.deletePerson   =async id=>{
   state.people=state.people.filter(p=>p.id!==id);
   await saveToFirebase('people',state.people);
   state.showAddPerson=false;state.editingPerson=null;showToast('Removed');render();
 };
-window.addRoom        = ()=>{state.editingRoom=null;state.showAddRoom=true;render();};
-window.editRoom       = id=>{state.editingRoom=state.rooms.find(r=>r.id===id);state.showAddRoom=true;render();};
-window.closeRoomModal = ()=>{state.showAddRoom=false;state.editingRoom=null;render();};
-window.saveRoom       = async()=>{
+window.addRoom        =()=>{state.editingRoom=null;state.showAddRoom=true;render();};
+window.editRoom       =id=>{state.editingRoom=state.rooms.find(r=>r.id===id);state.showAddRoom=true;render();};
+window.closeRoomModal =()=>{state.showAddRoom=false;state.editingRoom=null;render();};
+window.saveRoom       =async()=>{
   const name=document.getElementById('roomName').value.trim();
   const owner=document.getElementById('roomOwner').value||null;
   if(!name){showToast('Enter a room name','#e94560');return;}
@@ -1180,11 +1166,11 @@ window.saveRoom       = async()=>{
   await saveToFirebase('rooms',state.rooms);
   state.showAddRoom=false;state.editingRoom=null;showToast('Room saved!');render();
 };
-window.deleteRoom     = async id=>{
+window.deleteRoom     =async id=>{
   state.rooms=state.rooms.filter(r=>r.id!==id);
   await saveToFirebase('rooms',state.rooms);showToast('Room deleted');render();
 };
-window.newPinKey      = key=>{
+window.newPinKey      =key=>{
   if(!state.newPinBuffer)state.newPinBuffer='';
   if(key==='del'){state.newPinBuffer=state.newPinBuffer.slice(0,-1);render();return;}
   if(state.newPinBuffer.length>=4)return;
@@ -1197,7 +1183,7 @@ window.newPinKey      = key=>{
     },200);
   }
 };
-window.pushAllData    = async()=>{
+window.pushAllData    =async()=>{
   await Promise.all([
     saveToFirebase('chores',state.chores),saveToFirebase('people',state.people),
     saveToFirebase('history',state.history),saveToFirebase('rooms',state.rooms),
@@ -1210,18 +1196,3 @@ initData();
 </script>
 </body>
 </html>
-```
-
-Here's what's new:
-
-- ✅ **12 SVG avatars** — 4 boy, 4 girl, 4 neutral — shown on login screen and leaderboard
-- ✅ **Kids can tap their avatar** on their profile to change it
-- ✅ **Profile screen** with Account and Savings balances, full transaction history
-- ✅ **Kids can transfer to savings** from their profile
-- ✅ **Admin +/- buttons** for both Account and Savings with amount and note
-- ✅ **Overdraft protection** — clear prompt showing exact amounts pulled from savings
-- ✅ **Transaction history** per kid showing chore earnings, credits, debits, transfers
-- ✅ **Admin is just "Admin"** — no Mom/Dad reference anywhere
-- ✅ All previous features intact
-
-Paste and commit!
