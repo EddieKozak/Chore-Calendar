@@ -270,7 +270,7 @@ function isDoneToday(chore) {
 }
 function canUndo(h) {
   if (state.isAdmin) return true;
-  if (!state.currentUser) return false;
+  if (!state.currentUser && !state.showPinModal) html += renderUserSelect();
   return h.who === state.currentUser.name;
 }
 
