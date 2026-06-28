@@ -18,12 +18,16 @@
   .content { flex: 1; overflow-y: auto; padding: 16px; }
   .btn { padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.2s; }
   .btn-primary { background: #e94560; color: white; }
-  .btn-primary:hover { background: #c73652; }
   .btn-secondary { background: #0f3460; color: white; }
   .btn-success { background: #27ae60; color: white; }
   .btn-danger { background: #c0392b; color: white; }
+  .btn-warning { background: #f39c12; color: white; }
   .btn-sm { padding: 6px 12px; font-size: 12px; }
   .card { background: #16213e; border-radius: 12px; padding: 16px; margin-bottom: 12px; border: 1px solid #0f3460; }
+  .proverb-card { background: linear-gradient(135deg, #1a1a3e, #0f3460); border-radius: 12px; padding: 18px; margin-bottom: 16px; border: 1px solid #3a5080; }
+  .proverb-card .proverb-label { font-size: 11px; color: #e94560; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .proverb-card .proverb-text { font-size: 15px; color: #eee; line-height: 1.6; font-style: italic; }
+  .proverb-card .proverb-ref { font-size: 12px; color: #aaa; margin-top: 8px; text-align: right; }
   .input { width: 100%; padding: 10px 12px; border: 1px solid #0f3460; border-radius: 8px; background: #1a1a2e; color: #eee; font-size: 14px; }
   .input:focus { outline: none; border-color: #e94560; }
   select.input { cursor: pointer; }
@@ -47,17 +51,11 @@
   .person-name { font-size: 16px; font-weight: 600; }
   .person-earnings { font-size: 13px; color: #27ae60; }
   .person-rank { font-size: 24px; font-weight: 700; color: #e94560; }
-  .room-chip { display: inline-block; padding: 4px 10px; border-radius: 20px; background: #0f3460; font-size: 12px; margin: 3px; cursor: pointer; }
-  .room-chip.selected { background: #e94560; }
   .history-item { padding: 10px; background: #1a1a2e; border-radius: 8px; margin-bottom: 6px; border-left: 3px solid #27ae60; display: flex; justify-content: space-between; align-items: center; }
-  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
-  .badge-green { background: #1e5c3a; color: #27ae60; }
-  .badge-blue { background: #1a3a5c; color: #3498db; }
   .section-title { font-size: 13px; font-weight: 700; color: #aaa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; margin-top: 16px; }
   .fab { position: fixed; bottom: 80px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: #e94560; border: none; color: white; font-size: 28px; cursor: pointer; box-shadow: 0 4px 16px rgba(233,69,96,0.4); z-index: 50; display: flex; align-items: center; justify-content: center; }
   .emoji-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 10px; }
   .emoji-btn { font-size: 24px; padding: 8px; border: none; background: #1a1a2e; border-radius: 8px; cursor: pointer; text-align: center; }
-  .emoji-btn:hover { background: #0f3460; }
   .pin-dots { display: flex; gap: 12px; justify-content: center; margin: 16px 0; }
   .pin-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #e94560; background: transparent; transition: all 0.2s; }
   .pin-dot.filled { background: #e94560; }
@@ -73,18 +71,14 @@
   .cal-day.other-month { color: #555; }
   .progress-bar { height: 6px; background: #0f3460; border-radius: 3px; overflow: hidden; margin-top: 8px; }
   .progress-fill { height: 100%; background: #27ae60; border-radius: 3px; transition: width 0.3s; }
-  .pull-refresh { text-align: center; padding: 10px; color: #aaa; font-size: 13px; }
-  .swipe-hint { font-size: 11px; color: #555; text-align: center; margin-top: 8px; }
   .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; background: #0f3460; color: #aaa; margin-left: 6px; }
   .tag.admin { background: #3d1f1f; color: #e94560; }
   .empty-state { text-align: center; padding: 40px 20px; color: #555; }
   .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
-  .divider { height: 1px; background: #0f3460; margin: 12px 0; }
   .row { display: flex; gap: 10px; align-items: center; }
   .row.between { justify-content: space-between; }
   .text-sm { font-size: 13px; color: #aaa; }
   .text-green { color: #27ae60; }
-  .text-red { color: #e94560; }
   .mt-8 { margin-top: 8px; }
   .mt-16 { margin-top: 16px; }
   .mb-8 { margin-bottom: 8px; }
@@ -92,18 +86,17 @@
   .loading { text-align: center; padding: 40px; color: #aaa; }
   .spinner { width: 32px; height: 32px; border: 3px solid #0f3460; border-top-color: #e94560; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #27ae60; color: white; padding: 10px 20px; border-radius: 20px; font-size: 14px; z-index: 200; animation: fadeInOut 2s ease; }
-  @keyframes fadeInOut { 0%,100% { opacity: 0; } 20%,80% { opacity: 1; } }
+  .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #27ae60; color: white; padding: 10px 20px; border-radius: 20px; font-size: 14px; z-index: 200; animation: fadeInOut 2.2s ease; pointer-events: none; }
+  @keyframes fadeInOut { 0%,100%{opacity:0;} 15%,85%{opacity:1;} }
 </style>
 </head>
 <body>
 <div class="app" id="app">
   <div class="loading"><div class="spinner"></div>Loading...</div>
 </div>
-
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { getFirestore, doc, setDoc, getDoc, onSnapshot, collection } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { getFirestore, doc, setDoc, getDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyCDXKQ6J-ZgCcaWjIx2kQssgKCklLrIPmc",
@@ -121,62 +114,82 @@ const db = getFirestore(firebaseApp);
 const ADMIN_PIN = '1234';
 const EMOJIS = ['🛋️','🍳','🛁','🛏️','🧹','🌿','🚗','📦','🐕','🐈','🧺','🪣','🧴','🪴','⭐','🏠','🔧','🎮','📚','🧸'];
 
+const PROVERBS = {
+  1:  { text: "The fear of the Lord is the beginning of knowledge; fools despise wisdom and instruction.", ref: "Proverbs 1:7" },
+  2:  { text: "For the Lord gives wisdom; from His mouth come knowledge and understanding.", ref: "Proverbs 2:6" },
+  3:  { text: "Trust in the Lord with all your heart and do not lean on your own understanding.", ref: "Proverbs 3:5" },
+  4:  { text: "Watch over your heart with all diligence, for from it flow the springs of life.", ref: "Proverbs 4:23" },
+  5:  { text: "Let your fountain be blessed, and rejoice in the wife of your youth.", ref: "Proverbs 5:18" },
+  6:  { text: "Go to the ant, O sluggard, observe her ways and be wise.", ref: "Proverbs 6:6" },
+  7:  { text: "Say to wisdom, you are my sister, and call understanding your intimate friend.", ref: "Proverbs 7:4" },
+  8:  { text: "For wisdom is better than jewels; and all desirable things cannot compare with her.", ref: "Proverbs 8:11" },
+  9:  { text: "Give instruction to a wise man and he will be still wiser; teach a righteous man and he will increase his learning.", ref: "Proverbs 9:9" },
+  10: { text: "The blessing of the Lord — it makes rich, and He adds no sorrow to it.", ref: "Proverbs 10:22" },
+  11: { text: "Where there is no guidance the people fall, but in abundance of counselors there is victory.", ref: "Proverbs 11:14" },
+  12: { text: "Anxiety in a man's heart weighs it down, but a good word makes it glad.", ref: "Proverbs 12:25" },
+  13: { text: "Hope deferred makes the heart sick, but desire fulfilled is a tree of life.", ref: "Proverbs 13:12" },
+  14: { text: "There is a way which seems right to a man, but its end is the way of death.", ref: "Proverbs 14:12" },
+  15: { text: "A gentle answer turns away wrath, but a harsh word stirs up anger.", ref: "Proverbs 15:1" },
+  16: { text: "Commit your works to the Lord and your plans will be established.", ref: "Proverbs 16:3" },
+  17: { text: "A friend loves at all times, and a brother is born for adversity.", ref: "Proverbs 17:17" },
+  18: { text: "The name of the Lord is a strong tower; the righteous runs into it and is safe.", ref: "Proverbs 18:10" },
+  19: { text: "Many plans are in a man's heart, but the counsel of the Lord will stand.", ref: "Proverbs 19:21" },
+  20: { text: "It is by his deeds that a lad distinguishes himself, if his conduct is pure and right.", ref: "Proverbs 20:11" },
+  21: { text: "To do righteousness and justice is desired by the Lord more than sacrifice.", ref: "Proverbs 21:3" },
+  22: { text: "Train up a child in the way he should go; even when he is old he will not depart from it.", ref: "Proverbs 22:6" },
+  23: { text: "Do not let your heart envy sinners, but live in the fear of the Lord always.", ref: "Proverbs 23:17" },
+  24: { text: "For a righteous man falls seven times, and rises again, but the wicked stumble in time of calamity.", ref: "Proverbs 24:16" },
+  25: { text: "Like cold water to a weary soul, so is good news from a distant land.", ref: "Proverbs 25:25" },
+  26: { text: "Like a dog that returns to its vomit is a fool who repeats his folly.", ref: "Proverbs 26:11" },
+  27: { text: "Iron sharpens iron, so one man sharpens another.", ref: "Proverbs 27:17" },
+  28: { text: "He who trusts in his own heart is a fool, but he who walks wisely will be delivered.", ref: "Proverbs 28:26" },
+  29: { text: "Where there is no vision, the people are unrestrained, but happy is he who keeps the law.", ref: "Proverbs 29:18" },
+  30: { text: "Every word of God is tested; He is a shield to those who take refuge in Him.", ref: "Proverbs 30:5" },
+  31: { text: "Charm is deceitful and beauty is vain, but a woman who fears the Lord, she shall be praised.", ref: "Proverbs 31:30" },
+};
+
+function getTodaysProverb() {
+  const day = new Date().getDate();
+  return PROVERBS[day] || PROVERBS[1];
+}
+
 let state = {
   tab: 'calendar',
-  chores: [],
-  people: [],
-  history: [],
-  rooms: [],
+  chores: [], people: [], history: [], rooms: [],
   settings: { adminPin: ADMIN_PIN },
-  currentUser: null,
-  isAdmin: false,
-  showAddChore: false,
-  showAddPerson: false,
-  showAddRoom: false,
-  showPinModal: false,
-  showChoreList: false,
-  selectedDate: new Date(),
-  calendarDate: new Date(),
-  editingChore: null,
-  editingPerson: null,
-  editingRoom: null,
-  pinBuffer: '',
-  pinAction: null,
-  showEmojiPicker: false,
-  emojiTarget: null,
-  pendingEmojiRoom: null,
-  loading: true,
-  syncing: false,
+  currentUser: null, isAdmin: false,
+  showAddChore: false, showAddPerson: false, showAddRoom: false,
+  showPinModal: false, showChoreList: false,
+  selectedDate: new Date(), calendarDate: new Date(),
+  editingChore: null, editingPerson: null, editingRoom: null,
+  pinBuffer: '', pinAction: null, pinTargetPersonId: null,
+  showEmojiPicker: false, emojiTarget: null,
+  loading: true, showCashOutConfirm: null,
 };
 
 function todayKey() {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
-
 function dateKey(d) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
-
 function formatDate(d) {
   return d.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
 }
-
-function showToast(msg) {
+function showToast(msg, color) {
   const t = document.createElement('div');
   t.className = 'toast';
+  if (color) t.style.background = color;
   t.textContent = msg;
   document.body.appendChild(t);
-  setTimeout(() => t.remove(), 2000);
+  setTimeout(() => t.remove(), 2200);
 }
 
-// Firebase sync
 async function saveToFirebase(key, data) {
-  try {
-    await setDoc(doc(db, 'family', key), { data: JSON.stringify(data) });
-  } catch(e) { console.error('Save error', e); }
+  try { await setDoc(doc(db, 'family', key), { data: JSON.stringify(data) }); }
+  catch(e) { console.error('Save error', e); }
 }
-
 async function loadFromFirebase(key) {
   try {
     const snap = await getDoc(doc(db, 'family', key));
@@ -187,76 +200,60 @@ async function loadFromFirebase(key) {
 
 async function initData() {
   const [chores, people, history, rooms, settings] = await Promise.all([
-    loadFromFirebase('chores'),
-    loadFromFirebase('people'),
-    loadFromFirebase('history'),
-    loadFromFirebase('rooms'),
-    loadFromFirebase('settings'),
+    loadFromFirebase('chores'), loadFromFirebase('people'),
+    loadFromFirebase('history'), loadFromFirebase('rooms'), loadFromFirebase('settings'),
   ]);
-  state.chores = chores || getDefaultChores();
-  state.people = people || getDefaultPeople();
-  state.history = history || [];
-  state.rooms = rooms || getDefaultRooms();
+  state.chores   = chores   || getDefaultChores();
+  state.people   = people   || getDefaultPeople();
+  state.history  = history  || [];
+  state.rooms    = rooms    || getDefaultRooms();
   state.settings = settings || { adminPin: ADMIN_PIN };
-  state.loading = false;
-
-  // Set up real-time listeners
+  state.loading  = false;
   ['chores','people','history','rooms','settings'].forEach(key => {
     onSnapshot(doc(db, 'family', key), snap => {
-      if (snap.exists()) {
-        const d = JSON.parse(snap.data().data);
-        state[key] = d;
-        render();
-      }
+      if (snap.exists()) { state[key] = JSON.parse(snap.data().data); render(); }
     });
   });
-
   render();
 }
 
 function getDefaultRooms() {
   return [
-    { id: 1, name: 'Kitchen', emoji: '🍳', owner: null },
-    { id: 2, name: 'Living Room', emoji: '🛋️', owner: null },
-    { id: 3, name: 'Bathrooms', emoji: '🛁', owner: null },
-    { id: 4, name: 'Bedrooms', emoji: '🛏️', owner: null },
-    { id: 5, name: 'Outdoors', emoji: '🌿', owner: null },
+    { id:1, name:'Kitchen',     emoji:'🍳', owner:null },
+    { id:2, name:'Living Room', emoji:'🛋️', owner:null },
+    { id:3, name:'Bathrooms',   emoji:'🛁', owner:null },
+    { id:4, name:'Bedrooms',    emoji:'🛏️', owner:null },
+    { id:5, name:'Outdoors',    emoji:'🌿', owner:null },
   ];
 }
-
 function getDefaultPeople() {
   return [
-    { id: 1, name: 'Dad', emoji: '👨', isAdmin: true, totalEarned: 0 },
-    { id: 2, name: 'Mom', emoji: '👩', isAdmin: true, totalEarned: 0 },
+    { id:1, name:'Dad', emoji:'👨', isAdmin:true,  totalEarned:0 },
+    { id:2, name:'Mom', emoji:'👩', isAdmin:true,  totalEarned:0 },
   ];
 }
-
 function getDefaultChores() {
   return [
-    { id: 1, name: 'Wash Dishes', room: 'Kitchen', freq: 1, value: 2, doneBy: {}, asNeeded: false },
-    { id: 2, name: 'Vacuum', room: 'Living Room', freq: 3, value: 3, doneBy: {}, asNeeded: false },
-    { id: 3, name: 'Clean Toilet', room: 'Bathrooms', freq: 7, value: 3, doneBy: {}, asNeeded: false },
-    { id: 4, name: 'Mow Lawn', room: 'Outdoors', freq: 7, value: 5, doneBy: {}, asNeeded: false },
-    { id: 5, name: 'Take Out Trash', room: 'Kitchen', freq: 2, value: 2, doneBy: {}, asNeeded: false },
+    { id:1, name:'Wash Dishes',    room:'Kitchen',     freq:1, value:2, doneBy:{}, asNeeded:false },
+    { id:2, name:'Vacuum',         room:'Living Room', freq:3, value:3, doneBy:{}, asNeeded:false },
+    { id:3, name:'Clean Toilet',   room:'Bathrooms',   freq:7, value:3, doneBy:{}, asNeeded:false },
+    { id:4, name:'Mow Lawn',       room:'Outdoors',    freq:7, value:5, doneBy:{}, asNeeded:false },
+    { id:5, name:'Take Out Trash', room:'Kitchen',     freq:2, value:2, doneBy:{}, asNeeded:false },
   ];
 }
 
 function getChoresForDate(date) {
-  const dk = dateKey(date);
-  const today = new Date();
-  today.setHours(0,0,0,0);
-  const target = new Date(date);
-  target.setHours(0,0,0,0);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const target = new Date(date); target.setHours(0,0,0,0);
   const diffDays = Math.round((target - today) / 86400000);
-
   return state.chores.filter(chore => {
     if (chore.asNeeded) return true;
     if (diffDays === 0) return true;
     if (diffDays > 0) return chore.freq <= diffDays + 1;
-    const lastDone = chore.doneBy ? Math.max(0, ...Object.values(chore.doneBy).map(v => {
-      if (!v) return 0;
+    const vals = chore.doneBy ? Object.values(chore.doneBy) : [];
+    const lastDone = vals.length ? Math.max(0, ...vals.map(v => {
       const d = new Date(v); return isNaN(d) ? 0 : Math.round((today - d) / 86400000);
-    })) : 0;
+    })) : 999;
     return lastDone >= chore.freq;
   });
 }
@@ -268,38 +265,40 @@ function isChoreAvailableToUser(chore) {
   if (room && room.owner && room.owner !== state.currentUser.id) return false;
   return true;
 }
-
 function isDoneToday(chore) {
-  const dk = todayKey();
-  return chore.doneBy && chore.doneBy[dk];
+  return chore.doneBy && chore.doneBy[todayKey()];
+}
+function canUndo(h) {
+  if (state.isAdmin) return true;
+  if (!state.currentUser) return false;
+  return h.who === state.currentUser.name;
 }
 
 async function toggleChore(choreId) {
   const dk = todayKey();
   const chore = state.chores.find(c => c.id === choreId);
   if (!chore) return;
-  if (!isChoreAvailableToUser(chore)) { showToast("This room belongs to someone else"); return; }
-
-  const wasDone = isDoneToday(chore);
+  if (!isChoreAvailableToUser(chore)) { showToast('This room belongs to someone else', '#e94560'); return; }
   if (!chore.doneBy) chore.doneBy = {};
-
+  const wasDone = isDoneToday(chore);
   if (wasDone) {
+    const whoDidIt = chore.doneBy[dk];
+    if (!state.isAdmin && state.currentUser && whoDidIt !== state.currentUser.name) {
+      showToast('Only the person who did this (or admin) can uncheck it', '#e94560'); return;
+    }
     delete chore.doneBy[dk];
-    // Remove from history
     state.history = state.history.filter(h => !(h.choreId === choreId && h.date === dk));
   } else {
     const who = state.currentUser ? state.currentUser.name : 'Someone';
     chore.doneBy[dk] = who;
     state.history.unshift({ id: Date.now(), choreId, choreName: chore.name, date: dk, who, value: chore.value, room: chore.room });
     if (state.history.length > 200) state.history = state.history.slice(0, 200);
-    // Update person earnings
-    if (state.currentUser) {
+    if (state.currentUser && state.currentUser.id !== -1) {
       const person = state.people.find(p => p.id === state.currentUser.id);
       if (person) person.totalEarned = (person.totalEarned || 0) + chore.value;
     }
-    showToast(`+$${chore.value} earned!`);
+    showToast(`+$${chore.value} earned! 🎉`);
   }
-
   await Promise.all([
     saveToFirebase('chores', state.chores),
     saveToFirebase('history', state.history),
@@ -308,124 +307,120 @@ async function toggleChore(choreId) {
   render();
 }
 
-function openPinModal(action) {
+async function cashOut(personId) {
+  const person = state.people.find(p => p.id === personId);
+  if (!person) return;
+  person.totalEarned = 0;
+  await saveToFirebase('people', state.people);
+  state.showCashOutConfirm = null;
+  showToast(`${person.name} cashed out! 💸`);
+  render();
+}
+
+function openPinModal(action, personId) {
   state.pinAction = action;
+  state.pinTargetPersonId = personId || null;
   state.pinBuffer = '';
   state.showPinModal = true;
   render();
 }
-
 function handlePinKey(key) {
   if (key === 'del') { state.pinBuffer = state.pinBuffer.slice(0,-1); render(); return; }
   if (state.pinBuffer.length >= 4) return;
   state.pinBuffer += key;
   render();
-  if (state.pinBuffer.length === 4) {
-    setTimeout(() => checkPin(), 200);
-  }
+  if (state.pinBuffer.length === 4) setTimeout(() => checkPin(), 200);
 }
-
 function checkPin() {
   const pin = state.settings.adminPin || ADMIN_PIN;
   if (state.pinBuffer === pin) {
-    state.showPinModal = false;
-    state.pinBuffer = '';
+    state.showPinModal = false; state.pinBuffer = '';
     if (state.pinAction === 'admin') {
       state.isAdmin = true;
       state.currentUser = state.people.find(p => p.isAdmin) || state.people[0];
       showToast('Admin mode on');
+    } else if (state.pinAction === 'selectAdmin') {
+      const person = state.people.find(p => p.id === state.pinTargetPersonId);
+      if (person) { state.currentUser = person; state.isAdmin = true; showToast(`Welcome, ${person.name}!`); }
     } else if (state.pinAction === 'addChore') { state.showAddChore = true; }
-    else if (state.pinAction === 'addRoom') { state.showAddRoom = true; }
-    else if (state.pinAction === 'settings') { state.tab = 'settings'; }
+    else if (state.pinAction === 'addRoom')    { state.showAddRoom  = true; }
   } else {
-    showToast('Wrong PIN');
+    showToast('Wrong PIN', '#e94560');
     state.pinBuffer = '';
   }
   render();
 }
 
-// Render engine
 function render() {
   const app = document.getElementById('app');
   if (state.loading) { app.innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>'; return; }
-
   let html = `
     <div class="header">
       <h1>🏠 Chore Calendar</h1>
       <div class="date">${formatDate(new Date())}</div>
-      ${state.currentUser ? `<div class="text-sm mt-8">👤 ${state.currentUser.name}${state.isAdmin ? ' <span class="tag admin">Admin</span>' : ''}</div>` : '<div class="text-sm mt-8" style="color:#e94560;cursor:pointer" onclick="selectUser()">Tap to select who you are</div>'}
+      ${state.currentUser
+        ? `<div class="text-sm mt-8" style="cursor:pointer" onclick="selectUser()">👤 ${state.currentUser.name}${state.isAdmin?' <span class="tag admin">Admin</span>':''} &nbsp;(switch)</div>`
+        : '<div class="text-sm mt-8" style="color:#e94560;cursor:pointer" onclick="selectUser()">Tap to select who you are</div>'}
     </div>
     <div class="tabs">
-      ${['calendar','chores','people','history','settings'].map(t => `
+      ${['calendar','chores','people','history','settings'].map(t=>`
         <div class="tab ${state.tab===t?'active':''}" onclick="setTab('${t}')">
           <span class="icon">${{calendar:'📅',chores:'✅',people:'👥',history:'📋',settings:'⚙️'}[t]}</span>
           ${t.charAt(0).toUpperCase()+t.slice(1)}
         </div>`).join('')}
     </div>
-    <div class="content" id="main-content">
-  `;
-
-  if (state.tab === 'calendar') html += renderCalendar();
-  else if (state.tab === 'chores') html += renderChores();
-  else if (state.tab === 'people') html += renderPeople();
-  else if (state.tab === 'history') html += renderHistory();
-  else if (state.tab === 'settings') html += renderSettings();
-
+    <div class="content">`;
+  if      (state.tab==='calendar') html += renderCalendar();
+  else if (state.tab==='chores')   html += renderChores();
+  else if (state.tab==='people')   html += renderPeople();
+  else if (state.tab==='history')  html += renderHistory();
+  else if (state.tab==='settings') html += renderSettings();
   html += '</div>';
-
-  // FAB
-  if (state.tab === 'chores' && state.isAdmin) {
-    html += `<button class="fab" onclick="addChore()">+</button>`;
-  }
-  if (state.tab === 'people') {
-    html += `<button class="fab" onclick="addPerson()">+</button>`;
-  }
-
-  // Modals
-  if (state.showChoreList) html += renderDayModal();
-  if (state.showAddChore) html += renderAddChoreModal();
-  if (state.showAddPerson) html += renderAddPersonModal();
-  if (state.showAddRoom) html += renderAddRoomModal();
-  if (state.showPinModal) html += renderPinModal();
-  if (state.showEmojiPicker) html += renderEmojiPicker();
-  if (!state.currentUser && !state.showPinModal) html += renderUserSelect();
-
+  if (state.tab==='chores' && state.isAdmin) html += `<button class="fab" onclick="addChore()">+</button>`;
+  if (state.tab==='people')                  html += `<button class="fab" onclick="addPerson()">+</button>`;
+  if (state.showChoreList)      html += renderDayModal();
+  if (state.showAddChore)       html += renderAddChoreModal();
+  if (state.showAddPerson)      html += renderAddPersonModal();
+  if (state.showAddRoom)        html += renderAddRoomModal();
+  if (state.showPinModal)       html += renderPinModal();
+  if (state.showEmojiPicker)    html += renderEmojiPicker();
+  if (state.showCashOutConfirm) html += renderCashOutConfirm();
+  if (!state.currentUser)       html += renderUserSelect();
   app.innerHTML = html;
 }
 
 function renderCalendar() {
+  const proverb = getTodaysProverb();
   const now = state.calendarDate;
   const year = now.getFullYear(), month = now.getMonth();
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month+1, 0).getDate();
   const today = new Date(); today.setHours(0,0,0,0);
-  const monthName = now.toLocaleDateString('en-US', { month:'long', year:'numeric' });
-
+  const monthName = now.toLocaleDateString('en-US',{month:'long',year:'numeric'});
   let html = `
+    <div class="proverb-card">
+      <div class="proverb-label">📖 Proverbs ${new Date().getDate()}</div>
+      <div class="proverb-text">"${proverb.text}"</div>
+      <div class="proverb-ref">— ${proverb.ref} (NASB95)</div>
+    </div>
     <div class="row between mb-8">
       <button class="btn btn-secondary btn-sm" onclick="prevMonth()">◀</button>
       <span style="font-weight:700">${monthName}</span>
       <button class="btn btn-secondary btn-sm" onclick="nextMonth()">▶</button>
     </div>
     <div class="calendar-grid">
-      ${['Su','Mo','Tu','We','Th','Fr','Sa'].map(d=>`<div class="cal-header">${d}</div>`).join('')}
-  `;
-
-  for (let i = 0; i < firstDay; i++) html += `<div class="cal-day other-month"></div>`;
-  for (let d = 1; d <= daysInMonth; d++) {
-    const date = new Date(year, month, d);
-    const isToday = date.toDateString() === today.toDateString();
-    const choresOnDay = getChoresForDate(date);
-    const hasDone = choresOnDay.some(c => c.doneBy && c.doneBy[dateKey(date)]);
-    html += `<div class="cal-day ${isToday?'today':''} ${choresOnDay.length>0?'has-chores':''}" onclick="openDay(${year},${month},${d})">${d}</div>`;
+      ${['Su','Mo','Tu','We','Th','Fr','Sa'].map(d=>`<div class="cal-header">${d}</div>`).join('')}`;
+  for (let i=0;i<firstDay;i++) html+=`<div class="cal-day other-month"></div>`;
+  for (let d=1;d<=daysInMonth;d++) {
+    const date=new Date(year,month,d);
+    const isToday=date.toDateString()===today.toDateString();
+    const choresOnDay=getChoresForDate(date);
+    html+=`<div class="cal-day ${isToday?'today':''} ${choresOnDay.length?'has-chores':''}" onclick="openDay(${year},${month},${d})">${d}</div>`;
   }
-
-  html += '</div>';
-
-  // Today summary
-  const todayChores = getChoresForDate(today);
-  const doneCount = todayChores.filter(c => isDoneToday(c)).length;
-  html += `
+  html+=`</div>`;
+  const todayChores=getChoresForDate(today);
+  const doneCount=todayChores.filter(c=>isDoneToday(c)).length;
+  html+=`
     <div class="card mt-16">
       <div class="row between">
         <span style="font-weight:600">Today's Progress</span>
@@ -433,24 +428,22 @@ function renderCalendar() {
       </div>
       <div class="progress-bar"><div class="progress-fill" style="width:${todayChores.length?Math.round(doneCount/todayChores.length*100):0}%"></div></div>
       <button class="btn btn-primary w-full mt-16" onclick="openDay(${today.getFullYear()},${today.getMonth()},${today.getDate()})">Open Today's Chores</button>
-    </div>
-  `;
+    </div>`;
   return html;
 }
 
 function renderChores() {
-  const rooms = [...new Set(state.chores.map(c => c.room))];
-  if (state.chores.length === 0) return `<div class="empty-state"><div class="icon">✅</div><p>No chores yet!</p>${state.isAdmin?'<button class="btn btn-primary mt-16" onclick="addChore()">Add Chore</button>':''}</div>`;
-
-  let html = '';
-  rooms.forEach(room => {
-    const roomChores = state.chores.filter(c => c.room === room);
-    const roomObj = state.rooms.find(r => r.name === room);
-    html += `<div class="section-title">${roomObj?roomObj.emoji:''} ${room}</div>`;
-    roomChores.forEach(chore => {
-      const done = isDoneToday(chore);
-      const available = isChoreAvailableToUser(chore);
-      html += `
+  const rooms=[...new Set(state.chores.map(c=>c.room))];
+  if (!state.chores.length) return `<div class="empty-state"><div class="icon">✅</div><p>No chores yet!</p>${state.isAdmin?'<button class="btn btn-primary mt-16" onclick="addChore()">Add Chore</button>':''}</div>`;
+  let html='';
+  rooms.forEach(room=>{
+    const roomChores=state.chores.filter(c=>c.room===room);
+    const roomObj=state.rooms.find(r=>r.name===room);
+    html+=`<div class="section-title">${roomObj?roomObj.emoji:''} ${room}</div>`;
+    roomChores.forEach(chore=>{
+      const done=isDoneToday(chore);
+      const available=isChoreAvailableToUser(chore);
+      html+=`
         <div class="chore-item ${done?'done':''}">
           <div class="checkbox ${done?'checked':''}" onclick="${available?`toggleChore(${chore.id})`:''}">
             ${done?'✓':''}
@@ -468,11 +461,11 @@ function renderChores() {
 }
 
 function renderPeople() {
-  if (state.people.length === 0) return `<div class="empty-state"><div class="icon">👥</div><p>No people yet!</p></div>`;
-  const sorted = [...state.people].sort((a,b) => (b.totalEarned||0)-(a.totalEarned||0));
-  let html = '<div class="section-title">Leaderboard</div>';
-  sorted.forEach((person, i) => {
-    html += `
+  if (!state.people.length) return `<div class="empty-state"><div class="icon">👥</div><p>No people yet!</p></div>`;
+  const sorted=[...state.people].sort((a,b)=>(b.totalEarned||0)-(a.totalEarned||0));
+  let html='<div class="section-title">Leaderboard</div>';
+  sorted.forEach((person,i)=>{
+    html+=`
       <div class="person-card">
         <div class="person-rank">${['🥇','🥈','🥉'][i]||`#${i+1}`}</div>
         <div class="person-avatar">${person.emoji||'👤'}</div>
@@ -480,17 +473,21 @@ function renderPeople() {
           <div class="person-name">${person.name}${person.isAdmin?'<span class="tag admin">Admin</span>':''}</div>
           <div class="person-earnings">$${(person.totalEarned||0).toFixed(2)} earned</div>
         </div>
-        ${state.isAdmin?`<button class="btn btn-secondary btn-sm" onclick="editPerson(${person.id})">✏️</button>`:''}
+        <div style="display:flex;flex-direction:column;gap:6px">
+          ${state.isAdmin?`<button class="btn btn-secondary btn-sm" onclick="editPerson(${person.id})">✏️</button>`:''}
+          ${state.isAdmin?`<button class="btn btn-warning btn-sm" onclick="confirmCashOut(${person.id})">💸</button>`:''}
+        </div>
       </div>`;
   });
   return html;
 }
 
 function renderHistory() {
-  if (state.history.length === 0) return `<div class="empty-state"><div class="icon">📋</div><p>No history yet!</p></div>`;
-  let html = '<div class="section-title">Recent Activity</div>';
-  state.history.slice(0,50).forEach(h => {
-    html += `
+  if (!state.history.length) return `<div class="empty-state"><div class="icon">📋</div><p>No history yet!</p></div>`;
+  let html='<div class="section-title">Recent Activity</div>';
+  state.history.slice(0,50).forEach(h=>{
+    const canU=canUndo(h);
+    html+=`
       <div class="history-item">
         <div>
           <div style="font-weight:500">${h.choreName}</div>
@@ -498,7 +495,7 @@ function renderHistory() {
         </div>
         <div style="display:flex;gap:8px;align-items:center">
           <span class="text-green">+$${h.value}</span>
-          <button class="btn btn-danger btn-sm" onclick="undoHistory(${h.id})">↩</button>
+          ${canU?`<button class="btn btn-danger btn-sm" onclick="undoHistory(${h.id})">↩</button>`:''}
         </div>
       </div>`;
   });
@@ -506,47 +503,43 @@ function renderHistory() {
 }
 
 function renderSettings() {
-  const rooms = state.rooms;
-  let html = `
+  return `
     <div class="section-title">Rooms</div>
-    ${rooms.map(room => `
+    ${state.rooms.map(room=>`
       <div class="card">
         <div class="row between">
           <span>${room.emoji} ${room.name}</span>
           <div style="display:flex;gap:8px">
-            ${state.isAdmin?`<button class="btn btn-secondary btn-sm" onclick="editRoom(${room.id})">✏️</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteRoom(${room.id})">🗑</button>`:''}
+            ${state.isAdmin?`<button class="btn btn-secondary btn-sm" onclick="editRoom(${room.id})">✏️</button><button class="btn btn-danger btn-sm" onclick="deleteRoom(${room.id})">🗑</button>`:''}
           </div>
         </div>
-        ${room.owner ? `<div class="text-sm mt-8">Owner: ${state.people.find(p=>p.id===room.owner)?.name||'Unknown'}</div>` : '<div class="text-sm mt-8">No owner assigned</div>'}
+        <div class="text-sm mt-8">${room.owner?`Owner: ${state.people.find(p=>p.id===room.owner)?.name||'Unknown'}`:'No owner assigned'}</div>
       </div>`).join('')}
     ${state.isAdmin?`<button class="btn btn-primary w-full" onclick="addRoom()">+ Add Room</button>`:''}
     <div class="section-title mt-16">Admin</div>
     <div class="card">
-      ${state.isAdmin ? `
+      ${state.isAdmin?`
         <div class="text-green mb-8">✓ Admin mode active</div>
         <button class="btn btn-secondary w-full" onclick="exitAdmin()">Exit Admin Mode</button>
         <div class="form-group mt-16">
           <label>Change Admin PIN</label>
-          <input class="input" type="number" id="newPin" placeholder="Enter new 4-digit PIN" maxlength="4">
+          <input class="input" type="number" id="newPin" placeholder="Enter new 4-digit PIN">
           <button class="btn btn-primary w-full mt-8" onclick="changePin()">Update PIN</button>
         </div>
         <div class="form-group mt-16">
           <label>Push All Data to Cloud</label>
           <button class="btn btn-success w-full" onclick="pushAllData()">☁️ Push to Cloud</button>
         </div>
-      ` : `<button class="btn btn-primary w-full" onclick="openPinModal('admin')">🔐 Enter Admin Mode</button>`}
-    </div>
-  `;
-  return html;
+      `:`<button class="btn btn-primary w-full" onclick="openPinModal('admin')">🔐 Enter Admin Mode</button>`}
+    </div>`;
 }
 
 function renderDayModal() {
-  const date = state.selectedDate;
-  const chores = getChoresForDate(date);
-  const dk = dateKey(date);
-  const doneCount = chores.filter(c => c.doneBy && c.doneBy[dk]).length;
-
+  const date=state.selectedDate;
+  const chores=getChoresForDate(date);
+  const dk=dateKey(date);
+  const isToday=dk===todayKey();
+  const doneCount=chores.filter(c=>c.doneBy&&c.doneBy[dk]).length;
   return `
     <div class="modal-overlay" onclick="closeDayModal(event)">
       <div class="modal">
@@ -556,11 +549,10 @@ function renderDayModal() {
           <span class="text-green">$${chores.filter(c=>c.doneBy&&c.doneBy[dk]).reduce((s,c)=>s+c.value,0)} earned</span>
         </div>
         <div class="progress-bar mb-8"><div class="progress-fill" style="width:${chores.length?Math.round(doneCount/chores.length*100):0}%"></div></div>
-        ${chores.length===0?'<div class="empty-state"><div class="icon">🎉</div><p>No chores!</p></div>':''}
-        ${chores.map(chore => {
-          const done = chore.doneBy && chore.doneBy[dk];
-          const available = isChoreAvailableToUser(chore);
-          const isToday = dk === todayKey();
+        ${!chores.length?'<div class="empty-state"><div class="icon">🎉</div><p>No chores!</p></div>':''}
+        ${chores.map(chore=>{
+          const done=chore.doneBy&&chore.doneBy[dk];
+          const available=isChoreAvailableToUser(chore);
           return `
             <div class="chore-item ${done?'done':''}">
               <div class="checkbox ${done?'checked':''}" onclick="${available&&isToday?`toggleChore(${chore.id})`:''}">
@@ -579,86 +571,80 @@ function renderDayModal() {
 }
 
 function renderAddChoreModal() {
-  const editing = state.editingChore;
+  const e=state.editingChore;
   return `
     <div class="modal-overlay">
       <div class="modal">
-        <h2>${editing?'Edit':'Add'} Chore</h2>
-        <div class="form-group"><label>Chore Name</label><input class="input" id="choreName" placeholder="e.g. Wash Dishes" value="${editing?editing.name:''}"></div>
+        <h2>${e?'Edit':'Add'} Chore</h2>
+        <div class="form-group"><label>Chore Name</label><input class="input" id="choreName" placeholder="e.g. Wash Dishes" value="${e?e.name:''}"></div>
         <div class="form-group"><label>Room</label>
           <select class="input" id="choreRoom">
-            ${state.rooms.map(r=>`<option value="${r.name}" ${editing&&editing.room===r.name?'selected':''}>${r.emoji} ${r.name}</option>`).join('')}
+            ${state.rooms.map(r=>`<option value="${r.name}" ${e&&e.room===r.name?'selected':''}>${r.emoji} ${r.name}</option>`).join('')}
           </select>
         </div>
         <div class="form-group"><label>Dollar Value</label>
           <select class="input" id="choreValue">
-            ${[1,2,3,4,5].map(v=>`<option value="${v}" ${editing&&editing.value===v?'selected':v===2?'selected':''}>$${v}</option>`).join('')}
+            ${[1,2,3,4,5].map(v=>`<option value="${v}" ${e&&e.value===v?'selected':v===2&&!e?'selected':''}>$${v}</option>`).join('')}
           </select>
         </div>
         <div class="form-group"><label>Frequency</label>
           <select class="input" id="choreFreq">
-            <option value="0" ${editing&&editing.asNeeded?'selected':''}>As Needed</option>
-            ${[1,2,3,4,5,6,7,10,14,30].map(f=>`<option value="${f}" ${editing&&!editing.asNeeded&&editing.freq===f?'selected':f===1&&!editing?'selected':''}>Every ${f} day${f>1?'s':''}</option>`).join('')}
+            <option value="0" ${e&&e.asNeeded?'selected':''}>As Needed</option>
+            ${[1,2,3,4,5,6,7,10,14,30].map(f=>`<option value="${f}" ${e&&!e.asNeeded&&e.freq===f?'selected':f===1&&!e?'selected':''}>Every ${f} day${f>1?'s':''}</option>`).join('')}
           </select>
         </div>
         <div class="row mt-16" style="gap:10px">
           <button class="btn btn-secondary" style="flex:1" onclick="closeChoreModal()">Cancel</button>
           <button class="btn btn-primary" style="flex:1" onclick="saveChore()">Save</button>
         </div>
-        ${editing?`<button class="btn btn-danger w-full mt-8" onclick="deleteChore(${editing.id})">Delete Chore</button>`:''}
+        ${e?`<button class="btn btn-danger w-full mt-8" onclick="deleteChore(${e.id})">Delete Chore</button>`:''}
       </div>
     </div>`;
 }
 
 function renderAddPersonModal() {
-  const editing = state.editingPerson;
+  const e=state.editingPerson;
   return `
     <div class="modal-overlay">
       <div class="modal">
-        <h2>${editing?'Edit':'Add'} Person</h2>
-        <div class="form-group"><label>Name</label><input class="input" id="personName" placeholder="e.g. Dad" value="${editing?editing.name:''}"></div>
+        <h2>${e?'Edit':'Add'} Person</h2>
+        <div class="form-group"><label>Name</label><input class="input" id="personName" placeholder="e.g. Dad" value="${e?e.name:''}"></div>
         <div class="form-group"><label>Emoji</label>
           <div class="row">
-            <span id="selectedEmoji" style="font-size:32px">${editing?editing.emoji:'👤'}</span>
+            <span id="selectedEmoji" style="font-size:32px">${e?e.emoji:'👤'}</span>
             <button class="btn btn-secondary btn-sm" onclick="openEmojiPicker('person')">Change</button>
           </div>
         </div>
         <div class="form-group">
           <label>Is Admin?</label>
-          <input type="checkbox" id="personAdmin" ${editing&&editing.isAdmin?'checked':''} style="margin-left:8px;width:18px;height:18px">
-        </div>
-        <div class="form-group"><label>Assigned Room (optional)</label>
-          <select class="input" id="personRoom">
-            <option value="">None</option>
-            ${state.rooms.map(r=>`<option value="${r.id}">${r.emoji} ${r.name}</option>`).join('')}
-          </select>
+          <input type="checkbox" id="personAdmin" ${e&&e.isAdmin?'checked':''} style="margin-left:8px;width:18px;height:18px">
         </div>
         <div class="row mt-16" style="gap:10px">
           <button class="btn btn-secondary" style="flex:1" onclick="closePersonModal()">Cancel</button>
           <button class="btn btn-primary" style="flex:1" onclick="savePerson()">Save</button>
         </div>
-        ${editing?`<button class="btn btn-danger w-full mt-8" onclick="deletePerson(${editing.id})">Remove Person</button>`:''}
+        ${e?`<button class="btn btn-danger w-full mt-8" onclick="deletePerson(${e.id})">Remove Person</button>`:''}
       </div>
     </div>`;
 }
 
 function renderAddRoomModal() {
-  const editing = state.editingRoom;
+  const e=state.editingRoom;
   return `
     <div class="modal-overlay">
       <div class="modal">
-        <h2>${editing?'Edit':'Add'} Room</h2>
-        <div class="form-group"><label>Room Name</label><input class="input" id="roomName" placeholder="e.g. Kitchen" value="${editing?editing.name:''}"></div>
+        <h2>${e?'Edit':'Add'} Room</h2>
+        <div class="form-group"><label>Room Name</label><input class="input" id="roomName" placeholder="e.g. Kitchen" value="${e?e.name:''}"></div>
         <div class="form-group"><label>Emoji</label>
           <div class="row">
-            <span id="roomEmoji" style="font-size:32px">${editing?editing.emoji:'🏠'}</span>
+            <span id="roomEmoji" style="font-size:32px">${e?e.emoji:'🏠'}</span>
             <button class="btn btn-secondary btn-sm" onclick="openEmojiPicker('room')">Change</button>
           </div>
         </div>
         <div class="form-group"><label>Room Owner (optional)</label>
           <select class="input" id="roomOwner">
             <option value="">No owner</option>
-            ${state.people.map(p=>`<option value="${p.id}" ${editing&&editing.owner===p.id?'selected':''}>${p.emoji} ${p.name}</option>`).join('')}
+            ${state.people.map(p=>`<option value="${p.id}" ${e&&e.owner===p.id?'selected':''}>${p.emoji} ${p.name}</option>`).join('')}
           </select>
         </div>
         <div class="row mt-16" style="gap:10px">
@@ -701,161 +687,165 @@ function renderEmojiPicker() {
     </div>`;
 }
 
+function renderCashOutConfirm() {
+  const person=state.people.find(p=>p.id===state.showCashOutConfirm);
+  if (!person) return '';
+  return `
+    <div class="modal-overlay">
+      <div class="modal" style="text-align:center">
+        <h2>💸 Cash Out</h2>
+        <p style="margin-bottom:16px">Pay <strong>${person.name}</strong> their <span class="text-green">$${(person.totalEarned||0).toFixed(2)}</span> and reset to $0?</p>
+        <div class="row" style="gap:10px">
+          <button class="btn btn-secondary" style="flex:1" onclick="state.showCashOutConfirm=null;render()">Cancel</button>
+          <button class="btn btn-success" style="flex:1" onclick="cashOut(${person.id})">Yes, Pay Out!</button>
+        </div>
+      </div>
+    </div>`;
+}
+
 function renderUserSelect() {
   return `
     <div class="modal-overlay">
       <div class="modal">
         <h2>Who are you?</h2>
-        <div class="text-sm mb-8">Select your name to track your chores and earnings.</div>
+        <div class="text-sm mb-8">Select your name to get started.</div>
         ${state.people.map(p=>`
-          <div class="person-card" onclick="selectUserById(${p.id})" style="cursor:pointer">
+          <div class="person-card" onclick="${p.isAdmin?`openPinModal('selectAdmin',${p.id})`:`selectUserById(${p.id})`}" style="cursor:pointer">
             <div class="person-avatar">${p.emoji}</div>
-            <div class="person-info"><div class="person-name">${p.name}</div></div>
+            <div class="person-info">
+              <div class="person-name">${p.name}</div>
+              <div class="text-sm">${p.isAdmin?'🔐 PIN required':'Tap to select'}</div>
+            </div>
           </div>`).join('')}
-        <button class="btn btn-secondary w-full mt-8" onclick="selectUserById(null)">Just browsing</button>
+        <button class="btn btn-secondary w-full mt-8" onclick="selectUserById(-1)">Just browsing</button>
       </div>
     </div>`;
 }
 
-// Global functions
-window.setTab = (tab) => { state.tab = tab; render(); };
-window.selectUser = () => { state.currentUser = null; render(); };
-window.selectUserById = (id) => {
-  if (id === null) { state.currentUser = { id: -1, name: 'Guest', emoji: '👤' }; state.isAdmin = false; }
-  else {
-    state.currentUser = state.people.find(p => p.id === id);
-    state.isAdmin = state.currentUser?.isAdmin || false;
-  }
+window.setTab           = t  => { state.tab=t; render(); };
+window.selectUser       = () => { state.currentUser=null; state.isAdmin=false; render(); };
+window.selectUserById   = id => {
+  if (id===-1) { state.currentUser={id:-1,name:'Guest',emoji:'👤'}; state.isAdmin=false; }
+  else { state.currentUser=state.people.find(p=>p.id===id); state.isAdmin=state.currentUser?.isAdmin||false; }
   render();
 };
-window.prevMonth = () => { state.calendarDate = new Date(state.calendarDate.getFullYear(), state.calendarDate.getMonth()-1, 1); render(); };
-window.nextMonth = () => { state.calendarDate = new Date(state.calendarDate.getFullYear(), state.calendarDate.getMonth()+1, 1); render(); };
-window.openDay = (y,m,d) => { state.selectedDate = new Date(y,m,d); state.showChoreList = true; render(); };
-window.closeDayModal = (e) => { if (e.target.classList.contains('modal-overlay')) { state.showChoreList = false; render(); } };
-window.toggleChore = toggleChore;
-window.openPinModal = openPinModal;
-window.handlePinKey = handlePinKey;
-window.addChore = () => { if (!state.isAdmin) { openPinModal('addChore'); return; } state.editingChore = null; state.showAddChore = true; render(); };
-window.editChore = (id) => { state.editingChore = state.chores.find(c=>c.id===id); state.showAddChore = true; render(); };
-window.closeChoreModal = () => { state.showAddChore = false; state.editingChore = null; render(); };
-window.saveChore = async () => {
-  const name = document.getElementById('choreName').value.trim();
-  const room = document.getElementById('choreRoom').value;
-  const value = parseInt(document.getElementById('choreValue').value);
-  const freqVal = document.getElementById('choreFreq').value;
-  const asNeeded = freqVal === '0';
-  const freq = asNeeded ? 1 : parseInt(freqVal);
-  if (!name) { showToast('Enter a chore name'); return; }
-  if (state.editingChore) {
-    Object.assign(state.editingChore, { name, room, value, freq, asNeeded });
-  } else {
-    state.chores.push({ id: Date.now(), name, room, value, freq, asNeeded, doneBy: {} });
-  }
-  await saveToFirebase('chores', state.chores);
-  state.showAddChore = false; state.editingChore = null;
+window.prevMonth        = () => { state.calendarDate=new Date(state.calendarDate.getFullYear(),state.calendarDate.getMonth()-1,1); render(); };
+window.nextMonth        = () => { state.calendarDate=new Date(state.calendarDate.getFullYear(),state.calendarDate.getMonth()+1,1); render(); };
+window.openDay          = (y,m,d) => { state.selectedDate=new Date(y,m,d); state.showChoreList=true; render(); };
+window.closeDayModal    = e => { if(e.target.classList.contains('modal-overlay')){state.showChoreList=false;render();} };
+window.toggleChore      = toggleChore;
+window.openPinModal     = openPinModal;
+window.handlePinKey     = handlePinKey;
+window.confirmCashOut   = id => { state.showCashOutConfirm=id; render(); };
+window.cashOut          = cashOut;
+window.addChore         = () => { if(!state.isAdmin){openPinModal('addChore');return;} state.editingChore=null; state.showAddChore=true; render(); };
+window.editChore        = id => { state.editingChore=state.chores.find(c=>c.id===id); state.showAddChore=true; render(); };
+window.closeChoreModal  = () => { state.showAddChore=false; state.editingChore=null; render(); };
+window.saveChore        = async () => {
+  const name=document.getElementById('choreName').value.trim();
+  const room=document.getElementById('choreRoom').value;
+  const value=parseInt(document.getElementById('choreValue').value);
+  const freqVal=document.getElementById('choreFreq').value;
+  const asNeeded=freqVal==='0';
+  const freq=asNeeded?1:parseInt(freqVal);
+  if(!name){showToast('Enter a chore name','#e94560');return;}
+  if(state.editingChore){Object.assign(state.editingChore,{name,room,value,freq,asNeeded});}
+  else{state.chores.push({id:Date.now(),name,room,value,freq,asNeeded,doneBy:{}});}
+  await saveToFirebase('chores',state.chores);
+  state.showAddChore=false; state.editingChore=null;
   showToast('Chore saved!'); render();
 };
-window.deleteChore = async (id) => {
-  state.chores = state.chores.filter(c=>c.id!==id);
-  await saveToFirebase('chores', state.chores);
-  state.showAddChore = false; state.editingChore = null;
+window.deleteChore      = async id => {
+  state.chores=state.chores.filter(c=>c.id!==id);
+  await saveToFirebase('chores',state.chores);
+  state.showAddChore=false; state.editingChore=null;
   showToast('Chore deleted'); render();
 };
-window.addPerson = () => { state.editingPerson = null; state.showAddPerson = true; render(); };
-window.editPerson = (id) => { state.editingPerson = state.people.find(p=>p.id===id); state.showAddPerson = true; render(); };
-window.closePersonModal = () => { state.showAddPerson = false; state.editingPerson = null; render(); };
-window.savePerson = async () => {
-  const name = document.getElementById('personName').value.trim();
-  const emoji = document.getElementById('selectedEmoji')?.textContent || '👤';
-  const isAdmin = document.getElementById('personAdmin').checked;
-  if (!name) { showToast('Enter a name'); return; }
-  if (state.editingPerson) {
-    Object.assign(state.editingPerson, { name, emoji, isAdmin });
-  } else {
-    state.people.push({ id: Date.now(), name, emoji, isAdmin, totalEarned: 0 });
-  }
-  await saveToFirebase('people', state.people);
-  state.showAddPerson = false; state.editingPerson = null;
+window.addPerson        = () => { state.editingPerson=null; state.showAddPerson=true; render(); };
+window.editPerson       = id => { state.editingPerson=state.people.find(p=>p.id===id); state.showAddPerson=true; render(); };
+window.closePersonModal = () => { state.showAddPerson=false; state.editingPerson=null; render(); };
+window.savePerson       = async () => {
+  const name=document.getElementById('personName').value.trim();
+  const emoji=document.getElementById('selectedEmoji')?.textContent||'👤';
+  const isAdmin=document.getElementById('personAdmin').checked;
+  if(!name){showToast('Enter a name','#e94560');return;}
+  if(state.editingPerson){Object.assign(state.editingPerson,{name,emoji,isAdmin});}
+  else{state.people.push({id:Date.now(),name,emoji,isAdmin,totalEarned:0});}
+  await saveToFirebase('people',state.people);
+  state.showAddPerson=false; state.editingPerson=null;
   showToast('Saved!'); render();
 };
-window.deletePerson = async (id) => {
-  state.people = state.people.filter(p=>p.id!==id);
-  await saveToFirebase('people', state.people);
-  state.showAddPerson = false; state.editingPerson = null;
+window.deletePerson     = async id => {
+  state.people=state.people.filter(p=>p.id!==id);
+  await saveToFirebase('people',state.people);
+  state.showAddPerson=false; state.editingPerson=null;
   showToast('Removed'); render();
 };
-window.addRoom = () => { state.editingRoom = null; state.showAddRoom = true; render(); };
-window.editRoom = (id) => { state.editingRoom = state.rooms.find(r=>r.id===id); state.showAddRoom = true; render(); };
-window.closeRoomModal = () => { state.showAddRoom = false; state.editingRoom = null; render(); };
-window.saveRoom = async () => {
-  const name = document.getElementById('roomName').value.trim();
-  const emoji = document.getElementById('roomEmoji')?.textContent || '🏠';
-  const owner = document.getElementById('roomOwner').value || null;
-  if (!name) { showToast('Enter a room name'); return; }
-  if (state.editingRoom) {
-    Object.assign(state.editingRoom, { name, emoji, owner: owner ? parseInt(owner) : null });
-  } else {
-    state.rooms.push({ id: Date.now(), name, emoji, owner: owner ? parseInt(owner) : null });
-  }
-  await saveToFirebase('rooms', state.rooms);
-  state.showAddRoom = false; state.editingRoom = null;
+window.addRoom          = () => { state.editingRoom=null; state.showAddRoom=true; render(); };
+window.editRoom         = id => { state.editingRoom=state.rooms.find(r=>r.id===id); state.showAddRoom=true; render(); };
+window.closeRoomModal   = () => { state.showAddRoom=false; state.editingRoom=null; render(); };
+window.saveRoom         = async () => {
+  const name=document.getElementById('roomName').value.trim();
+  const emoji=document.getElementById('roomEmoji')?.textContent||'🏠';
+  const owner=document.getElementById('roomOwner').value||null;
+  if(!name){showToast('Enter a room name','#e94560');return;}
+  if(state.editingRoom){Object.assign(state.editingRoom,{name,emoji,owner:owner?parseInt(owner):null});}
+  else{state.rooms.push({id:Date.now(),name,emoji,owner:owner?parseInt(owner):null});}
+  await saveToFirebase('rooms',state.rooms);
+  state.showAddRoom=false; state.editingRoom=null;
   showToast('Room saved!'); render();
 };
-window.deleteRoom = async (id) => {
-  state.rooms = state.rooms.filter(r=>r.id!==id);
-  await saveToFirebase('rooms', state.rooms);
+window.deleteRoom       = async id => {
+  state.rooms=state.rooms.filter(r=>r.id!==id);
+  await saveToFirebase('rooms',state.rooms);
   showToast('Room deleted'); render();
 };
-window.openEmojiPicker = (target) => { state.emojiTarget = target; state.showEmojiPicker = true; render(); };
-window.selectEmoji = (emoji) => {
-  state.showEmojiPicker = false;
-  if (state.emojiTarget === 'person') {
-    const el = document.getElementById('selectedEmoji');
-    if (el) el.textContent = emoji;
-  } else if (state.emojiTarget === 'room') {
-    const el = document.getElementById('roomEmoji');
-    if (el) el.textContent = emoji;
-  }
+window.openEmojiPicker  = target => { state.emojiTarget=target; state.showEmojiPicker=true; render(); };
+window.selectEmoji      = emoji => {
+  state.showEmojiPicker=false;
+  const el=document.getElementById(state.emojiTarget==='person'?'selectedEmoji':'roomEmoji');
+  if(el) el.textContent=emoji;
   render();
 };
-window.undoHistory = async (id) => {
-  const h = state.history.find(x=>x.id===id);
-  if (!h) return;
-  const chore = state.chores.find(c=>c.id===h.choreId);
-  if (chore && chore.doneBy) delete chore.doneBy[h.date];
-  if (h.who !== 'Someone') {
-    const person = state.people.find(p=>p.name===h.who);
-    if (person) person.totalEarned = Math.max(0, (person.totalEarned||0) - h.value);
+window.undoHistory      = async id => {
+  const h=state.history.find(x=>x.id===id);
+  if(!h) return;
+  if(!canUndo(h)){showToast("You can't undo someone else's chore",'#e94560');return;}
+  const chore=state.chores.find(c=>c.id===h.choreId);
+  if(chore&&chore.doneBy) delete chore.doneBy[h.date];
+  if(h.who!=='Someone'&&h.who!=='Guest'){
+    const person=state.people.find(p=>p.name===h.who);
+    if(person) person.totalEarned=Math.max(0,(person.totalEarned||0)-h.value);
   }
-  state.history = state.history.filter(x=>x.id!==id);
+  state.history=state.history.filter(x=>x.id!==id);
   await Promise.all([
-    saveToFirebase('chores', state.chores),
-    saveToFirebase('history', state.history),
-    saveToFirebase('people', state.people),
+    saveToFirebase('chores',state.chores),
+    saveToFirebase('history',state.history),
+    saveToFirebase('people',state.people),
   ]);
   showToast('Undone!'); render();
 };
-window.exitAdmin = () => { state.isAdmin = false; render(); };
-window.changePin = async () => {
-  const newPin = document.getElementById('newPin')?.value;
-  if (!newPin || newPin.length !== 4 || isNaN(newPin)) { showToast('Enter a valid 4-digit PIN'); return; }
-  state.settings.adminPin = newPin;
-  await saveToFirebase('settings', state.settings);
+window.exitAdmin        = () => { state.isAdmin=false; render(); };
+window.changePin        = async () => {
+  const newPin=document.getElementById('newPin')?.value;
+  if(!newPin||newPin.length!==4||isNaN(newPin)){showToast('Enter a valid 4-digit PIN','#e94560');return;}
+  state.settings.adminPin=newPin;
+  await saveToFirebase('settings',state.settings);
   showToast('PIN updated!');
 };
-window.pushAllData = async () => {
+window.pushAllData      = async () => {
   await Promise.all([
-    saveToFirebase('chores', state.chores),
-    saveToFirebase('people', state.people),
-    saveToFirebase('history', state.history),
-    saveToFirebase('rooms', state.rooms),
-    saveToFirebase('settings', state.settings),
+    saveToFirebase('chores',state.chores),
+    saveToFirebase('people',state.people),
+    saveToFirebase('history',state.history),
+    saveToFirebase('rooms',state.rooms),
+    saveToFirebase('settings',state.settings),
   ]);
-  showToast('All data pushed to cloud!');
+  showToast('All data pushed to cloud! ☁️');
 };
-window.state = state;
-window.render = render;
 
+window.state=state;
+window.render=render;
 initData();
 </script>
 </body>
