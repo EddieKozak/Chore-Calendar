@@ -1,0 +1,1782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home Chores</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #F7F8F5; --surface: #FFFFFF; --border: #E4E8E0;
+  --text: #1C2117; --text-muted: #7A8C74;
+  --accent: #5A8A6A; --accent-light: #EBF3EE; --accent-dark: #3D6B4F;
+  --danger: #C0392B; --done-bg: #F4F7F4; --done-text: #A8BAA3;
+  --gold: #C8961E; --gold-light: #FEF8EC;
+}
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+/* NAV */
+.nav { background: var(--surface); border-bottom: 1px solid var(--border); display: flex; position: sticky; top: 0; z-index: 200; }
+.nav-tab { flex: 1; padding: 12px 4px 10px; font-size: 10px; font-weight: 600; text-align: center; cursor: pointer; color: var(--text-muted); border-bottom: 2px solid transparent; transition: all 0.15s; letter-spacing: 0.04em; text-transform: uppercase; }
+.nav-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.nav-tab .nav-icon { font-size: 16px; display: block; margin-bottom: 2px; }
+
+/* PAGES */
+.page { display: none; max-width: 620px; margin: 0 auto; padding: 20px 16px 80px; }
+.page.active { display: block; }
+
+/* HEADER CARD */
+.header-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; margin-bottom: 20px; }
+.header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.app-title { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+.app-title span { color: var(--accent); }
+.progress-bar-wrap { background: var(--border); border-radius: 99px; height: 6px; overflow: hidden; }
+.progress-bar-fill { background: var(--accent); height: 100%; border-radius: 99px; transition: width 0.4s ease; }
+.progress-label { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+
+/* FORMS */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 18px; }
+.section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 12px; }
+.row { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+.row input, .row select { flex: 1; padding: 9px 11px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; color: var(--text); background: var(--bg); outline: none; transition: border-color 0.15s; min-width: 90px; }
+.row input:focus, .row select:focus { border-color: var(--accent); }
+.row-full { margin-bottom: 8px; }
+.row-full input, .row-full select { width: 100%; padding: 9px 11px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; color: var(--text); background: var(--bg); outline: none; transition: border-color 0.15s; }
+.row-full input:focus, .row-full select:focus { border-color: var(--accent); }
+.btn { padding: 9px 16px; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.btn-primary { background: var(--accent); color: white; }
+.btn-primary:hover { background: var(--accent-dark); }
+.btn-danger { background: #FDECEA; color: var(--danger); }
+.btn-danger:hover { background: var(--danger); color: white; }
+.btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text-muted); }
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+/* FILTER TABS */
+.filter-tabs { display: flex; gap: 6px; margin-bottom: 16px; overflow-x: auto; padding-bottom: 2px; }
+.filter-tabs::-webkit-scrollbar { display: none; }
+.ftab { padding: 5px 12px; border-radius: 99px; font-size: 12px; font-weight: 500; border: 1px solid var(--border); background: var(--surface); color: var(--text-muted); cursor: pointer; white-space: nowrap; transition: all 0.15s; }
+.ftab.active { background: var(--accent); border-color: var(--accent); color: white; }
+
+/* CHORE ITEMS */
+.chore-list { display: flex; flex-direction: column; gap: 6px; }
+.chore-item { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 11px 12px; display: flex; align-items: flex-start; gap: 10px; animation: slideIn 0.2s ease; }
+@keyframes slideIn { from { opacity:0; transform:translateY(-5px); } to { opacity:1; transform:none; } }
+.chore-item.done { background: var(--done-bg); border-color: transparent; opacity: 0.72; }
+.chore-item.snoozed { background: var(--done-bg); border-color: transparent; opacity: 0.55; }
+.chore-check { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border); cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.2s; margin-top: 1px; }
+.chore-check:hover { border-color: var(--accent); background: var(--accent-light); }
+.chore-item.done .chore-check { background: var(--accent); border-color: var(--accent); }
+.check-icon { display: none; color: white; font-size: 11px; font-weight: bold; }
+.chore-item.done .check-icon { display: block; }
+.chore-info { flex: 1; min-width: 0; }
+.chore-name { font-size: 14px; font-weight: 500; }
+.chore-item.done .chore-name { color: var(--done-text); text-decoration: line-through; }
+.chore-meta { display: flex; align-items: center; gap: 5px; margin-top: 4px; flex-wrap: wrap; }
+.badge { font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+.freq-badge { background: var(--accent-light); color: var(--accent-dark); }
+.diff-easy   { background: #EBF3EE; color: #3D6B4F; }
+.diff-medium { background: #FEF3E2; color: #D35400; }
+.diff-hard   { background: #FDECEA; color: #C0392B; }
+.diff-tough  { background: #F3E8FF; color: #6B3FA0; }
+.pts-badge { background: #E6F4EA; color: #1E7E34; font-weight: 700; }
+.done-meta { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+.chore-actions { display: flex; gap: 4px; align-items: center; flex-shrink: 0; margin-top: 1px; }
+.btn-icon { background: none; border: none; cursor: pointer; font-size: 15px; padding: 3px 5px; border-radius: 5px; transition: all 0.15s; line-height: 1; color: var(--text-muted); }
+.btn-icon:hover { background: var(--accent-light); color: var(--accent-dark); }
+.btn-icon.del:hover { background: #FDECEA; color: var(--danger); }
+
+/* MODALS */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 300; align-items: center; justify-content: center; padding: 16px; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--surface); border-radius: 16px; padding: 22px; width: 100%; max-width: 360px; max-height: 90vh; overflow-y: auto; }
+.modal-title { font-size: 17px; font-weight: 700; margin-bottom: 16px; }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+
+/* WHO DID IT */
+.person-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+.person-btn { padding: 8px 14px; border-radius: 99px; border: 2px solid var(--border); background: var(--bg); font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 6px; }
+.person-btn:hover { border-color: var(--accent); background: var(--accent-light); }
+.person-btn.selected { border-color: var(--accent); background: var(--accent); color: white; }
+
+/* EDIT MODAL fields */
+.edit-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 5px; display: block; }
+.edit-field { margin-bottom: 12px; }
+.edit-field input, .edit-field select { width: 100%; padding: 9px 11px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; color: var(--text); background: var(--bg); outline: none; }
+.edit-field input:focus, .edit-field select:focus { border-color: var(--accent); }
+
+/* CALENDAR */
+.cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.cal-month { font-size: 16px; font-weight: 700; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; margin-bottom: 16px; }
+.cal-dow { font-size: 10px; font-weight: 700; text-align: center; color: var(--text-muted); padding: 4px 0; text-transform: uppercase; }
+.cal-day { aspect-ratio: 1; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; position: relative; transition: background 0.1s; border: 1px solid transparent; }
+.cal-day:hover { background: var(--accent-light); }
+.cal-day.other-month { opacity: 0.3; }
+.cal-day.today { background: var(--accent-light); border-color: var(--accent); font-weight: 700; color: var(--accent-dark); }
+.cal-day.selected { background: var(--accent); color: white; border-color: var(--accent-dark); }
+.cal-day.has-activity::after { content:''; width:5px; height:5px; border-radius:50%; background: var(--accent); position:absolute; bottom:3px; }
+.cal-day.selected::after { background: white; }
+.cal-day.has-activity.today::after { background: var(--accent-dark); }
+.cal-event-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; margin-bottom: 6px; }
+.cal-event-chore { font-size: 13px; font-weight: 600; }
+.cal-event-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+/* PEOPLE */
+.person-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
+.person-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; flex-shrink: 0; }
+.person-stats { flex: 1; }
+.person-name-el { font-size: 15px; font-weight: 600; }
+.person-score { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.leaderboard-rank { font-size: 20px; font-weight: 800; color: var(--text-muted); width: 28px; text-align: center; }
+.rank-1 { color: #C8961E; } .rank-2 { color: #8A9BA8; } .rank-3 { color: #9E6B4A; }
+
+/* SETTINGS */
+.setting-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); gap: 12px; }
+.setting-row:last-child { border-bottom: none; }
+.setting-label { font-size: 14px; font-weight: 500; }
+.setting-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.setting-control input[type=number], .setting-control select { width: 90px; padding: 6px 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; background: var(--bg); outline: none; text-align: center; }
+.setting-control input[type=number]:focus, .setting-control select:focus { border-color: var(--accent); }
+.toggle { width: 44px; height: 24px; border-radius: 99px; background: var(--border); cursor: pointer; position: relative; transition: background 0.2s; flex-shrink: 0; border: none; }
+.toggle.on { background: var(--accent); }
+.toggle::after { content:''; position:absolute; width:18px; height:18px; border-radius:50%; background:white; top:3px; left:3px; transition: left 0.2s; }
+.toggle.on::after { left: 23px; }
+
+.empty-state { text-align: center; padding: 36px 16px; color: var(--text-muted); font-size: 14px; }
+.empty-icon { font-size: 32px; margin-bottom: 8px; }
+.category-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin: 14px 0 6px 2px; }
+.fab-area { position: fixed; bottom: 24px; right: 20px; }
+.btn-clear { background: var(--surface); border: 1px solid var(--border); color: var(--text-muted); border-radius: 99px; padding: 9px 16px; font-size: 12px; font-weight: 500; cursor: pointer; box-shadow: 0 2px 12px rgba(0,0,0,0.08); display: none; }
+.btn-clear.visible { display: block; }
+.btn-clear:hover { border-color: var(--danger); color: var(--danger); }
+.color-0{background:#D4EDDA;color:#2D6A4F} .color-1{background:#D0E8F5;color:#1A5276}
+.color-2{background:#F5D0D0;color:#922B21} .color-3{background:#F5EAD0;color:#7D6608}
+.color-4{background:#E8D5F5;color:#6C3483} .color-5{background:#D5F5F0;color:#0E6655}
+/* ROOMS */
+.room-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; animation: slideIn 0.18s ease; }
+.room-icon-bubble { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; background: var(--accent-light); }
+.room-info { flex: 1; min-width: 0; }
+.room-name-el { font-size: 15px; font-weight: 600; }
+.room-chore-count { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.room-actions { display: flex; gap: 4px; }
+
+/* EMOJI PICKER */
+.emoji-picker-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 6px; display: block; }
+.emoji-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.emoji-opt { width: 38px; height: 38px; border-radius: 8px; border: 2px solid var(--border); background: var(--bg); font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.12s; }
+.emoji-opt:hover { border-color: var(--accent); background: var(--accent-light); }
+.emoji-opt.selected { border-color: var(--accent); background: var(--accent); }
+.emoji-preview { width: 44px; height: 44px; border-radius: 10px; border: 2px solid var(--accent); background: var(--accent-light); font-size: 24px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+/* HISTORY LOG */
+.hist-filters { display: flex; gap: 6px; margin-bottom: 14px; overflow-x: auto; padding-bottom: 2px; }
+.hist-filters::-webkit-scrollbar { display: none; }
+.hftab { padding: 5px 12px; border-radius: 99px; font-size: 12px; font-weight: 500; border: 1px solid var(--border); background: var(--surface); color: var(--text-muted); cursor: pointer; white-space: nowrap; transition: all 0.15s; }
+.hftab.active { background: var(--accent); border-color: var(--accent); color: white; }
+.hist-summary { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+.hist-stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px; text-align: center; }
+.hist-stat-val { font-size: 20px; font-weight: 800; color: var(--accent); }
+.hist-stat-lbl { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.hist-day-header { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); padding: 10px 2px 6px; }
+.hist-entry { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+.hist-entry-check { width: 28px; height: 28px; border-radius: 50%; background: var(--accent); border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; color: white; font-size: 13px; flex-shrink: 0; transition: background 0.15s, border-color 0.15s; }
+.hist-entry-info { flex: 1; min-width: 0; }
+.hist-entry-name { font-size: 14px; font-weight: 600; }
+.hist-entry-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.hist-entry-val { font-size: 14px; font-weight: 700; color: #1E7E34; white-space: nowrap; }
+
+/* ROLES & ADMIN */
+.role-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.06em; }
+.role-admin { background: #FEF3E2; color: #D35400; }
+.role-user  { background: var(--accent-light); color: var(--accent-dark); }
+.admin-only { /* shown only to admins */ }
+.pin-modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:400; align-items:center; justify-content:center; padding:16px; }
+.pin-modal-overlay.open { display:flex; }
+.pin-dots { display:flex; gap:10px; justify-content:center; margin:16px 0; }
+.pin-dot { width:14px; height:14px; border-radius:50%; border:2px solid var(--border); background:transparent; transition:background 0.15s; }
+.pin-dot.filled { background:var(--accent); border-color:var(--accent); }
+.pin-pad { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:8px; }
+.pin-key { background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:14px; font-size:18px; font-weight:600; cursor:pointer; text-align:center; transition:all 0.12s; }
+.pin-key:hover { background:var(--accent-light); border-color:var(--accent); }
+.pin-key.del { color:var(--danger); font-size:14px; }
+.session-bar { background:var(--accent); color:white; padding:8px 16px; font-size:12px; font-weight:600; display:flex; align-items:center; justify-content:space-between; }
+.cal-chore-row { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--border); }
+.cal-chore-row:last-child { border-bottom:none; }
+.cal-chore-check { width:24px; height:24px; border-radius:50%; border:2px solid var(--border); cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:all 0.18s; }
+.cal-chore-check.checked { background:var(--accent); border-color:var(--accent); }
+.cal-chore-check.checked::after { content:'✓'; color:white; font-size:12px; font-weight:bold; }
+.cal-chore-check.readonly { cursor:default; opacity:0.5; }
+.cal-chore-name { flex:1; font-size:14px; font-weight:500; }
+.cal-chore-name.done { color:var(--done-text); text-decoration:line-through; }
+.cal-chore-val { font-size:13px; font-weight:700; color:#1E7E34; }
+
+/* ROOM OWNERSHIP & SESSION */
+.owned-badge { font-size:10px; font-weight:700; padding:2px 7px; border-radius:99px; background:#EEF2FF; color:#4B5FA6; white-space:nowrap; }
+.session-person-bar { background:var(--surface); border-bottom:1px solid var(--border); padding:8px 16px; display:flex; align-items:center; gap:8px; font-size:13px; }
+.session-person-bar select { flex:1; padding:6px 10px; border:1px solid var(--border); border-radius:8px; font-size:13px; background:var(--bg); outline:none; }
+.locked-badge { font-size:11px; color:var(--text-muted); margin-left:4px; }
+
+/* PULL TO REFRESH */
+.ptr-indicator {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  background: var(--accent); color: white;
+  font-size: 13px; font-weight: 600;
+  height: 52px; transform: translateY(-52px);
+  transition: transform 0.2s ease;
+  pointer-events: none;
+}
+.ptr-indicator.pulling { transition: none; }
+.ptr-indicator.visible { transform: translateY(0); transition: transform 0.2s ease; }
+.ptr-spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.4); border-top-color: white; border-radius: 50%; }
+.ptr-spinner.spin { animation: ptr-spin 0.7s linear infinite; }
+@keyframes ptr-spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="ptr-indicator" id="ptr-indicator">
+  <div class="ptr-spinner" id="ptr-spinner"></div>
+  <span id="ptr-label">Pull down to refresh</span>
+</div>
+
+<nav class="nav">
+  <div class="nav-tab active" onclick="showPage('calendar',this)"><span class="nav-icon">📅</span>Calendar</div>
+  <div class="nav-tab" onclick="showPage('chores',this)"><span class="nav-icon">🏠</span>Chores</div>
+  <div class="nav-tab" onclick="showPage('people',this)"><span class="nav-icon">👥</span>People</div>
+  <div class="nav-tab" onclick="showPage('rooms',this)"><span class="nav-icon">🚪</span>Rooms</div>
+  <div class="nav-tab" onclick="showPage('history',this)"><span class="nav-icon">📜</span>History</div>
+  <div class="nav-tab" onclick="showPage('settings',this)"><span class="nav-icon">⚙️</span>Settings</div>
+</nav>
+
+<!-- CHORES PAGE -->
+<div class="page" id="page-chores">
+  <div class="header-card">
+    <div class="header-top">
+      <div class="app-title">Home <span>Chores</span></div>
+      <div style="font-size:13px;color:var(--text-muted)" id="summary-text">0 of 0 done</div>
+    </div>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-bar" style="width:0%"></div></div>
+    <div class="progress-label" id="progress-label">Add chores to get started</div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">Add a Chore</div>
+    <div class="row-full"><input type="text" id="chore-input" placeholder="e.g. Vacuum living room" maxlength="60"></div>
+    <div class="row">
+      <select id="category-input"></select>
+      <div style="display:flex;align-items:center;gap:6px;flex:1;min-width:120px;">
+        <span style="font-size:12px;color:var(--text-muted);white-space:nowrap;">Every</span>
+        <input type="number" id="freq-input" min="1" max="30" value="7" style="width:56px;text-align:center;padding:9px 6px;">
+        <span style="font-size:12px;color:var(--text-muted);white-space:nowrap;">day(s)</span>
+      </div>
+      <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-muted);white-space:nowrap;cursor:pointer;">
+        <input type="checkbox" id="freq-asneeded" onchange="toggleAsNeeded('freq-input','freq-asneeded')" style="width:auto;"> As Needed
+      </label>
+      <select id="difficulty-input">
+        <option value="1">$1</option>
+        <option value="2">$2</option>
+        <option value="3" selected>$3</option>
+        <option value="4">$4</option>
+        <option value="5">$5</option>
+      </select>
+      <button class="btn btn-primary" onclick="addChore()">+ Add</button>
+    </div>
+  </div>
+
+  <div class="filter-tabs" id="filter-tabs-bar"></div>
+  <div id="chore-container"></div>
+</div>
+
+<!-- CALENDAR PAGE -->
+<div class="page active" id="page-calendar">
+  <div class="card">
+    <div class="cal-header">
+      <button class="btn btn-ghost" style="padding:6px 12px;" onclick="calPrev()">‹</button>
+      <div class="cal-month" id="cal-month-label"></div>
+      <button class="btn btn-ghost" style="padding:6px 12px;" onclick="calNext()">›</button>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+  </div>
+  <div id="cal-day-label" style="font-size:13px;font-weight:700;color:var(--text-muted);margin-bottom:10px;"></div>
+  <div id="cal-events"></div>
+</div>
+
+<!-- PEOPLE PAGE -->
+<div class="page" id="page-people">
+  <div class="card">
+    <div class="section-title">Add Person</div>
+    <div class="row">
+      <input type="text" id="person-name-input" placeholder="Name" maxlength="30">
+      <input type="text" id="person-emoji-input" placeholder="Emoji" maxlength="4" style="flex:0 0 60px;text-align:center;">
+      <select id="person-role-input" style="flex:0 0 90px;padding:9px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg);outline:none;">
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+      </select>
+      <button class="btn btn-primary" onclick="addPerson()">+ Add</button>
+    </div>
+  </div>
+  <div id="leaderboard-container"></div>
+</div>
+
+
+<!-- ROOMS PAGE -->
+<div class="page" id="page-rooms">
+  <div class="card">
+    <div class="section-title">Add a Room</div>
+    <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;">
+      <div class="emoji-preview" id="add-room-preview">🏠</div>
+      <div style="flex:1;">
+        <input type="text" id="room-name-input" placeholder="Room name, e.g. Master Bedroom" maxlength="40" style="width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg);outline:none;margin-bottom:8px;">
+      </div>
+    </div>
+    <span class="emoji-picker-label">Pick an icon</span>
+    <div class="emoji-grid" id="add-emoji-grid"></div>
+    <button class="btn btn-primary" onclick="addRoom()" style="width:100%;">+ Add Room</button>
+  </div>
+  <div id="rooms-container"></div>
+</div>
+
+
+<!-- HISTORY PAGE -->
+<div class="page" id="page-history">
+  <div class="hist-summary">
+    <div class="hist-stat"><div class="hist-stat-val" id="hist-total-count">0</div><div class="hist-stat-lbl">Total Done</div></div>
+    <div class="hist-stat"><div class="hist-stat-val" id="hist-total-val">$0</div><div class="hist-stat-lbl">Earned</div></div>
+    <div class="hist-stat"><div class="hist-stat-val" id="hist-streak">0</div><div class="hist-stat-lbl">Day Streak</div></div>
+  </div>
+  <div class="hist-filters" id="hist-filter-bar">
+    <div class="hftab active" onclick="setHistFilter('all',this)">All Time</div>
+    <div class="hftab" onclick="setHistFilter('today',this)">Today</div>
+    <div class="hftab" onclick="setHistFilter('week',this)">This Week</div>
+    <div class="hftab" onclick="setHistFilter('month',this)">This Month</div>
+  </div>
+  <div id="hist-person-filter" style="display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;padding-bottom:2px;"></div>
+  <div id="hist-container"></div>
+</div>
+
+<!-- SETTINGS PAGE -->
+<div class="page" id="page-settings">
+  <div class="card">
+    <div class="section-title">Pay Range</div>
+    <div style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">Each chore is assigned a dollar value from $1 to $5 when added or edited.</div>
+    <div class="setting-row">
+      <div><div class="setting-label">Multiplier — 1-day chores</div><div class="setting-desc">Multiplies the chore dollar value</div></div>
+      <div class="setting-control"><input type="number" id="mult-daily" min="0.1" max="10" step="0.1" value="1.0" onchange="saveSettings()"></div>
+    </div>
+    <div class="setting-row">
+      <div><div class="setting-label">Multiplier — 7-day chores</div></div>
+      <div class="setting-control"><input type="number" id="mult-weekly" min="0.1" max="10" step="0.1" value="1.0" onchange="saveSettings()"></div>
+    </div>
+  </div>
+
+
+
+  <div class="card">
+    <div class="section-title">Display</div>
+    <div class="setting-row">
+      <div><div class="setting-label">Show dollar value on chores</div></div>
+      <button class="toggle on" id="toggle-pts" onclick="toggleSetting('showPoints',this)"></button>
+    </div>
+    <div class="setting-row">
+      <div><div class="setting-label">Require "who did it"</div><div class="setting-desc">Prompt when completing a chore</div></div>
+      <button class="toggle on" id="toggle-who" onclick="toggleSetting('requireWho',this)"></button>
+    </div>
+    <div class="setting-row">
+      <div><div class="setting-label">Leaderboard period</div></div>
+      <div class="setting-control">
+        <select id="lb-period" onchange="saveSettings();renderPeople()">
+          <option value="all">All time</option>
+          <option value="week">This week</option>
+          <option value="month">This month</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="card">
+    <div class="section-title">Data</div>
+    <div class="setting-row">
+      <div><div class="setting-label">Reset all chores to pending</div><div class="setting-desc">Keeps chores, clears completion</div></div>
+      <button class="btn btn-danger" onclick="resetChores()">Reset</button>
+    </div>
+    <div class="setting-row">
+      <div><div class="setting-label">Clear all history</div><div class="setting-desc">Wipes completion log permanently</div></div>
+      <button class="btn btn-danger" onclick="clearHistory()">Clear</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">☁️ Cloud Sync</div>
+    <div style="font-size:13px;color:var(--text-muted);margin-bottom:14px;line-height:1.5;">
+      All changes sync automatically to Firebase in real time. Use the button below to push your current data up to the cloud so all family members see it immediately.
+    </div>
+    <div class="setting-row" style="border:none;padding-top:0;">
+      <div>
+        <div class="setting-label">Sync status</div>
+        <div class="setting-desc" id="sync-status-text">Checking…</div>
+      </div>
+      <div id="sync-status-dot" style="font-size:20px;">⏳</div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-top:8px;" onclick="pushAllToCloud()">
+      ☁️ Push All My Data to Cloud
+    </button>
+  </div>
+</div>
+
+<!-- ADMIN PIN MODAL -->
+<div class="pin-modal-overlay" id="pin-modal">
+  <div class="modal" style="max-width:300px;text-align:center;">
+    <div class="modal-title" id="pin-modal-title">Admin Login</div>
+    <div style="font-size:13px;color:var(--text-muted);margin-bottom:4px;" id="pin-modal-subtitle">Enter your 4-digit PIN</div>
+    <div class="pin-dots" id="pin-dots">
+      <div class="pin-dot" id="pd0"></div><div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div><div class="pin-dot" id="pd3"></div>
+    </div>
+    <div style="font-size:12px;color:var(--danger);min-height:16px;margin-bottom:8px;" id="pin-error"></div>
+    <div class="pin-pad">
+      <button class="pin-key" onclick="pinKey('1')">1</button>
+      <button class="pin-key" onclick="pinKey('2')">2</button>
+      <button class="pin-key" onclick="pinKey('3')">3</button>
+      <button class="pin-key" onclick="pinKey('4')">4</button>
+      <button class="pin-key" onclick="pinKey('5')">5</button>
+      <button class="pin-key" onclick="pinKey('6')">6</button>
+      <button class="pin-key" onclick="pinKey('7')">7</button>
+      <button class="pin-key" onclick="pinKey('8')">8</button>
+      <button class="pin-key" onclick="pinKey('9')">9</button>
+      <button class="pin-key del" onclick="pinKey('C')">Clear</button>
+      <button class="pin-key" onclick="pinKey('0')">0</button>
+      <button class="pin-key del" onclick="pinKey('⌫')">⌫</button>
+    </div>
+    <div class="modal-actions" style="justify-content:center;margin-top:14px;">
+      <button class="btn btn-ghost" onclick="closePinModal(false)">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- TODAY'S CHORES MODAL (calendar tap) -->
+<div class="modal-overlay" id="cal-chores-modal">
+  <div class="modal" style="max-width:420px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+      <div class="modal-title" style="margin:0;" id="cal-chores-modal-title">Today's Chores</div>
+      <button class="btn-icon" onclick="document.getElementById('cal-chores-modal').classList.remove('open')" style="font-size:18px;color:var(--text-muted);">✕</button>
+    </div>
+    <div id="cal-chores-modal-body"></div>
+  </div>
+</div>
+
+<!-- UNDO CONFIRM MODAL -->
+<div class="modal-overlay" id="undo-modal">
+  <div class="modal" style="max-width:320px;text-align:center;">
+    <div style="font-size:32px;margin-bottom:10px;">↩️</div>
+    <div class="modal-title" style="margin-bottom:8px;">Undo Chore?</div>
+    <div style="font-size:14px;color:var(--text-muted);margin-bottom:6px;" id="undo-modal-chore-name"></div>
+    <div style="font-size:13px;color:var(--text-muted);margin-bottom:20px;">This will remove it from the history log and return it to the pending list.</div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-ghost" style="flex:1;" onclick="closeUndoModal(false)">No, Keep It</button>
+      <button class="btn btn-danger" style="flex:1;background:var(--danger);color:white;" onclick="closeUndoModal(true)">Yes, Undo</button>
+    </div>
+  </div>
+</div>
+
+<!-- WHO DID IT MODAL -->
+<div class="modal-overlay" id="who-modal">
+  <div class="modal">
+    <div class="modal-title">Who did it? 🙌</div>
+    <div id="who-modal-chore-name" style="font-size:14px;font-weight:600;margin-bottom:6px;"></div>
+    <div style="font-size:13px;color:var(--text-muted);margin-bottom:14px;">Select who completed this chore:</div>
+    <div class="person-grid" id="who-person-grid"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeWhoModal(false)">Skip</button>
+      <button class="btn btn-primary" onclick="closeWhoModal(true)">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT CHORE MODAL -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <div class="modal-title">Edit Chore ✏️</div>
+    <div class="edit-field">
+      <label class="edit-label">Chore Name</label>
+      <input type="text" id="edit-name" maxlength="60">
+    </div>
+    <div class="edit-field">
+      <label class="edit-label">Category</label>
+      <select id="edit-category"></select>
+    </div>
+    <div class="edit-field">
+      <label class="edit-label">Frequency</label>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:12px;color:var(--text-muted);white-space:nowrap;">Every</span>
+        <input type="number" id="edit-freq" min="1" max="30" value="7" style="width:64px;text-align:center;padding:9px 8px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg);outline:none;">
+        <span style="font-size:12px;color:var(--text-muted);white-space:nowrap;">day(s)</span>
+        <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-muted);cursor:pointer;margin-left:4px;">
+          <input type="checkbox" id="edit-freq-asneeded" onchange="toggleAsNeeded('edit-freq','edit-freq-asneeded')" style="width:auto;"> As Needed
+        </label>
+      </div>
+    </div>
+    <div class="edit-field">
+      <label class="edit-label">Pay Value ($1–$5)</label>
+      <select id="edit-difficulty">
+        <option value="1">$1</option>
+        <option value="2">$2</option>
+        <option value="3">$3</option>
+        <option value="4">$4</option>
+        <option value="5">$5</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeEditModal(false)">Cancel</button>
+      <button class="btn btn-primary" onclick="closeEditModal(true)">Save</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- EDIT ROOM MODAL -->
+<div class="modal-overlay" id="edit-room-modal">
+  <div class="modal">
+    <div class="modal-title">Edit Room 🚪</div>
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;">
+      <div class="emoji-preview" id="edit-room-preview">🏠</div>
+      <input type="text" id="edit-room-name" maxlength="40" placeholder="Room name" style="flex:1;padding:9px 11px;border:1px solid var(--border);border-radius:8px;font-size:13px;background:var(--bg);outline:none;">
+    </div>
+    <span class="emoji-picker-label">Pick an icon</span>
+    <div class="emoji-grid" id="edit-emoji-grid"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeEditRoomModal(false)">Cancel</button>
+      <button class="btn btn-primary" onclick="closeEditRoomModal(true)">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="fab-area">
+  <button class="btn-clear" id="btn-clear" onclick="clearDone()">Remove snoozed</button>
+</div>
+
+  <!-- Firebase SDKs -->
+  <script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getFirestore, doc, collection, setDoc, onSnapshot, deleteDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCDXKQ6J-ZgCcaWjIx2kQssgKCklLrIPmc",
+    authDomain: "chore-calendar-18154.firebaseapp.com",
+    projectId: "chore-calendar-18154",
+    storageBucket: "chore-calendar-18154.firebasestorage.app",
+    messagingSenderId: "893868244332",
+    appId: "1:893868244332:web:14857ef43d6d6a90258749"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  // Expose db and Firestore helpers globally so the main script can use them
+  window._db         = db;
+  window._fsDoc      = doc;
+  window._fsCol      = collection;
+  window._fsSetDoc   = setDoc;
+  window._fsOnSnap   = onSnapshot;
+  window._fsDelDoc   = deleteDoc;
+  window._fsGetDoc   = getDoc;
+  window._fsReady    = true;
+  // Signal main script
+  document.dispatchEvent(new Event('firebase-ready'));
+  </script>
+
+<script>
+const SK_CHORES='hc_chores_v2', SK_PEOPLE='hc_people_v1', SK_HISTORY='hc_history_v1', SK_SETTINGS='hc_settings_v1', SK_ROOMS='hc_rooms_v1';
+
+let chores = JSON.parse(localStorage.getItem('fs_chores')||localStorage.getItem(SK_CHORES)||'null') || [
+  {id:1,name:'Wash dishes',    category:'Kitchen',    freq:1,           difficulty:1, done:false},
+  {id:2,name:'Wipe counters',  category:'Kitchen',    freq:1,           difficulty:1, done:false},
+  {id:3,name:'Take out trash', category:'Kitchen',    freq:7,           difficulty:1, done:false},
+  {id:4,name:'Scrub toilet',   category:'Bathroom',   freq:7,           difficulty:2, done:false},
+  {id:5,name:'Mop floor',      category:'Bathroom',   freq:7,           difficulty:2, done:false},
+  {id:6,name:'Vacuum',         category:'Living Room',freq:7,           difficulty:3, done:false},
+  {id:7,name:'Wash laundry',   category:'Laundry',    freq:'Weekly',    difficulty:3, done:false},
+  {id:8,name:'Mow lawn',       category:'Outdoor',    freq:14,          difficulty:4, done:false},
+];
+
+const DEFAULT_ROOMS = [
+  {id:1,name:'Kitchen',     emoji:'🍳'},
+  {id:2,name:'Bathroom',    emoji:'🚿'},
+  {id:3,name:'Living Room', emoji:'🛋'},
+  {id:4,name:'Bedroom',     emoji:'🛏'},
+  {id:5,name:'Laundry',     emoji:'👕'},
+  {id:6,name:'Outdoor',     emoji:'🌿'},
+  {id:7,name:'General',     emoji:'📋'},
+];
+let rooms = JSON.parse(localStorage.getItem('fs_rooms')||localStorage.getItem(SK_ROOMS)||'null') || DEFAULT_ROOMS.map(r=>({...r}));
+let nextRoomId = Math.max(0,...rooms.map(r=>r.id))+1;
+
+let people  = JSON.parse(localStorage.getItem('fs_people')||localStorage.getItem(SK_PEOPLE)||'null') || [];
+let history = JSON.parse(localStorage.getItem('fs_history')||localStorage.getItem(SK_HISTORY)||'[]');
+let settings = Object.assign({
+  // pay range is now direct $1-$5 per chore, no tier map needed
+  multDaily:1.0, multWeekly:1.0,
+  showPoints:true, requireWho:true, lbPeriod:'all'
+}, JSON.parse(localStorage.getItem('fs_settings')||localStorage.getItem(SK_SETTINGS)||'{}'));
+
+// strip old priority field from saved chores on load
+chores.forEach(c => { delete c.priority; });
+
+let nextChoreId  = Math.max(0,...chores.map(c=>c.id))+1;
+let nextPersonId = people.length ? Math.max(...people.map(p=>p.id))+1 : 1;
+let activeFilter = 'All';
+
+// ── SCHEDULE LOGIC ────────────────────────────────────────────────────────────
+// How many days must pass before a chore is due again
+// freq is stored as a number of days (1-30) or the string 'As Needed'
+// Legacy string values are mapped on the fly
+function freqDays(freq) {
+  if (freq === 'As Needed') return Infinity;
+  if (freq === 'Daily')     return 1;
+  if (freq === 'Weekly')    return 7;
+  if (freq === 'Bi-weekly') return 14;
+  if (freq === 'Monthly')   return 30;
+  const n = parseInt(freq, 10);
+  return isNaN(n) ? 7 : n;
+}
+
+function freqLabel(freq) {
+  if (freq === 'As Needed') return 'As Needed';
+  const d = freqDays(freq);
+  if (d === 1)  return 'Daily';
+  if (d === 7)  return 'Weekly';
+  if (d === 14) return 'Bi-weekly';
+  if (d === 30) return 'Monthly';
+  return 'Every ' + d + (d === 1 ? ' day' : ' days');
+}
+
+function nextDueDate(chore) {
+  if (!chore.doneDate) return null;
+  const days = freqDays(chore.freq);
+  if (days === Infinity) return null;
+  const d = new Date(chore.doneDate);
+  d.setDate(d.getDate() + days);
+  d.setHours(0,0,0,0);
+  return d;
+}
+
+function isDue(chore) {
+  if (!chore.done) return true;
+  if (freqDays(chore.freq) === Infinity) return false;
+  const due = nextDueDate(chore);
+  if (!due) return true;
+  const now = new Date(); now.setHours(0,0,0,0);
+  return now >= due;
+}
+
+// On each page load, auto-reset chores whose interval has elapsed
+function autoReset() {
+  let changed = false;
+  chores.forEach(c => {
+    if (c.done && isDue(c)) {
+      c.done = false; c.doneDate = null; c.doneBy = null;
+      changed = true;
+    }
+  });
+  if (changed) save();
+}
+autoReset();
+
+const today = new Date();
+let calYear=today.getFullYear(), calMonth=today.getMonth(), calSelected=today.toDateString();
+
+let whoTargetId=null, whoSelectedPerson=null;
+let editTargetId=null;
+
+// ── SAVE — Firestore + localStorage fallback ──────────────────────────────────
+function fsWrite(docId, data) {
+  if (window._fsReady) {
+    window._fsSetDoc(window._fsDoc(window._db, 'family', docId), data).catch(e => console.error('Firestore write error:', e));
+  }
+  // Always keep local copy too (instant local feedback)
+  localStorage.setItem('fs_' + docId, JSON.stringify(data));
+}
+
+function save()        { fsWrite('chores',   {data: chores});   }
+function savePeople()  { fsWrite('people',   {data: people});   }
+function saveHistory() { fsWrite('history',  {data: history});  }
+function saveRooms()   { fsWrite('rooms',    {data: rooms});    }
+function saveSettings(){
+  settings.multDaily  = +document.getElementById('mult-daily').value  || 1;
+  settings.multWeekly = +document.getElementById('mult-weekly').value || 1;
+  settings.lbPeriod   = document.getElementById('lb-period').value;
+  fsWrite('settings', {data: settings});
+  renderChores(); renderPeople();
+}
+function toggleSetting(key,btn){
+  settings[key]=!settings[key];
+  btn.classList.toggle('on',settings[key]);
+  fsWrite('settings', {data: settings});
+  renderChores();
+}
+
+// ── POINTS ────────────────────────────────────────────────────────────────────
+function calcPoints(c){
+  let pts = Math.max(1, Math.min(5, c.difficulty || 1));
+  const fd=freqDays(c.freq);
+  if(fd===1) pts=Math.round(pts*settings.multDaily);
+  if(fd===7) pts=Math.round(pts*settings.multWeekly);
+  return pts;
+}
+
+// ── PAGE NAV ──────────────────────────────────────────────────────────────────
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  el.classList.add('active');
+  if(id==='calendar') renderCalendar();
+  if(id==='people')   renderPeople();
+  if(id==='rooms')    { renderRooms(); initAddRoomPicker(); }
+  if(id==='history')  renderHistory();
+  if(id==='settings') loadSettingsUI();
+}
+
+// ── CHORES ────────────────────────────────────────────────────────────────────
+function addChore(){
+  const name=document.getElementById('chore-input').value.trim();
+  if(!name){document.getElementById('chore-input').focus();return;}
+  chores.unshift({
+    id:nextChoreId++, name,
+    category:  document.getElementById('category-input').value,
+    freq:      document.getElementById('freq-asneeded').checked ? 'As Needed' : (parseInt(document.getElementById('freq-input').value,10)||7),
+    difficulty:+document.getElementById('difficulty-input').value,
+    done:false, doneDate:null, doneBy:null
+  });
+  document.getElementById('chore-input').value='';
+  save(); renderChores();
+}
+
+function toggleDone(id){
+  const c=chores.find(x=>x.id===id); if(!c) return;
+  if(!c.done && !canCheckChore(c)){
+    alert('This chore belongs to a room assigned to someone else. Only that person can check it off.');
+    return;
+  }
+  if(c.done){
+    c.done=false; c.doneDate=null; c.doneBy=null;
+    const idx=history.map(h=>h.choreId).lastIndexOf(id);
+    if(idx>=0) history.splice(idx,1);
+    saveHistory(); save(); renderChores();
+  } else {
+    if(settings.requireWho && people.length>0) openWhoModal(id,c.name);
+    else completeChore(id,null);
+  }
+}
+
+function completeChore(id,personId){
+  const c=chores.find(x=>x.id===id); if(!c) return;
+  c.done=true; c.doneDate=new Date().toISOString(); c.doneBy=personId;
+  history.push({choreId:id,choreName:c.name,choreCategory:c.category,personId,date:c.doneDate,pts:calcPoints(c)});
+  saveHistory(); save(); renderChores();
+}
+
+function deleteChore(id){
+  if(currentRole !== 'admin' && !confirm('Remove this chore?')) return;
+  chores=chores.filter(x=>x.id!==id); save(); renderChores();
+}
+
+function clearDone(){
+  // Removes chores that are snoozed (done but not yet due) from the list permanently
+  chores=chores.filter(x=>!(x.done && !isDue(x))); save(); renderChores();
+}
+
+function setFilter(f,el){
+  activeFilter=f;
+  document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderChores();
+}
+
+function renderChores(){
+  const due=chores.filter(c=>isDue(c));
+  const done=due.filter(c=>c.done).length, total=due.length;
+  const snoozed=chores.filter(c=>c.done && !isDue(c)).length;
+  const pct=total?Math.round((done/total)*100):0;
+  document.getElementById('progress-bar').style.width=pct+'%';
+  document.getElementById('summary-text').textContent=`${done} of ${total} done`;
+  document.getElementById('progress-label').textContent=
+    total===0?'Add chores to get started':
+    pct===100?(snoozed>0?`🎉 All due tasks done! ${snoozed} snoozed.`:'🎉 All done! Great work.'):
+    `${pct}% complete — ${total-done} remaining${snoozed>0?' · '+snoozed+' snoozed':''}`;
+  document.getElementById('btn-clear').classList.toggle('visible', snoozed > 0);
+
+  // "Snoozed" = completed and not yet due again
+  let filtered;
+  if(activeFilter==='Pending')  filtered=chores.filter(c=>isDue(c) && !c.done);
+  else if(activeFilter==='Done') filtered=chores.filter(c=>isDue(c) && c.done);
+  else if(activeFilter==='Snoozed') filtered=chores.filter(c=>c.done && !isDue(c));
+  else if(activeFilter==='All')  filtered=chores.filter(c=>isDue(c));
+  else filtered=chores.filter(c=>isDue(c) && c.category===activeFilter);
+
+  const container=document.getElementById('chore-container');
+  container.innerHTML='';
+  if(!filtered.length){
+    container.innerHTML=`<div class="empty-state"><div class="empty-icon">✅</div>Nothing here yet.</div>`;
+    return;
+  }
+
+  const sorted=[...filtered].sort((a,b)=>{
+    // pending first, then done (completed today), then snoozed by next-due date
+    if(a.done !== b.done) return a.done - b.done;
+    if(a.done && b.done){
+      const da=nextDueDate(a)||new Date(9e15), db=nextDueDate(b)||new Date(9e15);
+      return da-db;
+    }
+    return 0;
+  });
+  const grouped={};
+  sorted.forEach(c=>{if(!grouped[c.category])grouped[c.category]=[];grouped[c.category].push(c);});
+  const showCats=['All','Pending','Done','Snoozed'].includes(activeFilter);
+
+  const diffColors=['','diff-easy','diff-easy','diff-medium','diff-hard','diff-tough'];
+  const diffInfo = {};
+  for(let v=1;v<=5;v++) diffInfo[v]={label:'$'+v, cls:diffColors[v]||'diff-easy', val:'$'+v};
+
+  Object.entries(grouped).forEach(([cat,items])=>{
+    if(showCats){
+      const lbl=document.createElement('div');
+      lbl.className='category-label'; lbl.textContent=cat;
+      container.appendChild(lbl);
+    }
+    const list=document.createElement('div'); list.className='chore-list';
+    items.forEach(c=>{
+      const pts=calcPoints(c);
+      const di=diffInfo[c.difficulty]||{label:'$'+c.difficulty,cls:'diff-easy',val:'$'+c.difficulty};
+      const person=c.doneBy?people.find(p=>p.id===c.doneBy):null;
+      const doneDate=c.doneDate?new Date(c.doneDate):null;
+      const doneDateStr=doneDate?doneDate.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'numeric',minute:'2-digit'}):'';
+      const due=nextDueDate(c);
+      const isSnoozed=c.done && !isDue(c);
+      const dueDateStr=due?due.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'}):'';
+      const item=document.createElement('div');
+      item.className='chore-item'+(isSnoozed?' snoozed':c.done?' done':'');
+      item.innerHTML=`
+        <div class="chore-check"${isSnoozed?'':canCheckChore(c)?` onclick="toggleDone(${c.id})"`:' title="Room assigned to another person" style="cursor:not-allowed;opacity:0.35;"'} style="${isSnoozed?'cursor:default;opacity:0.35':''}">
+          <span class="check-icon" style="${isSnoozed?'display:block':''}">✓</span>
+        </div>
+        <div class="chore-info">
+          <div class="chore-name" style="${isSnoozed?'color:var(--done-text);text-decoration:line-through':''}">
+            ${esc(c.name)}
+          </div>
+          <div class="chore-meta">
+            <span class="badge freq-badge">${freqLabel(c.freq)}</span>
+            ${settings.showPoints?`<span class="badge ${di.cls}">$${pts}</span>`:''}
+            ${isSnoozed&&dueDateStr?`<span class="badge" style="background:#EEF2FF;color:#4B5FA6">🔁 Due ${dueDateStr}</span>`:''}
+          </div>
+          ${c.done?`<div class="done-meta">Done ${doneDateStr}${person?` · by <strong>${esc(person.name)}</strong>`:''}</div>`:''}
+        </div>
+        <div class="chore-actions">
+          <button class="btn-icon" onclick="openEditModal(${c.id})" title="Edit">✏️</button>
+          <button class="btn-icon del" onclick="deleteChore(${c.id})" title="Delete">🗑</button>
+        </div>
+      `;
+      list.appendChild(item);
+    });
+    container.appendChild(list);
+  });
+}
+
+// ── WHO DID IT ────────────────────────────────────────────────────────────────
+function openWhoModal(choreId,choreName){
+  whoTargetId=choreId; whoSelectedPerson=null;
+  document.getElementById('who-modal-chore-name').textContent=choreName;
+  const grid=document.getElementById('who-person-grid');
+  grid.innerHTML='';
+  people.forEach(p=>{
+    const btn=document.createElement('button');
+    btn.className='person-btn';
+    btn.innerHTML=`<span>${p.emoji||'👤'}</span>${esc(p.name)}`;
+    btn.onclick=()=>{
+      grid.querySelectorAll('.person-btn').forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected'); whoSelectedPerson=p.id;
+    };
+    grid.appendChild(btn);
+  });
+  document.getElementById('who-modal').classList.add('open');
+}
+function closeWhoModal(confirm){
+  document.getElementById('who-modal').classList.remove('open');
+  completeChore(whoTargetId, confirm?whoSelectedPerson:null);
+  whoTargetId=null; whoSelectedPerson=null;
+}
+
+// ── EDIT MODAL ────────────────────────────────────────────────────────────────
+function openEditModal(id){
+  const c=chores.find(x=>x.id===id); if(!c) return;
+  editTargetId=id;
+  document.getElementById('edit-name').value=c.name;
+  // rebuild with correct selection
+  document.getElementById('edit-category').innerHTML=roomOptions(c.category);
+  if(c.freq==='As Needed'||freqDays(c.freq)===Infinity){
+    document.getElementById('edit-freq-asneeded').checked=true;
+    document.getElementById('edit-freq').value=7;
+    document.getElementById('edit-freq').disabled=true;
+  } else {
+    document.getElementById('edit-freq-asneeded').checked=false;
+    document.getElementById('edit-freq').value=freqDays(c.freq);
+    document.getElementById('edit-freq').disabled=false;
+  }
+  document.getElementById('edit-difficulty').value=c.difficulty;
+  document.getElementById('edit-modal').classList.add('open');
+}
+function closeEditModal(save_){
+  document.getElementById('edit-modal').classList.remove('open');
+  if(save_){
+    const c=chores.find(x=>x.id===editTargetId); if(!c) return;
+    c.name       = document.getElementById('edit-name').value.trim()||c.name;
+    c.category   = document.getElementById('edit-category').value;
+    c.freq = document.getElementById('edit-freq-asneeded').checked ? 'As Needed' : (parseInt(document.getElementById('edit-freq').value,10)||7);
+    c.difficulty = +document.getElementById('edit-difficulty').value;
+    save(); renderChores();
+  }
+  editTargetId=null;
+}
+
+// ── CALENDAR ──────────────────────────────────────────────────────────────────
+function calPrev(){calMonth--;if(calMonth<0){calMonth=11;calYear--;} renderCalendar();}
+function calNext(){calMonth++;if(calMonth>11){calMonth=0;calYear++;} renderCalendar();}
+
+function renderCalendar(){
+  const mn=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('cal-month-label').textContent=`${mn[calMonth]} ${calYear}`;
+  const grid=document.getElementById('cal-grid');
+  grid.innerHTML='';
+  ['Su','Mo','Tu','We','Th','Fr','Sa'].forEach(d=>{
+    const el=document.createElement('div'); el.className='cal-dow'; el.textContent=d; grid.appendChild(el);
+  });
+  const actDays=new Set(history.map(h=>new Date(h.date).toDateString()));
+  const first=new Date(calYear,calMonth,1).getDay();
+  const dim=new Date(calYear,calMonth+1,0).getDate();
+  const prevDim=new Date(calYear,calMonth,0).getDate();
+  for(let i=first-1;i>=0;i--){const el=document.createElement('div');el.className='cal-day other-month';el.textContent=prevDim-i;grid.appendChild(el);}
+  for(let d=1;d<=dim;d++){
+    const ds=new Date(calYear,calMonth,d).toDateString();
+    const el=document.createElement('div'); el.className='cal-day';
+    if(ds===today.toDateString()) el.classList.add('today');
+    if(ds===calSelected) el.classList.add('selected');
+    if(actDays.has(ds)) el.classList.add('has-activity');
+    el.textContent=d;
+    el.onclick=()=>{
+      calSelected=ds;
+      renderCalendar();
+      // open chores modal: today is interactive, past/future is view-only
+      openCalChoresModal(ds);
+    };
+    grid.appendChild(el);
+  }
+  const rem=(first+dim)%7===0?0:7-(first+dim)%7;
+  for(let d=1;d<=rem;d++){const el=document.createElement('div');el.className='cal-day other-month';el.textContent=d;grid.appendChild(el);}
+  renderCalEvents();
+}
+
+function renderCalEvents(){
+  const label=document.getElementById('cal-day-label');
+  const ec=document.getElementById('cal-events');
+  const sel=new Date(calSelected);
+  label.textContent=sel.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  const dayH=history.filter(h=>new Date(h.date).toDateString()===calSelected);
+  ec.innerHTML='';
+  if(!dayH.length){ec.innerHTML=`<div class="empty-state" style="padding:20px"><div class="empty-icon">📅</div>No chores completed on this day.</div>`;return;}
+  dayH.forEach(h=>{
+    const p=h.personId?people.find(x=>x.id===h.personId):null;
+    const t=new Date(h.date).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+    const el=document.createElement('div'); el.className='cal-event-item';
+    el.innerHTML=`<div class="cal-event-chore">✅ ${esc(h.choreName)}</div>
+      <div class="cal-event-meta">${t}${p?' · '+esc(p.name):''}${settings.showPoints?' · $'+h.pts:''}</div>`;
+    ec.appendChild(el);
+  });
+}
+
+// ── PEOPLE ────────────────────────────────────────────────────────────────────
+const COLORS=['color-0','color-1','color-2','color-3','color-4','color-5'];
+function addPerson(){
+  const name=document.getElementById('person-name-input').value.trim();
+  if(!name){document.getElementById('person-name-input').focus();return;}
+  const emoji=document.getElementById('person-emoji-input').value.trim()||'';
+  const role=document.getElementById('person-role-input').value||'user';
+  people.push({id:nextPersonId++,name,emoji,colorIdx:people.length%COLORS.length,role});
+  document.getElementById('person-role-input').value='user';
+  document.getElementById('person-name-input').value='';
+  document.getElementById('person-emoji-input').value='';
+  savePeople(); renderPeople();
+}
+function deletePerson(id){
+  if(!confirm('Remove this person?')) return;
+  people=people.filter(p=>p.id!==id); savePeople(); renderPeople();
+}
+function getPersonScore(pid){
+  const now=new Date();
+  return history.filter(h=>{
+    if(h.personId!==pid) return false;
+    if(settings.lbPeriod==='week') return (now-new Date(h.date))/(864e5)<=7;
+    if(settings.lbPeriod==='month'){const d=new Date(h.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();}
+    return true;
+  }).reduce((s,h)=>s+(h.pts||0),0);
+}
+function renderPeople(){
+  const c=document.getElementById('leaderboard-container'); c.innerHTML='';
+  if(!people.length){c.innerHTML=`<div class="empty-state"><div class="empty-icon">👥</div>Add people to track who does chores.</div>`;return;}
+  const ranked=[...people].map(p=>({...p,score:getPersonScore(p.id)})).sort((a,b)=>b.score-a.score);
+  const lbl=document.createElement('div'); lbl.className='section-title'; lbl.style.marginBottom='10px';
+  lbl.textContent='Leaderboard · '+(settings.lbPeriod==='week'?'This Week':settings.lbPeriod==='month'?'This Month':'All Time');
+  c.appendChild(lbl);
+  ranked.forEach((p,i)=>{
+    const rn=i+1, rc=rn===1?'rank-1':rn===2?'rank-2':rn===3?'rank-3':'';
+    const init=p.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    const comps=history.filter(h=>h.personId===p.id).length;
+    const isAdmin=(p.role||'user')==='admin';
+    const card=document.createElement('div'); card.className='person-card'; card.style.flexWrap='wrap';
+    card.innerHTML=`
+      <div class="leaderboard-rank ${rc}">${rn<=3?['🥇','🥈','🥉'][rn-1]:rn}</div>
+      <div class="person-avatar ${COLORS[p.colorIdx%COLORS.length]}">${p.emoji||init}</div>
+      <div class="person-stats" style="min-width:0;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div class="person-name-el">${esc(p.name)}</div>
+          <span class="role-badge ${isAdmin?'role-admin':'role-user'}">${isAdmin?'Admin':'User'}</span>
+        </div>
+        <div class="person-score">💰 $${p.score} earned · ${comps} completed</div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center;">
+        ${currentRole==='admin'?`<button class="btn btn-ghost" style="padding:5px 10px;font-size:12px;" onclick="requireAdminThen(()=>clearPersonFunds(${p.id}))">Clear $</button>
+        <button class="btn btn-ghost" style="padding:5px 10px;font-size:12px;" onclick="requireAdminThen(()=>togglePersonRole(${p.id}))">${isAdmin?'→ User':'→ Admin'}</button>
+        <button class="btn-icon del" onclick="requireAdminThen(()=>deletePerson(${p.id}))" title="Remove">🗑</button>`:''}
+      </div>`;
+    c.appendChild(card);
+  });
+}
+
+// ── SETTINGS UI ───────────────────────────────────────────────────────────────
+function loadSettingsUI(){
+  document.getElementById('mult-daily').value  = settings.multDaily;
+  document.getElementById('mult-weekly').value = settings.multWeekly;
+  document.getElementById('lb-period').value   = settings.lbPeriod;
+  document.getElementById('toggle-pts').classList.toggle('on',settings.showPoints);
+  document.getElementById('toggle-who').classList.toggle('on',settings.requireWho);
+}
+function resetChores(){
+  if(!confirm('Reset all chores to pending?')) return;
+  chores.forEach(c=>{c.done=false;c.doneDate=null;c.doneBy=null;}); save(); renderChores();
+}
+function clearHistory(){
+  if(!confirm('Clear all completion history? This cannot be undone.')) return;
+  history=[]; saveHistory(); renderChores(); renderCalendar();
+}
+
+// ── ROOMS ─────────────────────────────────────────────────────────────────────
+function roomOptions(selectedName) {
+  return rooms.map(r=>`<option value="${esc(r.name)}"${r.name===selectedName?' selected':''}>${r.emoji} ${esc(r.name)}</option>`).join('');
+}
+function rebuildCategoryDropdowns() {
+  const cat = document.getElementById('category-input');
+  const editCat = document.getElementById('edit-category');
+  if(cat)    cat.innerHTML    = roomOptions(cat.value    || (rooms[0]&&rooms[0].name));
+  if(editCat) editCat.innerHTML = roomOptions(editCat.value || (rooms[0]&&rooms[0].name));
+  renderFilterTabs();
+}
+function renderFilterTabs() {
+  const bar = document.getElementById('filter-tabs-bar');
+  if(!bar) return;
+  const statusTabs = [
+    {f:'All',label:'All'},{f:'Pending',label:'Pending'},{f:'Done',label:'Done'},{f:'Snoozed',label:'💤 Snoozed'}
+  ];
+  bar.innerHTML = statusTabs.map(t=>
+    `<div class="ftab${activeFilter===t.f?' active':''}" onclick="setFilter('${t.f}',this)">${t.label}</div>`
+  ).join('') + rooms.map(r=>
+    `<div class="ftab${activeFilter===r.name?' active':''}" onclick="setFilter('${esc(r.name)}',this)">${r.emoji} ${esc(r.name)}</div>`
+  ).join('');
+}
+
+let editRoomTargetId = null;
+function addRoom() {
+  const name = document.getElementById('room-name-input').value.trim();
+  if(!name) { document.getElementById('room-name-input').focus(); return; }
+  if(rooms.find(r=>r.name.toLowerCase()===name.toLowerCase())) { alert('A room with that name already exists.'); return; }
+  rooms.push({id:nextRoomId++, name, emoji: addRoomSelectedEmoji});
+  document.getElementById('room-name-input').value='';
+  initAddRoomPicker();
+  saveRooms(); rebuildCategoryDropdowns(); renderRooms();
+}
+function openEditRoomModal(id) {
+  const r = rooms.find(x=>x.id===id); if(!r) return;
+  editRoomTargetId = id;
+  document.getElementById('edit-room-name').value = r.name;
+  initEditRoomPicker(r.emoji);
+  document.getElementById('edit-room-modal').classList.add('open');
+}
+function closeEditRoomModal(doSave) {
+  document.getElementById('edit-room-modal').classList.remove('open');
+  if(doSave) {
+    const r = rooms.find(x=>x.id===editRoomTargetId); if(!r) return;
+    const newName  = document.getElementById('edit-room-name').value.trim() || r.name;
+    const newEmoji = editRoomSelectedEmoji || r.emoji;
+    const oldName  = r.name;
+    // rename chores that used the old room name
+    if(newName !== oldName) chores.forEach(c=>{ if(c.category===oldName) c.category=newName; });
+    // if current filter was the old name, update it
+    if(activeFilter===oldName) activeFilter=newName;
+    r.name=newName; r.emoji=newEmoji;
+    save(); saveRooms(); rebuildCategoryDropdowns(); renderChores(); renderRooms();
+  }
+  editRoomTargetId=null;
+}
+function deleteRoom(id) {
+  const r = rooms.find(x=>x.id===id); if(!r) return;
+  const count = chores.filter(c=>c.category===r.name).length;
+  const msg = count>0
+    ? `Remove "${r.name}"? ${count} chore${count>1?'s':''} assigned to it will be moved to "General".`
+    : `Remove "${r.name}"?`;
+  if(!confirm(msg)) return;
+  // reassign chores
+  const fallback = rooms.find(x=>x.id!==id);
+  chores.forEach(c=>{ if(c.category===r.name) c.category=fallback?fallback.name:'General'; });
+  if(activeFilter===r.name) activeFilter='All';
+  rooms=rooms.filter(x=>x.id!==id);
+  save(); saveRooms(); rebuildCategoryDropdowns(); renderChores(); renderRooms();
+}
+function renderRooms() {
+  const container = document.getElementById('rooms-container'); if(!container) return;
+  container.innerHTML='';
+  if(!rooms.length){
+    container.innerHTML=`<div class="empty-state"><div class="empty-icon">🚪</div>No rooms yet. Add one above.</div>`;
+    return;
+  }
+  rooms.forEach(r=>{
+    const count=chores.filter(c=>c.category===r.name).length;
+    const due=chores.filter(c=>c.category===r.name&&isDue(c)&&!c.done).length;
+    const owner=r.ownedByPersonId?people.find(p=>p.id===r.ownedByPersonId):null;
+    const card=document.createElement('div'); card.className='room-card'; card.style.flexWrap='wrap';
+    // Owner selector (admin only)
+    const ownerSelect = currentRole==='admin' ? `
+      <div style="width:100%;margin-top:8px;display:flex;align-items:center;gap:8px;">
+        <span style="font-size:11px;color:var(--text-muted);white-space:nowrap;">Assigned to:</span>
+        <select onchange="assignRoomOwner(${r.id},this.value)" style="flex:1;padding:5px 8px;border:1px solid var(--border);border-radius:7px;font-size:12px;background:var(--bg);outline:none;">
+          <option value="">— Anyone —</option>
+          ${people.map(p=>`<option value="${p.id}"${r.ownedByPersonId===p.id?' selected':''}>${p.emoji||'👤'} ${esc(p.name)}</option>`).join('')}
+        </select>
+      </div>` : '';
+    card.innerHTML=`
+      <div class="room-icon-bubble">${r.emoji}</div>
+      <div class="room-info" style="min-width:0;">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          <div class="room-name-el">${esc(r.name)}</div>
+          ${owner?`<span class="owned-badge">🔒 ${esc(owner.name)}</span>`:''}
+        </div>
+        <div class="room-chore-count">${count} chore${count!==1?'s':''} · ${due} pending</div>
+      </div>
+      <div class="room-actions">
+        ${currentRole==='admin'?`<button class="btn-icon" onclick="openEditRoomModal(${r.id})" title="Edit">✏️</button>
+        <button class="btn-icon del" onclick="deleteRoom(${r.id})" title="Delete">🗑</button>`:''}
+      </div>
+      ${ownerSelect}`;
+    container.appendChild(card);
+  });
+}
+
+function assignRoomOwner(roomId, personIdStr) {
+  const r = rooms.find(x=>x.id===roomId); if(!r) return;
+  r.ownedByPersonId = personIdStr ? parseInt(personIdStr,10) : null;
+  saveRooms(); renderRooms(); renderChores();
+}
+
+// ── EMOJI PICKER ──────────────────────────────────────────────────────────────
+const ROOM_EMOJIS = [
+  '🏠','🍳','🚿','🛋','🛏','👕','🌿','📋','🚗','🏋️','📚','🎮','🖥️','🛁',
+  '🚪','🪴','🧹','🧺','🪑','🛒','🔧','🧲','🌡️','❄️','🔥','💡','🪟','🧸',
+  '🎵','🍽️','☕','🧼','🪥','🛠️','🗄️','📦','🏡','🌳','🌻','⭐'
+];
+
+let addRoomSelectedEmoji = '🏠';
+let editRoomSelectedEmoji = '🏠';
+
+function buildEmojiGrid(gridId, previewId, selectedEmoji, onSelect) {
+  const grid = document.getElementById(gridId);
+  const preview = document.getElementById(previewId);
+  if (!grid) return;
+  grid.innerHTML = '';
+  ROOM_EMOJIS.forEach(em => {
+    const btn = document.createElement('button');
+    btn.className = 'emoji-opt' + (em === selectedEmoji ? ' selected' : '');
+    btn.textContent = em;
+    btn.onclick = () => {
+      grid.querySelectorAll('.emoji-opt').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      if (preview) preview.textContent = em;
+      onSelect(em);
+    };
+    grid.appendChild(btn);
+  });
+  if (preview) preview.textContent = selectedEmoji;
+}
+
+function initAddRoomPicker() {
+  addRoomSelectedEmoji = '🏠';
+  buildEmojiGrid('add-emoji-grid', 'add-room-preview', addRoomSelectedEmoji, em => { addRoomSelectedEmoji = em; });
+}
+
+function initEditRoomPicker(currentEmoji) {
+  editRoomSelectedEmoji = currentEmoji || '🏠';
+  buildEmojiGrid('edit-emoji-grid', 'edit-room-preview', editRoomSelectedEmoji, em => { editRoomSelectedEmoji = em; });
+}
+
+// ── HISTORY LOG ───────────────────────────────────────────────────────────────
+let histFilter = 'all';
+let histPersonFilter = null;
+
+function setHistFilter(f, el) {
+  histFilter = f;
+  document.querySelectorAll('.hftab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderHistory();
+}
+
+function setHistPersonFilter(pid) {
+  histPersonFilter = histPersonFilter === pid ? null : pid;
+  renderHistory();
+}
+
+function calcStreak() {
+  if (!history.length) return 0;
+  const days = new Set(history.map(h => new Date(h.date).toDateString()));
+  let streak = 0;
+  const d = new Date(); d.setHours(0,0,0,0);
+  while (days.has(d.toDateString())) {
+    streak++;
+    d.setDate(d.getDate() - 1);
+  }
+  // if today has no entry but yesterday does, still count from yesterday
+  if (streak === 0) {
+    d.setDate(d.getDate() - 1);
+    while (days.has(d.toDateString())) { streak++; d.setDate(d.getDate() - 1); }
+  }
+  return streak;
+}
+
+function renderHistory() {
+  const now = new Date(); now.setHours(23,59,59,999);
+  let filtered = [...history].reverse(); // newest first
+
+  // Time filter
+  if (histFilter === 'today') {
+    const start = new Date(); start.setHours(0,0,0,0);
+    filtered = filtered.filter(h => new Date(h.date) >= start);
+  } else if (histFilter === 'week') {
+    const start = new Date(); start.setDate(start.getDate() - 6); start.setHours(0,0,0,0);
+    filtered = filtered.filter(h => new Date(h.date) >= start);
+  } else if (histFilter === 'month') {
+    const start = new Date(); start.setDate(1); start.setHours(0,0,0,0);
+    filtered = filtered.filter(h => new Date(h.date) >= start);
+  }
+
+  // Person filter
+  if (histPersonFilter !== null) filtered = filtered.filter(h => h.personId === histPersonFilter);
+
+  // Summary stats
+  const totalCount = filtered.length;
+  const totalVal = filtered.reduce((s, h) => s + (h.pts || 0), 0);
+  const streak = calcStreak();
+  document.getElementById('hist-total-count').textContent = totalCount;
+  document.getElementById('hist-total-val').textContent = '$' + totalVal;
+  document.getElementById('hist-streak').textContent = streak;
+
+  // Person filter pills
+  const pfBar = document.getElementById('hist-person-filter');
+  if (people.length > 0) {
+    pfBar.style.display = 'flex';
+    pfBar.innerHTML = people.map(p => {
+      const active = histPersonFilter === p.id;
+      return `<div class="hftab${active ? ' active' : ''}" onclick="setHistPersonFilter(${p.id})">${p.emoji || '👤'} ${esc(p.name)}</div>`;
+    }).join('');
+  } else {
+    pfBar.style.display = 'none';
+  }
+
+  const container = document.getElementById('hist-container');
+  container.innerHTML = '';
+
+  if (!filtered.length) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">📜</div>No history yet.</div>`;
+    return;
+  }
+
+  // Group by date
+  const groups = {};
+  filtered.forEach(h => {
+    const ds = new Date(h.date).toDateString();
+    if (!groups[ds]) groups[ds] = [];
+    groups[ds].push(h);
+  });
+
+  const todayStr = new Date().toDateString();
+  const yday = new Date(); yday.setDate(yday.getDate()-1); const ydayStr = yday.toDateString();
+
+  Object.entries(groups).forEach(([ds, entries]) => {
+    const dayLabel = ds === todayStr ? 'Today' : ds === ydayStr ? 'Yesterday' :
+      new Date(ds).toLocaleDateString('en-US', {weekday:'long', month:'short', day:'numeric'});
+    const dayTotal = entries.reduce((s,h) => s+(h.pts||0), 0);
+    const hdr = document.createElement('div');
+    hdr.className = 'hist-day-header';
+    hdr.innerHTML = `${dayLabel} <span style="color:var(--accent);font-weight:800;">· $${dayTotal}</span>`;
+    container.appendChild(hdr);
+
+    entries.forEach(h => {
+      const person = h.personId ? people.find(p => p.id === h.personId) : null;
+      const time = new Date(h.date).toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'});
+      const room = rooms.find(r => r.name === h.choreCategory) || null;
+      const chore = chores.find(c => c.id === h.choreId);
+      const el = document.createElement('div'); el.className = 'hist-entry';
+      el.innerHTML = `
+        <div class="hist-entry-check" style="${currentRole==='admin'?'cursor:pointer;':'cursor:default;'}" title="${currentRole==='admin'?'Click to undo':''}" ${currentRole==='admin'?`onclick="undoHistoryEntry('${h.date}',${h.choreId})"`:''}
+          onmouseenter="${currentRole==='admin'?'this.style.background=\'#FDECEA\';this.style.borderColor=\'#C0392B\';this.innerHTML=\'✕\'':''}"
+          onmouseleave="${currentRole==='admin'?'this.style.background=\'\';this.style.borderColor=\'\';this.innerHTML=\'✓\'':''}">✓</div>
+        <div class="hist-entry-info">
+          <div class="hist-entry-name">${esc(h.choreName)}</div>
+          <div class="hist-entry-meta">${time}${person ? ' · ' + (person.emoji||'👤') + ' ' + esc(person.name) : ''}${room ? ' · ' + room.emoji + ' ' + esc(room.name) : ''}${!chore ? ' <span style="color:var(--danger);font-size:10px;">(chore deleted)</span>' : ''}</div>
+        </div>
+        <div class="hist-entry-val">$${h.pts || 0}</div>
+      `;
+      container.appendChild(el);
+    });
+  });
+}
+
+// undo modal state
+let undoPendingDate = null;
+let undoPendingChoreId = null;
+
+function undoHistoryEntry(dateStr, choreId) {
+  if (currentRole !== 'admin') return;
+  const chore = chores.find(c => c.id === choreId);
+  const choreName = chore ? chore.name : ('Chore #' + choreId);
+  undoPendingDate = dateStr;
+  undoPendingChoreId = choreId;
+  document.getElementById('undo-modal-chore-name').textContent = '"' + choreName + '"';
+  document.getElementById('undo-modal').classList.add('open');
+}
+
+function closeUndoModal(confirmed) {
+  document.getElementById('undo-modal').classList.remove('open');
+  if (!confirmed) { undoPendingDate = null; undoPendingChoreId = null; return; }
+
+  const dateStr = undoPendingDate;
+  const choreId = undoPendingChoreId;
+  undoPendingDate = null; undoPendingChoreId = null;
+
+  // Remove this specific history entry
+  const idx = history.findIndex(h => h.choreId === choreId && h.date === dateStr);
+  if (idx >= 0) history.splice(idx, 1);
+
+  // Reset the chore if it still exists and this was its completion record
+  const chore = chores.find(c => c.id === choreId);
+  if (chore && chore.doneDate === dateStr) {
+    chore.done = false;
+    chore.doneDate = null;
+    chore.doneBy = null;
+  }
+
+  save();
+  saveHistory();
+  renderHistory();
+  renderChores();
+  renderCalendar();
+}
+// currentRole: 'admin' or 'user' — session only, not persisted
+let currentRole = 'admin'; // start as admin; a real app would prompt login
+let sessionPersonId = null; // which person is logged in as user (null = no one selected)
+let pinBuffer = '';
+let pinCallback = null;
+const ADMIN_PIN_KEY = 'hc_admin_pin';
+let adminPin = localStorage.getItem(ADMIN_PIN_KEY) || '1234';
+
+function requireAdminThen(fn) {
+  if (currentRole === 'admin') { fn(); return; }
+  openPinModal(fn);
+}
+
+function openPinModal(callback) {
+  pinBuffer = ''; pinCallback = callback;
+  document.getElementById('pin-error').textContent = '';
+  updatePinDots();
+  document.getElementById('pin-modal-title').textContent = 'Admin Login';
+  document.getElementById('pin-modal-subtitle').textContent = 'Enter your 4-digit PIN';
+  document.getElementById('pin-modal').classList.add('open');
+}
+
+function closePinModal(success) {
+  document.getElementById('pin-modal').classList.remove('open');
+  pinBuffer = '';
+  if (!success) pinCallback = null;
+}
+
+function pinKey(k) {
+  if (k === 'C') { pinBuffer = ''; }
+  else if (k === '⌫') { pinBuffer = pinBuffer.slice(0, -1); }
+  else if (pinBuffer.length < 4) { pinBuffer += k; }
+  updatePinDots();
+  if (pinBuffer.length === 4) {
+    if (pinBuffer === adminPin) {
+      closePinModal(true);
+      if (pinCallback) { const fn = pinCallback; pinCallback = null; fn(); }
+    } else {
+      document.getElementById('pin-error').textContent = 'Incorrect PIN';
+      pinBuffer = '';
+      updatePinDots();
+    }
+  }
+}
+
+function updatePinDots() {
+  for (let i = 0; i < 4; i++) {
+    document.getElementById('pd' + i).classList.toggle('filled', i < pinBuffer.length);
+  }
+}
+
+function setSessionRole(role) {
+  currentRole = role;
+  renderSessionBar();
+  renderPeople();
+  // Re-render calendar if active
+  if (document.getElementById('page-calendar').classList.contains('active')) renderCalendar();
+}
+
+function renderSessionBar() {
+  let bar = document.getElementById('session-bar');
+  if (!bar) {
+    bar = document.createElement('div');
+    bar.id = 'session-bar';
+    bar.className = 'session-bar';
+    document.body.insertBefore(bar, document.querySelector('nav'));
+  }
+  if (currentRole === 'admin') {
+    bar.innerHTML = `<span>🔓 Admin Mode</span><button onclick="setSessionRole('user')" style="background:rgba(255,255,255,0.2);border:none;border-radius:6px;padding:4px 10px;color:white;font-size:11px;font-weight:600;cursor:pointer;">Switch to User</button>`;
+    bar.style.background = 'var(--accent)';
+    bar.style.color = 'white';
+  } else {
+    const personOpts = people.map(p=>`<option value="${p.id}"${sessionPersonId===p.id?' selected':''}>${p.emoji||'👤'} ${esc(p.name)}</option>`).join('');
+    bar.innerHTML = `
+      <span style="white-space:nowrap;font-size:12px;">👤 I am:</span>
+      <select onchange="sessionPersonId=this.value?parseInt(this.value,10):null;renderSessionBar();renderChores();" style="flex:1;padding:4px 8px;border-radius:6px;border:1px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.15);color:white;font-size:12px;outline:none;">
+        <option value="">— Select —</option>
+        ${personOpts}
+      </select>
+      <button onclick="requireAdminThen(()=>setSessionRole('admin'))" style="background:rgba(255,255,255,0.2);border:none;border-radius:6px;padding:4px 10px;color:white;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;">Admin Login</button>`;
+    bar.style.background = '#2c5f8a';
+    bar.style.color = 'white';
+    bar.style.display = 'flex';
+    bar.style.gap = '8px';
+    bar.style.alignItems = 'center';
+  }
+}
+
+function clearPersonFunds(pid) {
+  if (!confirm('Clear all earned funds for this person? This cannot be undone.')) return;
+  // Remove their history entries' pts contribution by zeroing them
+  history.forEach(h => { if (h.personId === pid) h.pts = 0; });
+  saveHistory(); renderPeople();
+}
+
+function togglePersonRole(pid) {
+  const p = people.find(x => x.id === pid); if (!p) return;
+  p.role = (p.role || 'user') === 'admin' ? 'user' : 'admin';
+  savePeople(); renderPeople();
+}
+
+// ── CALENDAR CHORES MODAL ─────────────────────────────────────────────────────
+function openCalChoresModal(dateStr) {
+  const sel = new Date(dateStr);
+  const todayStr = new Date().toDateString();
+  const isToday = dateStr === todayStr;
+  const isPast = sel < new Date(todayStr);
+  const isFuture = sel > new Date(todayStr);
+
+  const title = isToday ? "Today's Chores" :
+    sel.toLocaleDateString('en-US', {weekday:'long', month:'short', day:'numeric'});
+  document.getElementById('cal-chores-modal-title').textContent = title;
+
+  const body = document.getElementById('cal-chores-modal-body');
+  body.innerHTML = '';
+
+  if (isFuture && currentRole !== 'admin') {
+    body.innerHTML = `<div class="empty-state" style="padding:20px;"><div class="empty-icon">📅</div>Future date — view only.</div>`;
+    document.getElementById('cal-chores-modal').classList.add('open');
+    return;
+  }
+
+  // Past or future (admin) — show completed history for that day
+  if (isPast || (isFuture && currentRole === 'admin')) {
+    const dayH = history.filter(h => new Date(h.date).toDateString() === dateStr);
+    if (!dayH.length) {
+      body.innerHTML = `<div class="empty-state" style="padding:20px;"><div class="empty-icon">📋</div>No chores completed on this day.</div>`;
+    } else {
+      dayH.forEach(h => {
+        const person = h.personId ? people.find(p => p.id === h.personId) : null;
+        const t = new Date(h.date).toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'});
+        const row = document.createElement('div'); row.className = 'cal-chore-row';
+        row.innerHTML = `
+          <div class="cal-chore-check checked readonly"></div>
+          <div class="cal-chore-name done">${esc(h.choreName)}</div>
+          <div style="font-size:11px;color:var(--text-muted);">${t}${person ? ' · ' + esc(person.name) : ''}</div>
+          <div class="cal-chore-val">$${h.pts||0}</div>`;
+        body.appendChild(row);
+      });
+    }
+    document.getElementById('cal-chores-modal').classList.add('open');
+    return;
+  }
+
+  // TODAY — show due chores, interactive (all users can check off)
+  const dueChores = chores.filter(c => isDue(c) && !c.done);
+  const doneChores = chores.filter(c => isDue(c) && c.done);
+  const allDue = [...dueChores, ...doneChores];
+
+  if (!allDue.length) {
+    body.innerHTML = `<div class="empty-state" style="padding:20px;"><div class="empty-icon">🎉</div>All done for today!</div>`;
+    document.getElementById('cal-chores-modal').classList.add('open');
+    return;
+  }
+
+  allDue.forEach(c => {
+    const pts = calcPoints(c);
+    const row = document.createElement('div'); row.className = 'cal-chore-row';
+    const checkDiv = document.createElement('div');
+    checkDiv.className = 'cal-chore-check' + (c.done ? ' checked' : '');
+    const canCheck = canCheckChore(c);
+    if (!c.done && canCheck) {
+      checkDiv.onclick = () => {
+        toggleDone(c.id);
+        openCalChoresModal(dateStr);
+      };
+    } else if (!c.done && !canCheck) {
+      checkDiv.classList.add('readonly');
+      checkDiv.title = 'This room is assigned to someone else';
+    }
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'cal-chore-name' + (c.done ? ' done' : '');
+    nameDiv.innerHTML = esc(c.name) + ((!c.done && !canCheck) ? ' <span class="locked-badge">🔒</span>' : '');
+    const valDiv = document.createElement('div');
+    valDiv.className = 'cal-chore-val';
+    valDiv.textContent = '$' + pts;
+    row.appendChild(checkDiv);
+    row.appendChild(nameDiv);
+    row.appendChild(valDiv);
+    body.appendChild(row);
+  });
+
+  document.getElementById('cal-chores-modal').classList.add('open');
+}
+
+
+// ── OWNERSHIP ENFORCEMENT ─────────────────────────────────────────────────────
+function canCheckChore(chore) {
+  if (currentRole === 'admin') return true;
+  // find the room for this chore
+  const room = rooms.find(r => r.name === chore.category);
+  if (!room || !room.ownedByPersonId) return true; // unowned room — anyone can
+  // owned room — only the matching session person can check it
+  return sessionPersonId === room.ownedByPersonId;
+}
+
+// ── CLOUD SYNC HELPERS ────────────────────────────────────────────────────────
+async function pushAllToCloud() {
+  if (!window._fsReady) {
+    alert('Firebase is not connected yet. Please wait a moment and try again.');
+    return;
+  }
+  const btn = event.target;
+  btn.textContent = '⏳ Uploading…';
+  btn.disabled = true;
+  try {
+    await Promise.all([
+      window._fsSetDoc(window._fsDoc(window._db, 'family', 'chores'),   {data: chores}),
+      window._fsSetDoc(window._fsDoc(window._db, 'family', 'people'),   {data: people}),
+      window._fsSetDoc(window._fsDoc(window._db, 'family', 'history'),  {data: history}),
+      window._fsSetDoc(window._fsDoc(window._db, 'family', 'rooms'),    {data: rooms}),
+      window._fsSetDoc(window._fsDoc(window._db, 'family', 'settings'), {data: settings}),
+    ]);
+    btn.textContent = '✅ All data pushed!';
+    updateSyncStatus(true);
+    setTimeout(() => { btn.textContent = '☁️ Push All My Data to Cloud'; btn.disabled = false; }, 3000);
+  } catch(e) {
+    btn.textContent = '❌ Failed — check connection';
+    btn.disabled = false;
+    console.error('Push failed:', e);
+  }
+}
+
+function updateSyncStatus(connected) {
+  const dot  = document.getElementById('sync-status-dot');
+  const text = document.getElementById('sync-status-text');
+  if (!dot || !text) return;
+  if (connected) {
+    dot.textContent  = '🟢';
+    text.textContent = 'Connected — syncing in real time';
+  } else {
+    dot.textContent  = '🔴';
+    text.textContent = 'Not connected — changes saved locally only';
+  }
+}
+
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function toggleAsNeeded(inputId, checkboxId) {
+  const cb = document.getElementById(checkboxId);
+  const inp = document.getElementById(inputId);
+  inp.disabled = cb.checked;
+  if (!cb.checked && (!inp.value || inp.value < 1)) inp.value = 7;
+}
+
+document.getElementById('chore-input').addEventListener('keydown',e=>{if(e.key==='Enter')addChore();});
+document.getElementById('person-name-input').addEventListener('keydown',e=>{if(e.key==='Enter')addPerson();});
+document.getElementById('who-modal').addEventListener('click',function(e){if(e.target===this)closeWhoModal(false);});
+document.getElementById('edit-modal').addEventListener('click',function(e){if(e.target===this)closeEditModal(false);});
+document.getElementById('edit-room-modal').addEventListener('click',function(e){if(e.target===this)closeEditRoomModal(false);});
+document.getElementById('undo-modal').addEventListener('click', function(e){if(e.target===this)closeUndoModal(false);});
+document.getElementById('cal-chores-modal').addEventListener('click',function(e){if(e.target===this)document.getElementById('cal-chores-modal').classList.remove('open');});
+document.getElementById('pin-modal').addEventListener('click',function(e){if(e.target===this)closePinModal(false);});
+document.getElementById('room-name-input').addEventListener('keydown',e=>{if(e.key==='Enter')addRoom();});
+
+// ── FIREBASE REAL-TIME LISTENERS ──────────────────────────────────────────────
+function setupFirestoreListeners() {
+  const db = window._db;
+  const onSnap = window._fsOnSnap;
+  const col = window._fsDoc;
+
+  const docs = ['chores','people','history','rooms','settings'];
+  docs.forEach(docId => {
+    onSnap(window._fsDoc(db, 'family', docId), snap => {
+      if (!snap.exists()) return;
+      const d = snap.data().data;
+      if (!d) return;
+      if (docId === 'chores')   { chores   = d; nextChoreId  = Math.max(0,...chores.map(c=>c.id))+1; autoReset(); renderChores(); renderCalendar(); }
+      if (docId === 'people')   { people   = d; nextPersonId = people.length?Math.max(...people.map(p=>p.id))+1:1; renderPeople(); rebuildCategoryDropdowns(); }
+      if (docId === 'history')  { history  = d; renderHistory(); renderCalendar(); }
+      if (docId === 'rooms')    { rooms    = d; nextRoomId   = Math.max(0,...rooms.map(r=>r.id))+1; renderRooms(); rebuildCategoryDropdowns(); }
+      if (docId === 'settings') { Object.assign(settings, d); loadSettingsUI(); renderChores(); }
+      // Cache locally
+      localStorage.setItem('fs_' + docId, JSON.stringify(d));
+    });
+  });
+  console.log('✅ Firestore real-time sync active');
+  updateSyncStatus(true);
+}
+
+// Show sync status in session bar
+function showSyncStatus(connected) {
+  const bar = document.getElementById('session-bar');
+  const dot = document.getElementById('sync-dot');
+  if (dot) dot.textContent = connected ? ' 🟢' : ' 🔴';
+}
+
+// Boot sequence
+rebuildCategoryDropdowns();
+initAddRoomPicker();
+loadSettingsUI();
+renderChores();
+renderCalendar();
+renderSessionBar();
+
+// Start Firestore once Firebase module is ready
+if (window._fsReady) {
+  setupFirestoreListeners();
+} else {
+  document.addEventListener('firebase-ready', setupFirestoreListeners, { once: true });
+  // Timeout fallback — if Firebase doesn't load in 5s, warn user
+  setTimeout(() => {
+    if (!window._fsReady) {
+      console.warn('Firebase did not load — running in offline mode');
+      updateSyncStatus(false);
+      const bar = document.getElementById('session-bar');
+      if (bar) {
+        const warn = document.createElement('span');
+        warn.textContent = ' ⚠️ Offline';
+        warn.style.cssText = 'font-size:11px;opacity:0.8;';
+        bar.appendChild(warn);
+      }
+    }
+  }, 5000);
+}
+
+// ── WEATHER FORECAST ──────────────────────────────────────────────────────────
+// ── PULL TO REFRESH ───────────────────────────────────────────────────────────
+(function() {
+  const THRESHOLD = 72;
+  const MAX_PULL  = 100;
+  let startY = 0, pulling = false, triggered = false;
+
+  const ind     = document.getElementById('ptr-indicator');
+  const spinner = document.getElementById('ptr-spinner');
+  const label   = document.getElementById('ptr-label');
+
+  function refreshActivePage() {
+    const active = document.querySelector('.page.active');
+    if (!active) return;
+    const id = active.id.replace('page-', '');
+    if      (id === 'calendar') renderCalendar();
+    else if (id === 'chores')   renderChores();
+    else if (id === 'history')  renderHistory();
+    else if (id === 'people')   renderPeople();
+    else if (id === 'rooms')    renderRooms();
+  }
+
+  function showIndicator(ratio) {
+    const travel = Math.min(ratio * THRESHOLD, MAX_PULL);
+    ind.classList.add('pulling');
+    ind.style.transform = `translateY(${travel - 52}px)`;
+    label.textContent = ratio >= 1 ? 'Release to refresh' : 'Pull down to refresh';
+    spinner.style.transform = ratio >= 1 ? 'rotate(180deg)' : '';
+  }
+
+  function resetIndicator() {
+    ind.classList.remove('pulling');
+    ind.style.transform = '';
+  }
+
+  function triggerRefresh() {
+    ind.classList.remove('pulling');
+    ind.classList.add('visible');
+    label.textContent = 'Refreshing…';
+    spinner.classList.add('spin');
+    spinner.style.transform = '';
+    setTimeout(() => {
+      refreshActivePage();
+      setTimeout(() => {
+        ind.classList.remove('visible');
+        spinner.classList.remove('spin');
+        label.textContent = 'Pull down to refresh';
+      }, 400);
+    }, 300);
+  }
+
+  document.addEventListener('touchstart', e => {
+    if (window.scrollY > 0) return;
+    if (e.target.closest('.modal-overlay')) return;
+    startY = e.touches[0].clientY;
+    pulling = false; triggered = false;
+  }, { passive: true });
+
+  document.addEventListener('touchmove', e => {
+    if (e.target.closest('.modal-overlay')) return;
+    const delta = e.touches[0].clientY - startY;
+    if (delta <= 0 || window.scrollY > 4) { if (pulling) { pulling = false; resetIndicator(); } return; }
+    pulling = true;
+    const ratio = delta / THRESHOLD;
+    showIndicator(ratio);
+    triggered = ratio >= 1;
+  }, { passive: true });
+
+  document.addEventListener('touchend', () => {
+    if (!pulling) return;
+    pulling = false;
+    if (triggered) triggerRefresh();
+    else resetIndicator();
+    triggered = false;
+  });
+})();
+</script>
+</body>
+</html>
