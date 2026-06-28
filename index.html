@@ -1,3 +1,6 @@
+Got it — one Admin account, three kids, PIN fix, and Change PIN in settings. Here's the complete fresh script:
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31,7 +34,7 @@
   .input { width: 100%; padding: 10px 12px; border: 1px solid #0f3460; border-radius: 8px; background: #1a1a2e; color: #eee; font-size: 14px; }
   .input:focus { outline: none; border-color: #e94560; }
   select.input { cursor: pointer; }
-  .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 16px; }
+  .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 16px; }
   .modal { background: #16213e; border-radius: 16px; padding: 24px; width: 100%; max-width: 400px; border: 1px solid #0f3460; max-height: 80vh; overflow-y: auto; }
   .modal h2 { margin-bottom: 16px; color: #e94560; }
   .form-group { margin-bottom: 14px; }
@@ -111,8 +114,8 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp);
 
-const ADMIN_PIN = '1234';
-const EMOJIS = ['🛋️','🍳','🛁','🛏️','🧹','🌿','🚗','📦','🐕','🐈','🧺','🪣','🧴','🪴','⭐','🏠','🔧','🎮','📚','🧸'];
+const DEFAULT_PIN = '1234';
+const EMOJIS = ['🛋️','🍳','🛁','🛏️','🧹','🌿','🚗','📦','🐕','🐈','🧺','🪣','🧴','🪴','⭐','🏠','🔧','🎮','📚','🧸','👨','👩','👦','👧','🧑','👴','👵','🧒'];
 
 const PROVERBS = {
   1:  { text: "The fear of the Lord is the beginning of knowledge; fools despise wisdom and instruction.", ref: "Proverbs 1:7" },
@@ -149,22 +152,39 @@ const PROVERBS = {
 };
 
 function getTodaysProverb() {
-  const day = new Date().getDate();
-  return PROVERBS[day] || PROVERBS[1];
+  return PROVERBS[new Date().getDate()] || PROVERBS[1];
 }
 
+// SINGLE screen state — only one screen shows at a time
+const SCREEN = {
+  USER_SELECT: 'user_select',
+  PIN: 'pin',
+  MAIN: 'main',
+};
+
 let state = {
+  screen: SCREEN.USER_SELECT,
   tab: 'calendar',
   chores: [], people: [], history: [], rooms: [],
-  settings: { adminPin: ADMIN_PIN },
-  currentUser: null, isAdmin: false,
-  showAddChore: false, showAddPerson: false, showAddRoom: false,
-  showPinModal: false, showChoreList: false,
-  selectedDate: new Date(), calendarDate: new Date(),
-  editingChore: null, editingPerson: null, editingRoom: null,
-  pinBuffer: '', pinAction: null, pinTargetPersonId: null,
-  showEmojiPicker: false, emojiTarget: null,
-  loading: true, showCashOutConfirm: null,
+  settings: { adminPin: DEFAULT_PIN },
+  currentUser: null,
+  isAdmin: false,
+  pinBuffer: '',
+  pinAction: null,
+  showAddChore: false,
+  showAddPerson: false,
+  showAddRoom: false,
+  showChoreList: false,
+  showEmojiPicker: false,
+  showCashOutConfirm: null,
+  showChangePinModal: false,
+  selectedDate: new Date(),
+  calendarDate: new Date(),
+  editingChore: null,
+  editingPerson: null,
+  editingRoom: null,
+  emojiTarget: null,
+  loading: true,
 };
 
 function todayKey() {
@@ -207,7 +227,7 @@ async function initData() {
   state.people   = people   || getDefaultPeople();
   state.history  = history  || [];
   state.rooms    = rooms    || getDefaultRooms();
-  state.settings = settings || { adminPin: ADMIN_PIN };
+  state.settings = settings || { adminPin: DEFAULT_PIN };
   state.loading  = false;
   ['chores','people','history','rooms','settings'].forEach(key => {
     onSnapshot(doc(db, 'family', key), snap => {
@@ -228,8 +248,10 @@ function getDefaultRooms() {
 }
 function getDefaultPeople() {
   return [
-    { id:1, name:'Dad', emoji:'👨', isAdmin:true,  totalEarned:0 },
-    { id:2, name:'Mom', emoji:'👩', isAdmin:true,  totalEarned:0 },
+    { id:0,  name:'Admin', emoji:'👑', isAdmin:true,  totalEarned:0 },
+    { id:10, name:'Eli',   emoji:'👦', isAdmin:false, totalEarned:0 },
+    { id:11, name:'Kid 2', emoji:'👧', isAdmin:false, totalEarned:0 },
+    { id:12, name:'Kid 3', emoji:'🧒', isAdmin:false, totalEarned:0 },
   ];
 }
 function getDefaultChores() {
@@ -257,7 +279,6 @@ function getChoresForDate(date) {
     return lastDone >= chore.freq;
   });
 }
-
 function isChoreAvailableToUser(chore) {
   if (state.isAdmin) return true;
   if (!state.currentUser) return false;
@@ -265,12 +286,10 @@ function isChoreAvailableToUser(chore) {
   if (room && room.owner && room.owner !== state.currentUser.id) return false;
   return true;
 }
-function isDoneToday(chore) {
-  return chore.doneBy && chore.doneBy[todayKey()];
-}
+function isDoneToday(chore) { return chore.doneBy && chore.doneBy[todayKey()]; }
 function canUndo(h) {
   if (state.isAdmin) return true;
-  if (!state.currentUser && !state.showPinModal) html += renderUserSelect();
+  if (!state.currentUser) return false;
   return h.who === state.currentUser.name;
 }
 
@@ -280,10 +299,8 @@ async function toggleChore(choreId) {
   if (!chore) return;
   if (!isChoreAvailableToUser(chore)) { showToast('This room belongs to someone else', '#e94560'); return; }
   if (!chore.doneBy) chore.doneBy = {};
-  const wasDone = isDoneToday(chore);
-  if (wasDone) {
-    const whoDidIt = chore.doneBy[dk];
-    if (!state.isAdmin && state.currentUser && whoDidIt !== state.currentUser.name) {
+  if (isDoneToday(chore)) {
+    if (!state.isAdmin && chore.doneBy[dk] !== state.currentUser?.name) {
       showToast('Only the person who did this (or admin) can uncheck it', '#e94560'); return;
     }
     delete chore.doneBy[dk];
@@ -293,7 +310,7 @@ async function toggleChore(choreId) {
     chore.doneBy[dk] = who;
     state.history.unshift({ id: Date.now(), choreId, choreName: chore.name, date: dk, who, value: chore.value, room: chore.room });
     if (state.history.length > 200) state.history = state.history.slice(0, 200);
-    if (state.currentUser && state.currentUser.id !== -1) {
+    if (state.currentUser && state.currentUser.id !== 0) {
       const person = state.people.find(p => p.id === state.currentUser.id);
       if (person) person.totalEarned = (person.totalEarned || 0) + chore.value;
     }
@@ -317,11 +334,11 @@ async function cashOut(personId) {
   render();
 }
 
-function openPinModal(action, personId) {
+// PIN handling
+function startPin(action) {
   state.pinAction = action;
-  state.pinTargetPersonId = personId !== undefined ? personId : null;
   state.pinBuffer = '';
-  state.showPinModal = true;
+  state.screen = SCREEN.PIN;
   render();
 }
 function handlePinKey(key) {
@@ -329,24 +346,25 @@ function handlePinKey(key) {
   if (state.pinBuffer.length >= 4) return;
   state.pinBuffer += key;
   render();
-  if (state.pinBuffer.length === 4) setTimeout(() => checkPin(), 200);
+  if (state.pinBuffer.length === 4) setTimeout(checkPin, 200);
 }
 function checkPin() {
-  const pin = state.settings.adminPin || ADMIN_PIN;
+  const pin = state.settings.adminPin || DEFAULT_PIN;
   if (state.pinBuffer === pin) {
-    state.showPinModal = false; state.pinBuffer = '';
-    if (state.pinAction === 'admin') {
+    state.pinBuffer = '';
+    if (state.pinAction === 'login') {
+      state.currentUser = state.people.find(p => p.isAdmin) || { id:0, name:'Admin', emoji:'👑', isAdmin:true };
       state.isAdmin = true;
-      state.currentUser = state.people.find(p => p.isAdmin) || state.people[0];
-      showToast('Admin mode on');
-    } else if (state.pinAction === 'selectAdmin') {
-      const person = state.people.find(p => p.id === state.pinTargetPersonId);
-      if (person) { state.currentUser = person; state.isAdmin = true; showToast(`Welcome, ${person.name}!`); }
-    } else if (state.pinAction === 'addChore') { state.showAddChore = true; }
-    else if (state.pinAction === 'addRoom')    { state.showAddRoom  = true; }
+      state.screen = SCREEN.MAIN;
+      showToast('Welcome, Admin!');
+    } else if (state.pinAction === 'changePin') {
+      state.screen = SCREEN.MAIN;
+      state.showChangePinModal = true;
+    }
   } else {
     showToast('Wrong PIN', '#e94560');
     state.pinBuffer = '';
+    state.screen = SCREEN.USER_SELECT;
   }
   render();
 }
@@ -354,13 +372,19 @@ function checkPin() {
 function render() {
   const app = document.getElementById('app');
   if (state.loading) { app.innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>'; return; }
+
+  // Route to correct top-level screen
+  if (state.screen === SCREEN.USER_SELECT) { app.innerHTML = renderUserSelectScreen(); return; }
+  if (state.screen === SCREEN.PIN)         { app.innerHTML = renderPinScreen(); return; }
+
+  // MAIN app
   let html = `
     <div class="header">
       <h1>🏠 Chore Calendar</h1>
       <div class="date">${formatDate(new Date())}</div>
-      ${state.currentUser
-        ? `<div class="text-sm mt-8" style="cursor:pointer" onclick="selectUser()">👤 ${state.currentUser.name}${state.isAdmin?' <span class="tag admin">Admin</span>':''} &nbsp;(switch)</div>`
-        : '<div class="text-sm mt-8" style="color:#e94560;cursor:pointer" onclick="selectUser()">Tap to select who you are</div>'}
+      <div class="text-sm mt-8" style="cursor:pointer" onclick="switchUser()">
+        ${state.currentUser.emoji} ${state.currentUser.name}${state.isAdmin?' <span class="tag admin">Admin</span>':''} &nbsp;(switch)
+      </div>
     </div>
     <div class="tabs">
       ${['calendar','chores','people','history','settings'].map(t=>`
@@ -376,17 +400,65 @@ function render() {
   else if (state.tab==='history')  html += renderHistory();
   else if (state.tab==='settings') html += renderSettings();
   html += '</div>';
+
   if (state.tab==='chores' && state.isAdmin) html += `<button class="fab" onclick="addChore()">+</button>`;
-  if (state.tab==='people')                  html += `<button class="fab" onclick="addPerson()">+</button>`;
+  if (state.tab==='people' && state.isAdmin) html += `<button class="fab" onclick="addPerson()">+</button>`;
+
   if (state.showChoreList)      html += renderDayModal();
   if (state.showAddChore)       html += renderAddChoreModal();
   if (state.showAddPerson)      html += renderAddPersonModal();
   if (state.showAddRoom)        html += renderAddRoomModal();
-  if (state.showPinModal)       html += renderPinModal();
   if (state.showEmojiPicker)    html += renderEmojiPicker();
   if (state.showCashOutConfirm) html += renderCashOutConfirm();
-  if (!state.currentUser)       html += renderUserSelect();
+  if (state.showChangePinModal) html += renderChangePinModal();
+
   app.innerHTML = html;
+}
+
+function renderUserSelectScreen() {
+  const kids = state.people.filter(p => !p.isAdmin);
+  return `
+    <div style="min-height:100vh;background:#1a1a2e;display:flex;align-items:center;justify-content:center;padding:24px;">
+      <div style="width:100%;max-width:380px;">
+        <h1 style="text-align:center;color:#e94560;font-size:26px;margin-bottom:4px;">🏠 Chore Calendar</h1>
+        <p style="text-align:center;color:#aaa;font-size:13px;margin-bottom:28px;">${formatDate(new Date())}</p>
+        <p style="color:#aaa;font-size:12px;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Who are you?</p>
+        ${kids.map(p=>`
+          <div class="person-card" onclick="loginAsKid(${p.id})">
+            <div class="person-avatar">${p.emoji}</div>
+            <div class="person-info">
+              <div class="person-name">${p.name}</div>
+              <div class="text-sm">Tap to enter</div>
+            </div>
+          </div>`).join('')}
+        <div class="person-card mt-16" onclick="startPin('login')" style="border-color:#e94560;">
+          <div class="person-avatar" style="background:#3d1f1f;">👑</div>
+          <div class="person-info">
+            <div class="person-name" style="color:#e94560;">Admin</div>
+            <div class="text-sm">🔐 PIN required</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderPinScreen() {
+  return `
+    <div style="min-height:100vh;background:#1a1a2e;display:flex;align-items:center;justify-content:center;padding:24px;">
+      <div style="width:100%;max-width:320px;text-align:center;">
+        <h2 style="color:#e94560;margin-bottom:8px;">🔐 Admin PIN</h2>
+        <p style="color:#aaa;font-size:13px;margin-bottom:16px;">Enter your PIN to continue</p>
+        <div class="pin-dots">
+          ${[0,1,2,3].map(i=>`<div class="pin-dot ${i<state.pinBuffer.length?'filled':''}"></div>`).join('')}
+        </div>
+        <div class="pin-pad">
+          ${[1,2,3,4,5,6,7,8,9].map(n=>`<div class="pin-key" onclick="handlePinKey('${n}')">${n}</div>`).join('')}
+          <div class="pin-key" onclick="handlePinKey('del')">⌫</div>
+          <div class="pin-key" onclick="handlePinKey('0')">0</div>
+          <div class="pin-key" onclick="cancelPin()">✕</div>
+        </div>
+      </div>
+    </div>`;
 }
 
 function renderCalendar() {
@@ -461,8 +533,9 @@ function renderChores() {
 }
 
 function renderPeople() {
-  if (!state.people.length) return `<div class="empty-state"><div class="icon">👥</div><p>No people yet!</p></div>`;
-  const sorted=[...state.people].sort((a,b)=>(b.totalEarned||0)-(a.totalEarned||0));
+  const kids = state.people.filter(p => !p.isAdmin);
+  if (!kids.length) return `<div class="empty-state"><div class="icon">👥</div><p>No kids yet!</p></div>`;
+  const sorted=[...kids].sort((a,b)=>(b.totalEarned||0)-(a.totalEarned||0));
   let html='<div class="section-title">Leaderboard</div>';
   sorted.forEach((person,i)=>{
     html+=`
@@ -470,7 +543,7 @@ function renderPeople() {
         <div class="person-rank">${['🥇','🥈','🥉'][i]||`#${i+1}`}</div>
         <div class="person-avatar">${person.emoji||'👤'}</div>
         <div class="person-info">
-          <div class="person-name">${person.name}${person.isAdmin?'<span class="tag admin">Admin</span>':''}</div>
+          <div class="person-name">${person.name}</div>
           <div class="person-earnings">$${(person.totalEarned||0).toFixed(2)} earned</div>
         </div>
         <div style="display:flex;flex-direction:column;gap:6px">
@@ -516,22 +589,14 @@ function renderSettings() {
         <div class="text-sm mt-8">${room.owner?`Owner: ${state.people.find(p=>p.id===room.owner)?.name||'Unknown'}`:'No owner assigned'}</div>
       </div>`).join('')}
     ${state.isAdmin?`<button class="btn btn-primary w-full" onclick="addRoom()">+ Add Room</button>`:''}
-    <div class="section-title mt-16">Admin</div>
+    ${state.isAdmin?`
+    <div class="section-title mt-16">Admin Tools</div>
     <div class="card">
-      ${state.isAdmin?`
-        <div class="text-green mb-8">✓ Admin mode active</div>
-        <button class="btn btn-secondary w-full" onclick="exitAdmin()">Exit Admin Mode</button>
-        <div class="form-group mt-16">
-          <label>Change Admin PIN</label>
-          <input class="input" type="number" id="newPin" placeholder="Enter new 4-digit PIN">
-          <button class="btn btn-primary w-full mt-8" onclick="changePin()">Update PIN</button>
-        </div>
-        <div class="form-group mt-16">
-          <label>Push All Data to Cloud</label>
-          <button class="btn btn-success w-full" onclick="pushAllData()">☁️ Push to Cloud</button>
-        </div>
-      `:`<button class="btn btn-primary w-full" onclick="openPinModal('admin')">🔐 Enter Admin Mode</button>`}
-    </div>`;
+      <div class="text-green mb-8">✓ Admin mode active</div>
+      <button class="btn btn-secondary w-full mb-8" onclick="state.showChangePinModal=true;render()">🔐 Change PIN</button>
+      <button class="btn btn-success w-full mb-8" onclick="pushAllData()">☁️ Push All Data to Cloud</button>
+      <button class="btn btn-danger w-full" onclick="switchUser()">Exit Admin</button>
+    </div>`:''}`;
 }
 
 function renderDayModal() {
@@ -608,22 +673,18 @@ function renderAddPersonModal() {
     <div class="modal-overlay">
       <div class="modal">
         <h2>${e?'Edit':'Add'} Person</h2>
-        <div class="form-group"><label>Name</label><input class="input" id="personName" placeholder="e.g. Dad" value="${e?e.name:''}"></div>
+        <div class="form-group"><label>Name</label><input class="input" id="personName" placeholder="e.g. Eli" value="${e?e.name:''}"></div>
         <div class="form-group"><label>Emoji</label>
           <div class="row">
             <span id="selectedEmoji" style="font-size:32px">${e?e.emoji:'👤'}</span>
             <button class="btn btn-secondary btn-sm" onclick="openEmojiPicker('person')">Change</button>
           </div>
         </div>
-        <div class="form-group">
-          <label>Is Admin?</label>
-          <input type="checkbox" id="personAdmin" ${e&&e.isAdmin?'checked':''} style="margin-left:8px;width:18px;height:18px">
-        </div>
         <div class="row mt-16" style="gap:10px">
           <button class="btn btn-secondary" style="flex:1" onclick="closePersonModal()">Cancel</button>
           <button class="btn btn-primary" style="flex:1" onclick="savePerson()">Save</button>
         </div>
-        ${e?`<button class="btn btn-danger w-full mt-8" onclick="deletePerson(${e.id})">Remove Person</button>`:''}
+        ${e?`<button class="btn btn-danger w-full mt-8" onclick="deletePerson(${e.id})">Remove</button>`:''}
       </div>
     </div>`;
 }
@@ -644,30 +705,12 @@ function renderAddRoomModal() {
         <div class="form-group"><label>Room Owner (optional)</label>
           <select class="input" id="roomOwner">
             <option value="">No owner</option>
-            ${state.people.map(p=>`<option value="${p.id}" ${e&&e.owner===p.id?'selected':''}>${p.emoji} ${p.name}</option>`).join('')}
+            ${state.people.filter(p=>!p.isAdmin).map(p=>`<option value="${p.id}" ${e&&e.owner===p.id?'selected':''}>${p.emoji} ${p.name}</option>`).join('')}
           </select>
         </div>
         <div class="row mt-16" style="gap:10px">
           <button class="btn btn-secondary" style="flex:1" onclick="closeRoomModal()">Cancel</button>
           <button class="btn btn-primary" style="flex:1" onclick="saveRoom()">Save</button>
-        </div>
-      </div>
-    </div>`;
-}
-
-function renderPinModal() {
-  return `
-    <div class="modal-overlay">
-      <div class="modal" style="text-align:center">
-        <h2>🔐 Enter PIN</h2>
-        <div class="pin-dots">
-          ${[0,1,2,3].map(i=>`<div class="pin-dot ${i<state.pinBuffer.length?'filled':''}"></div>`).join('')}
-        </div>
-        <div class="pin-pad">
-          ${[1,2,3,4,5,6,7,8,9].map(n=>`<div class="pin-key" onclick="handlePinKey('${n}')">${n}</div>`).join('')}
-          <div class="pin-key" onclick="handlePinKey('del')">⌫</div>
-          <div class="pin-key" onclick="handlePinKey('0')">0</div>
-          <div class="pin-key" onclick="state.showPinModal=false;render()">✕</div>
         </div>
       </div>
     </div>`;
@@ -680,7 +723,6 @@ function renderEmojiPicker() {
         <h2>Pick Emoji</h2>
         <div class="emoji-grid">
           ${EMOJIS.map(e=>`<div class="emoji-btn" onclick="selectEmoji('${e}')">${e}</div>`).join('')}
-          ${['👨','👩','👦','👧','🧑','👴','👵','🧒'].map(e=>`<div class="emoji-btn" onclick="selectEmoji('${e}')">${e}</div>`).join('')}
         </div>
         <button class="btn btn-secondary w-full mt-16" onclick="state.showEmojiPicker=false;render()">Cancel</button>
       </div>
@@ -703,49 +745,43 @@ function renderCashOutConfirm() {
     </div>`;
 }
 
-function renderUserSelect() {
+function renderChangePinModal() {
   return `
     <div class="modal-overlay">
-      <div class="modal">
-        <h2>Who are you?</h2>
-        <div class="text-sm mb-8">Select your name to get started.</div>
-        ${state.people.map(p=>`
-          <div class="person-card" onclick="handleUserSelect(${p.id}, ${p.isAdmin === true})">
-            <div class="person-avatar">${p.emoji}</div>
-            <div class="person-info">
-              <div class="person-name">${p.name}</div>
-              <div class="text-sm">${p.isAdmin === true ? '🔐 PIN required' : 'Tap to select'}</div>
-            </div>
-          </div>`).join('')}
-        <button class="btn btn-secondary w-full mt-8" onclick="selectUserById(-1)">Just browsing</button>
+      <div class="modal" style="text-align:center">
+        <h2>🔐 Change PIN</h2>
+        <p style="color:#aaa;font-size:13px;margin-bottom:16px;">Enter a new 4-digit PIN</p>
+        <div class="pin-dots">
+          ${[0,1,2,3].map(i=>`<div class="pin-dot ${i<(state.newPinBuffer||'').length?'filled':''}"></div>`).join('')}
+        </div>
+        <div class="pin-pad">
+          ${[1,2,3,4,5,6,7,8,9].map(n=>`<div class="pin-key" onclick="newPinKey('${n}')">${n}</div>`).join('')}
+          <div class="pin-key" onclick="newPinKey('del')">⌫</div>
+          <div class="pin-key" onclick="newPinKey('0')">0</div>
+          <div class="pin-key" onclick="state.showChangePinModal=false;state.newPinBuffer='';render()">✕</div>
+        </div>
       </div>
     </div>`;
 }
 
-window.handleUserSelect = (id, isAdmin) => {
-  if (isAdmin === true) { openPinModal('selectAdmin', id); }
-  else { selectUserById(id); }
-};
-window.setTab           = t  => { state.tab=t; render(); };
-window.selectUser       = () => { state.currentUser=null; state.isAdmin=false; render(); };
-window.selectUserById   = id => {
-  if (id===-1) { state.currentUser={id:-1,name:'Guest',emoji:'👤'}; state.isAdmin=false; }
-  else { state.currentUser=state.people.find(p=>p.id===id); state.isAdmin=state.currentUser?.isAdmin||false; }
-  render();
-};
-window.prevMonth        = () => { state.calendarDate=new Date(state.calendarDate.getFullYear(),state.calendarDate.getMonth()-1,1); render(); };
-window.nextMonth        = () => { state.calendarDate=new Date(state.calendarDate.getFullYear(),state.calendarDate.getMonth()+1,1); render(); };
-window.openDay          = (y,m,d) => { state.selectedDate=new Date(y,m,d); state.showChoreList=true; render(); };
-window.closeDayModal    = e => { if(e.target.classList.contains('modal-overlay')){state.showChoreList=false;render();} };
-window.toggleChore      = toggleChore;
-window.openPinModal     = openPinModal;
-window.handlePinKey     = handlePinKey;
-window.confirmCashOut   = id => { state.showCashOutConfirm=id; render(); };
-window.cashOut          = cashOut;
-window.addChore         = () => { if(!state.isAdmin){openPinModal('addChore');return;} state.editingChore=null; state.showAddChore=true; render(); };
-window.editChore        = id => { state.editingChore=state.chores.find(c=>c.id===id); state.showAddChore=true; render(); };
-window.closeChoreModal  = () => { state.showAddChore=false; state.editingChore=null; render(); };
-window.saveChore        = async () => {
+// Global functions
+window.loginAsKid    = id => { state.currentUser=state.people.find(p=>p.id===id); state.isAdmin=false; state.screen=SCREEN.MAIN; render(); };
+window.startPin      = startPin;
+window.handlePinKey  = handlePinKey;
+window.cancelPin     = () => { state.screen=SCREEN.USER_SELECT; state.pinBuffer=''; render(); };
+window.switchUser    = () => { state.currentUser=null; state.isAdmin=false; state.screen=SCREEN.USER_SELECT; render(); };
+window.setTab        = t => { state.tab=t; render(); };
+window.prevMonth     = () => { state.calendarDate=new Date(state.calendarDate.getFullYear(),state.calendarDate.getMonth()-1,1); render(); };
+window.nextMonth     = () => { state.calendarDate=new Date(state.calendarDate.getFullYear(),state.calendarDate.getMonth()+1,1); render(); };
+window.openDay       = (y,m,d) => { state.selectedDate=new Date(y,m,d); state.showChoreList=true; render(); };
+window.closeDayModal = e => { if(e.target.classList.contains('modal-overlay')){state.showChoreList=false;render();} };
+window.toggleChore   = toggleChore;
+window.confirmCashOut= id => { state.showCashOutConfirm=id; render(); };
+window.cashOut       = cashOut;
+window.addChore      = () => { state.editingChore=null; state.showAddChore=true; render(); };
+window.editChore     = id => { state.editingChore=state.chores.find(c=>c.id===id); state.showAddChore=true; render(); };
+window.closeChoreModal=() => { state.showAddChore=false; state.editingChore=null; render(); };
+window.saveChore     = async () => {
   const name=document.getElementById('choreName').value.trim();
   const room=document.getElementById('choreRoom').value;
   const value=parseInt(document.getElementById('choreValue').value);
@@ -759,36 +795,35 @@ window.saveChore        = async () => {
   state.showAddChore=false; state.editingChore=null;
   showToast('Chore saved!'); render();
 };
-window.deleteChore      = async id => {
+window.deleteChore   = async id => {
   state.chores=state.chores.filter(c=>c.id!==id);
   await saveToFirebase('chores',state.chores);
   state.showAddChore=false; state.editingChore=null;
   showToast('Chore deleted'); render();
 };
-window.addPerson        = () => { state.editingPerson=null; state.showAddPerson=true; render(); };
-window.editPerson       = id => { state.editingPerson=state.people.find(p=>p.id===id); state.showAddPerson=true; render(); };
-window.closePersonModal = () => { state.showAddPerson=false; state.editingPerson=null; render(); };
-window.savePerson       = async () => {
+window.addPerson     = () => { state.editingPerson=null; state.showAddPerson=true; render(); };
+window.editPerson    = id => { state.editingPerson=state.people.find(p=>p.id===id); state.showAddPerson=true; render(); };
+window.closePersonModal=() => { state.showAddPerson=false; state.editingPerson=null; render(); };
+window.savePerson    = async () => {
   const name=document.getElementById('personName').value.trim();
   const emoji=document.getElementById('selectedEmoji')?.textContent||'👤';
-  const isAdmin=document.getElementById('personAdmin').checked;
   if(!name){showToast('Enter a name','#e94560');return;}
-  if(state.editingPerson){Object.assign(state.editingPerson,{name,emoji,isAdmin});}
-  else{state.people.push({id:Date.now(),name,emoji,isAdmin,totalEarned:0});}
+  if(state.editingPerson){Object.assign(state.editingPerson,{name,emoji});}
+  else{state.people.push({id:Date.now(),name,emoji,isAdmin:false,totalEarned:0});}
   await saveToFirebase('people',state.people);
   state.showAddPerson=false; state.editingPerson=null;
   showToast('Saved!'); render();
 };
-window.deletePerson     = async id => {
+window.deletePerson  = async id => {
   state.people=state.people.filter(p=>p.id!==id);
   await saveToFirebase('people',state.people);
   state.showAddPerson=false; state.editingPerson=null;
   showToast('Removed'); render();
 };
-window.addRoom          = () => { state.editingRoom=null; state.showAddRoom=true; render(); };
-window.editRoom         = id => { state.editingRoom=state.rooms.find(r=>r.id===id); state.showAddRoom=true; render(); };
-window.closeRoomModal   = () => { state.showAddRoom=false; state.editingRoom=null; render(); };
-window.saveRoom         = async () => {
+window.addRoom       = () => { state.editingRoom=null; state.showAddRoom=true; render(); };
+window.editRoom      = id => { state.editingRoom=state.rooms.find(r=>r.id===id); state.showAddRoom=true; render(); };
+window.closeRoomModal= () => { state.showAddRoom=false; state.editingRoom=null; render(); };
+window.saveRoom      = async () => {
   const name=document.getElementById('roomName').value.trim();
   const emoji=document.getElementById('roomEmoji')?.textContent||'🏠';
   const owner=document.getElementById('roomOwner').value||null;
@@ -799,25 +834,25 @@ window.saveRoom         = async () => {
   state.showAddRoom=false; state.editingRoom=null;
   showToast('Room saved!'); render();
 };
-window.deleteRoom       = async id => {
+window.deleteRoom    = async id => {
   state.rooms=state.rooms.filter(r=>r.id!==id);
   await saveToFirebase('rooms',state.rooms);
   showToast('Room deleted'); render();
 };
-window.openEmojiPicker  = target => { state.emojiTarget=target; state.showEmojiPicker=true; render(); };
-window.selectEmoji      = emoji => {
+window.openEmojiPicker=target=>{state.emojiTarget=target;state.showEmojiPicker=true;render();};
+window.selectEmoji   = emoji => {
   state.showEmojiPicker=false;
   const el=document.getElementById(state.emojiTarget==='person'?'selectedEmoji':'roomEmoji');
   if(el) el.textContent=emoji;
   render();
 };
-window.undoHistory      = async id => {
+window.undoHistory   = async id => {
   const h=state.history.find(x=>x.id===id);
   if(!h) return;
   if(!canUndo(h)){showToast("You can't undo someone else's chore",'#e94560');return;}
   const chore=state.chores.find(c=>c.id===h.choreId);
   if(chore&&chore.doneBy) delete chore.doneBy[h.date];
-  if(h.who!=='Someone'&&h.who!=='Guest'){
+  if(h.who!=='Someone'){
     const person=state.people.find(p=>p.name===h.who);
     if(person) person.totalEarned=Math.max(0,(person.totalEarned||0)-h.value);
   }
@@ -829,15 +864,24 @@ window.undoHistory      = async id => {
   ]);
   showToast('Undone!'); render();
 };
-window.exitAdmin        = () => { state.isAdmin=false; render(); };
-window.changePin        = async () => {
-  const newPin=document.getElementById('newPin')?.value;
-  if(!newPin||newPin.length!==4||isNaN(newPin)){showToast('Enter a valid 4-digit PIN','#e94560');return;}
-  state.settings.adminPin=newPin;
-  await saveToFirebase('settings',state.settings);
-  showToast('PIN updated!');
+window.newPinKey     = key => {
+  if(!state.newPinBuffer) state.newPinBuffer='';
+  if(key==='del'){state.newPinBuffer=state.newPinBuffer.slice(0,-1);render();return;}
+  if(state.newPinBuffer.length>=4) return;
+  state.newPinBuffer+=key;
+  render();
+  if(state.newPinBuffer.length===4){
+    setTimeout(async()=>{
+      state.settings.adminPin=state.newPinBuffer;
+      await saveToFirebase('settings',state.settings);
+      state.showChangePinModal=false;
+      state.newPinBuffer='';
+      showToast('PIN updated! ✓');
+      render();
+    },200);
+  }
 };
-window.pushAllData      = async () => {
+window.pushAllData   = async () => {
   await Promise.all([
     saveToFirebase('chores',state.chores),
     saveToFirebase('people',state.people),
@@ -845,12 +889,14 @@ window.pushAllData      = async () => {
     saveToFirebase('rooms',state.rooms),
     saveToFirebase('settings',state.settings),
   ]);
-  showToast('All data pushed to cloud! ☁️');
+  showToast('All data pushed! ☁️');
 };
-
 window.state=state;
 window.render=render;
 initData();
 </script>
 </body>
 </html>
+```
+
+The big change here is the PIN now gets its **own full screen** — completely separate from the user select screen. No more overlap issues. Tap Admin → full screen PIN pad appears → enter 1234 → you're in. Let me know how it goes!
