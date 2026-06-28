@@ -1,3 +1,6 @@
+Here's the complete updated script:
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -43,6 +46,7 @@
   .chore-item.overdue { border-color: #c0392b; background: #2a1a1a; }
   .chore-item.warning { border-color: #f39c12; background: #2a2210; }
   .chore-item.exempted { border-color: #f39c12; background: #2a2210; }
+  .chore-item.urgent { border-color: #9b59b6; background: #1e1a2e; }
   .checkbox { width: 24px; height: 24px; border: 2px solid #e94560; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
   .checkbox.checked { background: #e94560; }
   .chore-info { flex: 1; }
@@ -58,6 +62,7 @@
   .person-earnings { font-size: 13px; color: #27ae60; }
   .person-rank { font-size: 24px; font-weight: 700; color: #e94560; }
   .history-item { padding: 10px; background: #1a1a2e; border-radius: 8px; margin-bottom: 6px; border-left: 3px solid #27ae60; display: flex; justify-content: space-between; align-items: center; }
+  .history-item.urgent-history { border-left-color: #9b59b6; }
   .section-title { font-size: 13px; font-weight: 700; color: #aaa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; margin-top: 16px; }
   .fab { position: fixed; bottom: 80px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: #e94560; border: none; color: white; font-size: 28px; cursor: pointer; box-shadow: 0 4px 16px rgba(233,69,96,0.4); z-index: 50; display: flex; align-items: center; justify-content: center; }
   .pin-dots { display: flex; gap: 12px; justify-content: center; margin: 16px 0; }
@@ -78,7 +83,7 @@
   .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; background: #0f3460; color: #aaa; margin-left: 6px; }
   .tag.admin { background: #3d1f1f; color: #e94560; }
   .tag.locked { background: #3d1f1f; color: #e94560; }
-  .tag.overdue { background: #3d1000; color: #f39c12; }
+  .tag.urgent { background: #2d1f3d; color: #9b59b6; }
   .empty-state { text-align: center; padding: 40px 20px; color: #555; }
   .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
   .row { display: flex; gap: 10px; align-items: center; }
@@ -87,6 +92,7 @@
   .text-green { color: #27ae60; }
   .text-red { color: #e94560; }
   .text-orange { color: #f39c12; }
+  .text-purple { color: #9b59b6; }
   .mt-8 { margin-top: 8px; }
   .mt-16 { margin-top: 16px; }
   .mb-8 { margin-bottom: 8px; }
@@ -157,14 +163,13 @@ const PROVERBS = {
 
 function getTodaysProverb() { return PROVERBS[new Date().getDate()] || PROVERBS[1]; }
 
-const SCREEN = { USER_SELECT: 'user_select', PIN: 'pin', MAIN: 'main' };
+const SCREEN = { USER_SELECT:'user_select', PIN:'pin', MAIN:'main' };
 
 let state = {
   screen: SCREEN.USER_SELECT,
   tab: 'calendar',
   chores: [], people: [], history: [], rooms: [],
   settings: { adminPin: DEFAULT_PIN },
-  // locks: { choreId: { personId, exemptToday } }
   locks: {},
   currentUser: null, isAdmin: false,
   pinBuffer: '', pinAction: null, newPinBuffer: '',
@@ -175,7 +180,6 @@ let state = {
   loading: true,
 };
 
-// ── DATE HELPERS ─────────────────────────────────────────────────────────────
 function todayKey() {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -184,13 +188,11 @@ function dateKey(d) {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 function formatDate(d) {
-  return d.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
+  return d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
 }
-function daysBetween(dateStr1, dateStr2) {
-  const d1 = new Date(dateStr1), d2 = new Date(dateStr2);
-  return Math.round((d2 - d1) / 86400000);
+function daysBetween(d1str, d2str) {
+  return Math.round((new Date(d2str) - new Date(d1str)) / 86400000);
 }
-
 function showToast(msg, color) {
   const t = document.createElement('div');
   t.className = 'toast';
@@ -200,21 +202,20 @@ function showToast(msg, color) {
   setTimeout(() => t.remove(), 2200);
 }
 
-// ── FIREBASE ─────────────────────────────────────────────────────────────────
 async function saveToFirebase(key, data) {
-  try { await setDoc(doc(db, 'family', key), { data: JSON.stringify(data) }); }
-  catch(e) { console.error('Save error', e); }
+  try { await setDoc(doc(db,'family',key),{data:JSON.stringify(data)}); }
+  catch(e) { console.error('Save error',e); }
 }
 async function loadFromFirebase(key) {
   try {
-    const snap = await getDoc(doc(db, 'family', key));
+    const snap = await getDoc(doc(db,'family',key));
     if (snap.exists()) return JSON.parse(snap.data().data);
-  } catch(e) { console.error('Load error', e); }
+  } catch(e) { console.error('Load error',e); }
   return null;
 }
 
 async function initData() {
-  const [chores, people, history, rooms, settings, locks] = await Promise.all([
+  const [chores,people,history,rooms,settings,locks] = await Promise.all([
     loadFromFirebase('chores'), loadFromFirebase('people'),
     loadFromFirebase('history'), loadFromFirebase('rooms'),
     loadFromFirebase('settings'), loadFromFirebase('locks'),
@@ -223,142 +224,95 @@ async function initData() {
   state.people   = people   || getDefaultPeople();
   state.history  = history  || [];
   state.rooms    = rooms    || getDefaultRooms();
-  state.settings = settings || { adminPin: DEFAULT_PIN };
+  state.settings = settings || {adminPin:DEFAULT_PIN};
   state.locks    = locks    || {};
   state.loading  = false;
-
   ['chores','people','history','rooms','settings','locks'].forEach(key => {
-    onSnapshot(doc(db, 'family', key), snap => {
-      if (snap.exists()) { state[key] = JSON.parse(snap.data().data); processOverdue(); render(); }
+    onSnapshot(doc(db,'family',key), snap => {
+      if (snap.exists()) { state[key]=JSON.parse(snap.data().data); processOverdue(); render(); }
     });
   });
-
   processOverdue();
   render();
 }
 
 function getDefaultRooms() {
   return [
-    { id:1, name:'Kitchen' },
-    { id:2, name:'Living Room' },
-    { id:3, name:'Bathrooms' },
-    { id:4, name:'Bedrooms' },
-    { id:5, name:'Outdoors' },
+    {id:1,name:'Kitchen',owner:null},
+    {id:2,name:'Living Room',owner:null},
+    {id:3,name:'Bathrooms',owner:null},
+    {id:4,name:'Bedrooms',owner:null},
+    {id:5,name:'Outdoors',owner:null},
   ];
 }
 function getDefaultPeople() {
   return [
-    { id:0,  name:'Admin', isAdmin:true,  totalEarned:0 },
-    { id:10, name:'Eli',   isAdmin:false, totalEarned:0 },
-    { id:11, name:'Kid 2', isAdmin:false, totalEarned:0 },
-    { id:12, name:'Kid 3', isAdmin:false, totalEarned:0 },
+    {id:0, name:'Admin', isAdmin:true,  totalEarned:0},
+    {id:10,name:'Eli',   isAdmin:false, totalEarned:0},
+    {id:11,name:'Kid 2', isAdmin:false, totalEarned:0},
+    {id:12,name:'Kid 3', isAdmin:false, totalEarned:0},
   ];
 }
 function getDefaultChores() {
   return [
-    { id:1, name:'Wash Dishes',    room:'Kitchen',     freq:1, value:2, doneBy:{}, asNeeded:false, lastCompleted:null },
-    { id:2, name:'Vacuum',         room:'Living Room', freq:3, value:3, doneBy:{}, asNeeded:false, lastCompleted:null },
-    { id:3, name:'Clean Toilet',   room:'Bathrooms',   freq:7, value:3, doneBy:{}, asNeeded:false, lastCompleted:null },
-    { id:4, name:'Mow Lawn',       room:'Outdoors',    freq:7, value:5, doneBy:{}, asNeeded:false, lastCompleted:null },
-    { id:5, name:'Take Out Trash', room:'Kitchen',     freq:2, value:2, doneBy:{}, asNeeded:false, lastCompleted:null },
+    {id:1,name:'Wash Dishes',   room:'Kitchen',     freq:1, value:2,doneBy:{},urgent:false,lastCompleted:null},
+    {id:2,name:'Vacuum',        room:'Living Room', freq:3, value:3,doneBy:{},urgent:false,lastCompleted:null},
+    {id:3,name:'Clean Toilet',  room:'Bathrooms',   freq:7, value:3,doneBy:{},urgent:false,lastCompleted:null},
+    {id:4,name:'Mow Lawn',      room:'Outdoors',    freq:7, value:5,doneBy:{},urgent:false,lastCompleted:null},
+    {id:5,name:'Take Out Trash',room:'Kitchen',     freq:2, value:2,doneBy:{},urgent:false,lastCompleted:null},
   ];
 }
 
-// ── OVERDUE LOGIC ─────────────────────────────────────────────────────────────
-function getDaysOverdue(chore) {
-  if (chore.asNeeded || chore.freq === 1) return 0;
-  const dk = todayKey();
-  if (chore.doneBy && chore.doneBy[dk]) return 0; // done today
-  if (!chore.lastCompleted) {
-    // Never completed — count from first day
-    return 0;
-  }
-  const daysSince = daysBetween(chore.lastCompleted, dk);
-  return Math.max(0, daysSince - chore.freq);
-}
-
+// ── CHORE STATUS ──────────────────────────────────────────────────────────────
 function getChoreStatus(chore) {
-  // 'normal' | 'warning' | 'overdue' | 'exempted'
-  if (chore.asNeeded) return 'normal';
+  if (chore.urgent) return 'urgent';
+  if (chore.freq === 1) return 'normal';
   const dk = todayKey();
   if (chore.doneBy && chore.doneBy[dk]) return 'normal';
-  if (chore.freq === 1) return 'normal';
   if (!chore.lastCompleted) return 'normal';
-
   const daysSince = daysBetween(chore.lastCompleted, dk);
   const pct = daysSince / chore.freq;
-
-  // Check if exempted today
   const lock = state.locks[chore.id];
   if (lock && lock.exemptToday === dk) return 'exempted';
-
   if (pct >= 1) return 'overdue';
   if (pct >= 0.5) return 'warning';
   return 'normal';
 }
 
-function shouldChoreShow(chore) {
-  if (chore.asNeeded) return true;
-  const dk = todayKey();
-  if (chore.doneBy && chore.doneBy[dk]) return true; // show completed ones
-
-  if (chore.freq === 1) return true; // daily always shows
-
-  if (!chore.lastCompleted) return true; // never done, show it
-
-  const daysSince = daysBetween(chore.lastCompleted, dk);
-
-  // If overdue (past due date), always carry over and show
-  if (daysSince >= chore.freq) return true;
-
-  // Show when it's due
-  return daysSince >= chore.freq;
-}
-
 function getChoresForDate(date) {
   const dk = dateKey(date);
-  const todayDk = todayKey();
-  const isToday = dk === todayDk;
-
   return state.chores.filter(chore => {
-    if (chore.asNeeded) return true;
+    if (chore.urgent) return true;
     if (chore.doneBy && chore.doneBy[dk]) return true;
     if (chore.freq === 1) return true;
     if (!chore.lastCompleted) return true;
-
     const daysSince = daysBetween(chore.lastCompleted, dk);
     return daysSince >= chore.freq;
   });
 }
 
-// Assign overdue chores to last place kid
+// ── OVERDUE / LOCKS ───────────────────────────────────────────────────────────
 function processOverdue() {
   const kids = state.people.filter(p => !p.isAdmin);
   if (!kids.length) return;
-
   const dk = todayKey();
   let changed = false;
 
-  // Find all overdue chores (100%+) not already locked
   const overdueChores = state.chores.filter(chore => {
-    if (chore.asNeeded || chore.freq === 1) return false;
+    if (chore.urgent || chore.freq === 1) return false;
     if (chore.doneBy && chore.doneBy[dk]) return false;
     if (!chore.lastCompleted) return false;
-    const daysSince = daysBetween(chore.lastCompleted, dk);
-    return daysSince >= chore.freq;
+    return daysBetween(chore.lastCompleted, dk) >= chore.freq;
   });
 
-  // Sort kids by earnings ascending (last place first)
-  const sortedKids = [...kids].sort((a,b) => (a.totalEarned||0) - (b.totalEarned||0));
-
+  const sortedKids = [...kids].sort((a,b) => (a.totalEarned||0)-(b.totalEarned||0));
   overdueChores.forEach((chore, idx) => {
-    if (state.locks[chore.id] && state.locks[chore.id].personId !== undefined) return; // already assigned
+    if (state.locks[chore.id] && state.locks[chore.id].personId !== undefined) return;
     const kid = sortedKids[idx % sortedKids.length];
-    state.locks[chore.id] = { personId: kid.id, assignedDate: dk, exemptToday: null };
+    state.locks[chore.id] = {personId:kid.id, assignedDate:dk, exemptToday:null};
     changed = true;
   });
 
-  // Clear locks for completed chores
   Object.keys(state.locks).forEach(choreId => {
     const chore = state.chores.find(c => c.id === parseInt(choreId));
     if (!chore) { delete state.locks[choreId]; changed = true; return; }
@@ -369,30 +323,24 @@ function processOverdue() {
 }
 
 function isPersonLocked(personId) {
-  return Object.values(state.locks).some(lock => {
-    if (lock.personId !== personId) return false;
-    if (lock.exemptToday === todayKey()) return false;
-    return true;
-  });
+  return Object.values(state.locks).some(lock =>
+    lock.personId === personId && lock.exemptToday !== todayKey()
+  );
 }
-
 function getLockedChoresForPerson(personId) {
   return Object.entries(state.locks)
     .filter(([,lock]) => lock.personId === personId && lock.exemptToday !== todayKey())
     .map(([choreId]) => state.chores.find(c => c.id === parseInt(choreId)))
     .filter(Boolean);
 }
-
 function getChoreValueForUser(chore, personId) {
-  if (!personId || personId === 0) return chore.value;
-  // If this chore itself is the locked chore for this person, worth $0
+  if (!personId && personId !== 0) return chore.value;
+  if (personId === 0) return chore.value;
   const lock = state.locks[chore.id];
   if (lock && lock.personId === personId && lock.exemptToday !== todayKey()) return 0;
-  // If person is locked by any overdue chore, all other chores worth $0
   if (isPersonLocked(personId)) return 0;
   return chore.value;
 }
-
 function isChoreAvailableToUser(chore) {
   if (state.isAdmin) return true;
   if (!state.currentUser) return false;
@@ -407,28 +355,34 @@ function canUndo(h) {
   return h.who === state.currentUser.name;
 }
 
-// ── ACTIONS ───────────────────────────────────────────────────────────────────
+// ── TOGGLE CHORE ──────────────────────────────────────────────────────────────
 async function toggleChore(choreId) {
   const dk = todayKey();
   const chore = state.chores.find(c => c.id === choreId);
   if (!chore) return;
-  if (!isChoreAvailableToUser(chore)) { showToast('This room belongs to someone else', '#e94560'); return; }
+  if (!isChoreAvailableToUser(chore)) { showToast('This room belongs to someone else','#e94560'); return; }
   if (!chore.doneBy) chore.doneBy = {};
 
   if (isDoneToday(chore)) {
+    // Unchecking
     if (!state.isAdmin && chore.doneBy[dk] !== state.currentUser?.name) {
-      showToast('Only the person who did this (or admin) can uncheck it', '#e94560'); return;
+      showToast('Only the person who did this (or admin) can uncheck it','#e94560'); return;
+    }
+    const entry = state.history.find(h => h.choreId === choreId && h.date === dk);
+    if (entry) {
+      const person = state.people.find(p => p.name === entry.who);
+      if (person && entry.value > 0) person.totalEarned = Math.max(0,(person.totalEarned||0)-entry.value);
     }
     delete chore.doneBy[dk];
-    chore.lastCompleted = null; // revert
+    chore.lastCompleted = null;
     state.history = state.history.filter(h => !(h.choreId === choreId && h.date === dk));
-    // Restore earnings
-    const entry = state.history.find(h => h.choreId === choreId && h.date === dk);
-    if (entry && entry.who !== 'Someone') {
-      const person = state.people.find(p => p.name === entry.who);
-      if (person) person.totalEarned = Math.max(0, (person.totalEarned||0) - entry.value);
+
+    // If urgent was restored via undo and unchecked again, put it back
+    if (chore.urgent && !state.chores.find(c => c.id === choreId)) {
+      state.chores.push(chore);
     }
   } else {
+    // Checking
     const who = state.currentUser ? state.currentUser.name : 'Someone';
     const personId = state.currentUser ? state.currentUser.id : null;
     const earnedValue = personId !== null ? getChoreValueForUser(chore, personId) : chore.value;
@@ -436,16 +390,35 @@ async function toggleChore(choreId) {
     chore.doneBy[dk] = who;
     chore.lastCompleted = dk;
 
-    state.history.unshift({ id: Date.now(), choreId, choreName: chore.name, date: dk, who, value: earnedValue, room: chore.room });
-    if (state.history.length > 200) state.history = state.history.slice(0, 200);
+    state.history.unshift({
+      id: Date.now(), choreId, choreName: chore.name,
+      date: dk, who, value: earnedValue, room: chore.room,
+      urgent: chore.urgent || false,
+      // Store chore snapshot for undo of urgent chores
+      choreSnapshot: chore.urgent ? JSON.parse(JSON.stringify(chore)) : null,
+    });
+    if (state.history.length > 200) state.history = state.history.slice(0,200);
 
-    if (state.currentUser && state.currentUser.id !== 0) {
+    if (state.currentUser && state.currentUser.id !== 0 && earnedValue > 0) {
       const person = state.people.find(p => p.id === state.currentUser.id);
-      if (person && earnedValue > 0) person.totalEarned = (person.totalEarned || 0) + earnedValue;
+      if (person) person.totalEarned = (person.totalEarned||0) + earnedValue;
     }
 
-    if (earnedValue === 0) showToast(`Completed (Restricted Pay) — $0`, '#e94560');
+    if (earnedValue === 0) showToast('Completed (Restricted Pay) — $0','#e94560');
     else showToast(`+$${earnedValue} earned! 🎉`);
+
+    // If urgent — delete after short delay so user sees the check
+    if (chore.urgent) {
+      setTimeout(async () => {
+        state.chores = state.chores.filter(c => c.id !== choreId);
+        delete state.locks[choreId];
+        await Promise.all([
+          saveToFirebase('chores', state.chores),
+          saveToFirebase('locks', state.locks),
+        ]);
+        render();
+      }, 800);
+    }
   }
 
   processOverdue();
@@ -456,6 +429,43 @@ async function toggleChore(choreId) {
     saveToFirebase('locks', state.locks),
   ]);
   render();
+}
+
+async function undoHistory(id) {
+  const h = state.history.find(x => x.id === id);
+  if (!h) return;
+  if (!canUndo(h)) { showToast("You can't undo someone else's chore",'#e94560'); return; }
+
+  // Reverse earnings
+  if (h.who !== 'Someone' && h.value > 0) {
+    const person = state.people.find(p => p.name === h.who);
+    if (person) person.totalEarned = Math.max(0,(person.totalEarned||0)-h.value);
+  }
+
+  // If urgent — restore chore from snapshot
+  if (h.urgent && h.choreSnapshot) {
+    const exists = state.chores.find(c => c.id === h.choreId);
+    if (!exists) {
+      const restored = JSON.parse(JSON.stringify(h.choreSnapshot));
+      restored.doneBy = {};
+      restored.lastCompleted = null;
+      state.chores.push(restored);
+    }
+  } else {
+    // Regular chore — uncheck it
+    const chore = state.chores.find(c => c.id === h.choreId);
+    if (chore && chore.doneBy) { delete chore.doneBy[h.date]; chore.lastCompleted = null; }
+  }
+
+  state.history = state.history.filter(x => x.id !== id);
+  processOverdue();
+  await Promise.all([
+    saveToFirebase('chores', state.chores),
+    saveToFirebase('history', state.history),
+    saveToFirebase('people', state.people),
+    saveToFirebase('locks', state.locks),
+  ]);
+  showToast('Undone!'); render();
 }
 
 async function cashOut(personId) {
@@ -469,12 +479,9 @@ async function cashOut(personId) {
 }
 
 async function adminExemptChore(choreId) {
-  const dk = todayKey();
-  if (state.locks[choreId]) {
-    state.locks[choreId].exemptToday = dk;
-  }
+  if (state.locks[choreId]) state.locks[choreId].exemptToday = todayKey();
   await saveToFirebase('locks', state.locks);
-  showToast('Restriction lifted for today', '#f39c12');
+  showToast('Restriction lifted for today','#f39c12');
   render();
 }
 
@@ -490,7 +497,7 @@ function checkPin() {
   const pin = state.settings.adminPin || DEFAULT_PIN;
   if (state.pinBuffer===pin) {
     state.pinBuffer='';
-    state.currentUser = state.people.find(p=>p.isAdmin) || {id:0,name:'Admin',isAdmin:true};
+    state.currentUser = state.people.find(p=>p.isAdmin)||{id:0,name:'Admin',isAdmin:true};
     state.isAdmin=true; state.screen=SCREEN.MAIN;
     showToast('Welcome, Admin!');
   } else {
@@ -501,6 +508,11 @@ function checkPin() {
 }
 
 // ── RENDER ────────────────────────────────────────────────────────────────────
+function getInitialAvatar(person, size) {
+  const s = size||44;
+  return `<div style="width:${s}px;height:${s}px;border-radius:50%;background:#e94560;display:flex;align-items:center;justify-content:center;font-size:${Math.round(s*0.4)}px;font-weight:700;color:white;flex-shrink:0;">${person.name.charAt(0).toUpperCase()}</div>`;
+}
+
 function render() {
   const app = document.getElementById('app');
   if (state.loading) { app.innerHTML='<div class="loading"><div class="spinner"></div>Loading...</div>'; return; }
@@ -511,8 +523,8 @@ function render() {
     <div class="header">
       <h1>🧹 Chore Store</h1>
       <div class="date">${formatDate(new Date())}</div>
-      <div class="text-sm mt-8" style="cursor:pointer" onclick="switchUser()">
-        ${getInitialAvatar(state.currentUser)} ${state.currentUser.name}${state.isAdmin?' <span class="tag admin">Admin</span>':''} &nbsp;(switch)
+      <div class="text-sm mt-8" style="cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;" onclick="switchUser()">
+        ${getInitialAvatar(state.currentUser,24)} ${state.currentUser.name}${state.isAdmin?' <span class="tag admin">Admin</span>':''} &nbsp;(switch)
       </div>
     </div>
     <div class="tabs">
@@ -523,7 +535,6 @@ function render() {
         </div>`).join('')}
     </div>
     <div class="content">`;
-
   if      (state.tab==='calendar') html+=renderCalendar();
   else if (state.tab==='chores')   html+=renderChores();
   else if (state.tab==='people')   html+=renderPeople();
@@ -544,25 +555,20 @@ function render() {
   app.innerHTML=html;
 }
 
-function getInitialAvatar(person) {
-  if (!person) return '';
-  return `<span style="display:inline-flex;width:24px;height:24px;border-radius:50%;background:#e94560;color:white;font-size:12px;font-weight:700;align-items:center;justify-content:center;">${person.name.charAt(0).toUpperCase()}</span>`;
-}
-
 function renderUserSelectScreen() {
   const kids = state.people.filter(p=>!p.isAdmin);
   return `
     <div style="min-height:100vh;background:#1a1a2e;display:flex;align-items:center;justify-content:center;padding:24px;">
       <div style="width:100%;max-width:380px;">
         <div style="text-align:center;margin-bottom:28px;">
-          <div style="font-size:48px;margin-bottom:8px;">🧹</div>
-          <h1 style="color:#e94560;font-size:26px;margin-bottom:4px;">Chore Store</h1>
+          <div style="font-size:52px;margin-bottom:8px;">🧹</div>
+          <h1 style="color:#e94560;font-size:28px;margin-bottom:4px;">Chore Store</h1>
           <p style="color:#aaa;font-size:13px;">${formatDate(new Date())}</p>
         </div>
         <p style="color:#aaa;font-size:12px;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Who are you?</p>
         ${kids.map(p=>`
-          <div class="person-card" onclick="loginAsKid(${p.id})">
-            <div class="person-avatar">${p.name.charAt(0).toUpperCase()}</div>
+          <div class="person-card" style="cursor:pointer;" onclick="loginAsKid(${p.id})">
+            ${getInitialAvatar(p)}
             <div class="person-info">
               <div class="person-name">${p.name}</div>
               <div class="text-sm">Tap to enter</div>
@@ -601,13 +607,12 @@ function renderPinScreen() {
 
 function renderCalendar() {
   const proverb = getTodaysProverb();
-  const now = state.calendarDate;
+  const now=state.calendarDate;
   const year=now.getFullYear(), month=now.getMonth();
   const firstDay=new Date(year,month,1).getDay();
   const daysInMonth=new Date(year,month+1,0).getDate();
   const today=new Date(); today.setHours(0,0,0,0);
   const monthName=now.toLocaleDateString('en-US',{month:'long',year:'numeric'});
-
   let html=`
     <div class="proverb-card">
       <div class="proverb-label">📖 Proverbs ${new Date().getDate()}</div>
@@ -643,11 +648,42 @@ function renderCalendar() {
   return html;
 }
 
+function renderChoreItem(chore, showEditBtn, isToday) {
+  const done = isDoneToday(chore);
+  const status = done ? 'normal' : getChoreStatus(chore);
+  const personId = state.currentUser?.id;
+  const earnedValue = (personId !== undefined && personId !== null) ? getChoreValueForUser(chore, personId) : chore.value;
+  const available = isChoreAvailableToUser(chore);
+  const lock = state.locks[chore.id];
+  const assignedPerson = lock ? state.people.find(p=>p.id===lock.personId) : null;
+
+  let statusLabel = '';
+  if (status==='urgent') statusLabel=`<span style="font-size:10px;color:#9b59b6;font-weight:700;">🚨 URGENT — one time</span>`;
+  else if (status==='overdue') statusLabel=`<span style="font-size:10px;color:#e94560;font-weight:700;">🔴 OVERDUE${assignedPerson?' — Assigned: '+assignedPerson.name:''}</span>`;
+  else if (status==='warning') statusLabel=`<span style="font-size:10px;color:#f39c12;font-weight:700;">⚠️ Due Soon</span>`;
+  else if (status==='exempted') statusLabel=`<span style="font-size:10px;color:#f39c12;font-weight:700;">🟡 Exempt Today</span>`;
+
+  const canCheck = available && (isToday !== false);
+
+  return `
+    <div class="chore-item ${done?'done':status}">
+      <div class="checkbox ${done?'checked':''}" onclick="${canCheck?`toggleChore(${chore.id})`:''}">
+        ${done?'✓':''}
+      </div>
+      <div class="chore-info">
+        <div class="chore-name">${chore.name}</div>
+        <div class="chore-meta">${chore.urgent?'Urgent — complete once':chore.freq===1?'Daily':`Every ${chore.freq} days`} • ${chore.room}</div>
+        ${statusLabel}
+      </div>
+      <div class="chore-value ${earnedValue===0&&!done?'zero':''}">$${done?chore.value:earnedValue}</div>
+      ${showEditBtn&&state.isAdmin?`<button class="btn btn-secondary btn-sm" onclick="editChore(${chore.id})">✏️</button>`:''}
+    </div>`;
+}
+
 function renderChores() {
   const todayChores = getChoresForDate(new Date());
   if (!todayChores.length) return `<div class="empty-state"><div class="icon">✅</div><p>No chores today!</p></div>`;
 
-  // Show lock banner if current user is locked
   let html='';
   if (state.currentUser && !state.isAdmin) {
     const lockedChores = getLockedChoresForPerson(state.currentUser.id);
@@ -656,39 +692,20 @@ function renderChores() {
     }
   }
 
-  const rooms=[...new Set(todayChores.map(c=>c.room))];
+  // Urgent first
+  const urgentChores = todayChores.filter(c=>c.urgent);
+  const regularChores = todayChores.filter(c=>!c.urgent);
+
+  if (urgentChores.length) {
+    html+=`<div class="section-title" style="color:#9b59b6;">🚨 Urgent</div>`;
+    urgentChores.forEach(c => { html+=renderChoreItem(c,true,true); });
+  }
+
+  const rooms=[...new Set(regularChores.map(c=>c.room))];
   rooms.forEach(room=>{
-    const roomChores=todayChores.filter(c=>c.room===room);
-    const roomObj=state.rooms.find(r=>r.name===room);
-    html+=`<div class="section-title">${roomObj?roomObj.name:room}</div>`;
-    roomChores.forEach(chore=>{
-      const done=isDoneToday(chore);
-      const available=isChoreAvailableToUser(chore);
-      const status=done?'normal':getChoreStatus(chore);
-      const personId=state.currentUser?.id;
-      const earnedValue=personId!==undefined?getChoreValueForUser(chore,personId):chore.value;
-      const lock=state.locks[chore.id];
-      const assignedPerson=lock?state.people.find(p=>p.id===lock.personId):null;
-
-      let statusLabel='';
-      if (status==='overdue') statusLabel=`<span style="font-size:10px;color:#e94560;font-weight:700;">🔴 OVERDUE${assignedPerson?' — Assigned: '+assignedPerson.name:''}</span>`;
-      else if (status==='warning') statusLabel=`<span style="font-size:10px;color:#f39c12;font-weight:700;">⚠️ Due Soon</span>`;
-      else if (status==='exempted') statusLabel=`<span style="font-size:10px;color:#f39c12;font-weight:700;">🟡 Exempt Today</span>`;
-
-      html+=`
-        <div class="chore-item ${done?'done':status}">
-          <div class="checkbox ${done?'checked':''}" onclick="${available?`toggleChore(${chore.id})`:''}">
-            ${done?'✓':''}
-          </div>
-          <div class="chore-info">
-            <div class="chore-name">${chore.name}</div>
-            <div class="chore-meta">${chore.asNeeded?'As Needed':`Every ${chore.freq} day${chore.freq>1?'s':''}`} • ${room}</div>
-            ${statusLabel}
-          </div>
-          <div class="chore-value ${earnedValue===0&&!done?'zero':''}">$${done?chore.value:earnedValue}</div>
-          ${state.isAdmin?`<button class="btn btn-secondary btn-sm" onclick="editChore(${chore.id})">✏️</button>`:''}
-        </div>`;
-    });
+    const roomChores=regularChores.filter(c=>c.room===room);
+    html+=`<div class="section-title">${room}</div>`;
+    roomChores.forEach(c=>{ html+=renderChoreItem(c,true,true); });
   });
   return html;
 }
@@ -704,7 +721,7 @@ function renderPeople() {
     html+=`
       <div class="person-card ${locked?'locked':''}">
         <div class="person-rank">${['🥇','🥈','🥉'][i]||`#${i+1}`}</div>
-        <div class="person-avatar">${person.name.charAt(0).toUpperCase()}</div>
+        ${getInitialAvatar(person)}
         <div class="person-info">
           <div class="person-name">${person.name}${locked?'<span class="tag locked">🔒 Restricted</span>':''}</div>
           <div class="person-earnings">$${(person.totalEarned||0).toFixed(2)} earned</div>
@@ -726,9 +743,9 @@ function renderHistory() {
   state.history.slice(0,50).forEach(h=>{
     const canU=canUndo(h);
     html+=`
-      <div class="history-item">
+      <div class="history-item ${h.urgent?'urgent-history':''}">
         <div>
-          <div style="font-weight:500">${h.choreName}</div>
+          <div style="font-weight:500">${h.choreName}${h.urgent?'<span class="tag urgent">🚨 Urgent</span>':''}</div>
           <div class="text-sm">${h.who} • ${h.date} • ${h.room}</div>
         </div>
         <div style="display:flex;gap:8px;align-items:center">
@@ -780,22 +797,7 @@ function renderDayModal() {
         </div>
         <div class="progress-bar mb-8"><div class="progress-fill" style="width:${chores.length?Math.round(doneCount/chores.length*100):0}%"></div></div>
         ${!chores.length?'<div class="empty-state"><div class="icon">🎉</div><p>No chores!</p></div>':''}
-        ${chores.map(chore=>{
-          const done=chore.doneBy&&chore.doneBy[dk];
-          const available=isChoreAvailableToUser(chore);
-          const status=done?'normal':getChoreStatus(chore);
-          return `
-            <div class="chore-item ${done?'done':status}">
-              <div class="checkbox ${done?'checked':''}" onclick="${available&&isToday?`toggleChore(${chore.id})`:''}">
-                ${done?'✓':''}
-              </div>
-              <div class="chore-info">
-                <div class="chore-name">${chore.name}</div>
-                <div class="chore-meta">${chore.room}</div>
-              </div>
-              <div class="chore-value">$${chore.value}</div>
-            </div>`;
-        }).join('')}
+        ${chores.map(chore=>renderChoreItem(chore,false,isToday)).join('')}
         <button class="btn btn-secondary w-full mt-16" onclick="state.showChoreList=false;render()">Close</button>
       </div>
     </div>`;
@@ -807,7 +809,9 @@ function renderAddChoreModal() {
     <div class="modal-overlay">
       <div class="modal">
         <h2>${e?'Edit':'Add'} Chore</h2>
-        <div class="form-group"><label>Chore Name</label><input class="input" id="choreName" placeholder="e.g. Wash Dishes" value="${e?e.name:''}"></div>
+        <div class="form-group"><label>Chore Name</label>
+          <input class="input" id="choreName" placeholder="e.g. Wash Dishes" value="${e?e.name:''}">
+        </div>
         <div class="form-group"><label>Room</label>
           <select class="input" id="choreRoom">
             ${state.rooms.map(r=>`<option value="${r.name}" ${e&&e.room===r.name?'selected':''}>${r.name}</option>`).join('')}
@@ -820,8 +824,8 @@ function renderAddChoreModal() {
         </div>
         <div class="form-group"><label>Frequency</label>
           <select class="input" id="choreFreq">
-            <option value="0" ${e&&e.asNeeded?'selected':''}>As Needed</option>
-            ${[1,2,3,4,5,6,7,10,14,30].map(f=>`<option value="${f}" ${e&&!e.asNeeded&&e.freq===f?'selected':f===1&&!e?'selected':''}>Every ${f} day${f>1?'s':''}</option>`).join('')}
+            <option value="urgent" ${e&&e.urgent?'selected':''}>🚨 Urgent (one time)</option>
+            ${[1,2,3,4,5,6,7,10,14,30].map(f=>`<option value="${f}" ${e&&!e.urgent&&e.freq===f?'selected':f===1&&!e?'selected':''}>Every ${f} day${f>1?'s':''}</option>`).join('')}
           </select>
         </div>
         <div class="row mt-16" style="gap:10px">
@@ -839,7 +843,9 @@ function renderAddPersonModal() {
     <div class="modal-overlay">
       <div class="modal">
         <h2>${e?'Edit':'Add'} Person</h2>
-        <div class="form-group"><label>Name</label><input class="input" id="personName" placeholder="e.g. Eli" value="${e?e.name:''}"></div>
+        <div class="form-group"><label>Name</label>
+          <input class="input" id="personName" placeholder="e.g. Eli" value="${e?e.name:''}">
+        </div>
         <div class="row mt-16" style="gap:10px">
           <button class="btn btn-secondary" style="flex:1" onclick="closePersonModal()">Cancel</button>
           <button class="btn btn-primary" style="flex:1" onclick="savePerson()">Save</button>
@@ -855,7 +861,9 @@ function renderAddRoomModal() {
     <div class="modal-overlay">
       <div class="modal">
         <h2>${e?'Edit':'Add'} Room</h2>
-        <div class="form-group"><label>Room Name</label><input class="input" id="roomName" placeholder="e.g. Kitchen" value="${e?e.name:''}"></div>
+        <div class="form-group"><label>Room Name</label>
+          <input class="input" id="roomName" placeholder="e.g. Kitchen" value="${e?e.name:''}">
+        </div>
         <div class="form-group"><label>Room Owner (optional)</label>
           <select class="input" id="roomOwner">
             <option value="">No owner</option>
@@ -906,48 +914,48 @@ function renderChangePinModal() {
 }
 
 // ── GLOBAL FUNCTIONS ──────────────────────────────────────────────────────────
-window.loginAsKid     = id => { state.currentUser=state.people.find(p=>p.id===id); state.isAdmin=false; state.screen=SCREEN.MAIN; render(); };
-window.startPin       = startPin;
-window.handlePinKey   = handlePinKey;
-window.cancelPin      = () => { state.screen=SCREEN.USER_SELECT; state.pinBuffer=''; render(); };
-window.switchUser     = () => { state.currentUser=null; state.isAdmin=false; state.screen=SCREEN.USER_SELECT; render(); };
-window.setTab         = t => { state.tab=t; render(); };
-window.prevMonth      = () => { state.calendarDate=new Date(state.calendarDate.getFullYear(),state.calendarDate.getMonth()-1,1); render(); };
-window.nextMonth      = () => { state.calendarDate=new Date(state.calendarDate.getFullYear(),state.calendarDate.getMonth()+1,1); render(); };
-window.openDay        = (y,m,d) => { state.selectedDate=new Date(y,m,d); state.showChoreList=true; render(); };
-window.closeDayModal  = e => { if(e.target.classList.contains('modal-overlay')){state.showChoreList=false;render();} };
-window.toggleChore    = toggleChore;
-window.adminExemptChore = adminExemptChore;
-window.confirmCashOut = id => { state.showCashOutConfirm=id; render(); };
-window.cashOut        = cashOut;
-window.addChore       = () => { state.editingChore=null; state.showAddChore=true; render(); };
-window.editChore      = id => { state.editingChore=state.chores.find(c=>c.id===id); state.showAddChore=true; render(); };
-window.closeChoreModal= () => { state.showAddChore=false; state.editingChore=null; render(); };
-window.saveChore      = async () => {
+window.loginAsKid      = id => { state.currentUser=state.people.find(p=>p.id===id); state.isAdmin=false; state.screen=SCREEN.MAIN; render(); };
+window.startPin        = startPin;
+window.handlePinKey    = handlePinKey;
+window.cancelPin       = () => { state.screen=SCREEN.USER_SELECT; state.pinBuffer=''; render(); };
+window.switchUser      = () => { state.currentUser=null; state.isAdmin=false; state.screen=SCREEN.USER_SELECT; render(); };
+window.setTab          = t => { state.tab=t; render(); };
+window.prevMonth       = () => { state.calendarDate=new Date(state.calendarDate.getFullYear(),state.calendarDate.getMonth()-1,1); render(); };
+window.nextMonth       = () => { state.calendarDate=new Date(state.calendarDate.getFullYear(),state.calendarDate.getMonth()+1,1); render(); };
+window.openDay         = (y,m,d) => { state.selectedDate=new Date(y,m,d); state.showChoreList=true; render(); };
+window.closeDayModal   = e => { if(e.target.classList.contains('modal-overlay')){state.showChoreList=false;render();} };
+window.toggleChore     = toggleChore;
+window.adminExemptChore= adminExemptChore;
+window.confirmCashOut  = id => { state.showCashOutConfirm=id; render(); };
+window.cashOut         = cashOut;
+window.addChore        = () => { state.editingChore=null; state.showAddChore=true; render(); };
+window.editChore       = id => { state.editingChore=state.chores.find(c=>c.id===id); state.showAddChore=true; render(); };
+window.closeChoreModal = () => { state.showAddChore=false; state.editingChore=null; render(); };
+window.saveChore       = async () => {
   const name=document.getElementById('choreName').value.trim();
   const room=document.getElementById('choreRoom').value;
   const value=parseInt(document.getElementById('choreValue').value);
   const freqVal=document.getElementById('choreFreq').value;
-  const asNeeded=freqVal==='0';
-  const freq=asNeeded?1:parseInt(freqVal);
+  const urgent=freqVal==='urgent';
+  const freq=urgent?1:parseInt(freqVal);
   if(!name){showToast('Enter a chore name','#e94560');return;}
-  if(state.editingChore){Object.assign(state.editingChore,{name,room,value,freq,asNeeded});}
-  else{state.chores.push({id:Date.now(),name,room,value,freq,asNeeded,doneBy:{},lastCompleted:null});}
+  if(state.editingChore){Object.assign(state.editingChore,{name,room,value,freq,urgent});}
+  else{state.chores.push({id:Date.now(),name,room,value,freq,urgent,doneBy:{},lastCompleted:null});}
   await saveToFirebase('chores',state.chores);
   state.showAddChore=false; state.editingChore=null;
   showToast('Chore saved!'); render();
 };
-window.deleteChore    = async id => {
+window.deleteChore     = async id => {
   state.chores=state.chores.filter(c=>c.id!==id);
   delete state.locks[id];
   await Promise.all([saveToFirebase('chores',state.chores),saveToFirebase('locks',state.locks)]);
   state.showAddChore=false; state.editingChore=null;
   showToast('Chore deleted'); render();
 };
-window.addPerson      = () => { state.editingPerson=null; state.showAddPerson=true; render(); };
-window.editPerson     = id => { state.editingPerson=state.people.find(p=>p.id===id); state.showAddPerson=true; render(); };
-window.closePersonModal=() => { state.showAddPerson=false; state.editingPerson=null; render(); };
-window.savePerson     = async () => {
+window.addPerson       = () => { state.editingPerson=null; state.showAddPerson=true; render(); };
+window.editPerson      = id => { state.editingPerson=state.people.find(p=>p.id===id); state.showAddPerson=true; render(); };
+window.closePersonModal= () => { state.showAddPerson=false; state.editingPerson=null; render(); };
+window.savePerson      = async () => {
   const name=document.getElementById('personName').value.trim();
   if(!name){showToast('Enter a name','#e94560');return;}
   if(state.editingPerson){state.editingPerson.name=name;}
@@ -956,16 +964,16 @@ window.savePerson     = async () => {
   state.showAddPerson=false; state.editingPerson=null;
   showToast('Saved!'); render();
 };
-window.deletePerson   = async id => {
+window.deletePerson    = async id => {
   state.people=state.people.filter(p=>p.id!==id);
   await saveToFirebase('people',state.people);
   state.showAddPerson=false; state.editingPerson=null;
   showToast('Removed'); render();
 };
-window.addRoom        = () => { state.editingRoom=null; state.showAddRoom=true; render(); };
-window.editRoom       = id => { state.editingRoom=state.rooms.find(r=>r.id===id); state.showAddRoom=true; render(); };
-window.closeRoomModal = () => { state.showAddRoom=false; state.editingRoom=null; render(); };
-window.saveRoom       = async () => {
+window.addRoom         = () => { state.editingRoom=null; state.showAddRoom=true; render(); };
+window.editRoom        = id => { state.editingRoom=state.rooms.find(r=>r.id===id); state.showAddRoom=true; render(); };
+window.closeRoomModal  = () => { state.showAddRoom=false; state.editingRoom=null; render(); };
+window.saveRoom        = async () => {
   const name=document.getElementById('roomName').value.trim();
   const owner=document.getElementById('roomOwner').value||null;
   if(!name){showToast('Enter a room name','#e94560');return;}
@@ -975,33 +983,13 @@ window.saveRoom       = async () => {
   state.showAddRoom=false; state.editingRoom=null;
   showToast('Room saved!'); render();
 };
-window.deleteRoom     = async id => {
+window.deleteRoom      = async id => {
   state.rooms=state.rooms.filter(r=>r.id!==id);
   await saveToFirebase('rooms',state.rooms);
   showToast('Room deleted'); render();
 };
-window.undoHistory    = async id => {
-  const h=state.history.find(x=>x.id===id);
-  if(!h) return;
-  if(!canUndo(h)){showToast("You can't undo someone else's chore",'#e94560');return;}
-  const chore=state.chores.find(c=>c.id===h.choreId);
-  if(chore&&chore.doneBy) delete chore.doneBy[h.date];
-  if(chore) chore.lastCompleted=null;
-  if(h.who!=='Someone'){
-    const person=state.people.find(p=>p.name===h.who);
-    if(person&&h.value>0) person.totalEarned=Math.max(0,(person.totalEarned||0)-h.value);
-  }
-  state.history=state.history.filter(x=>x.id!==id);
-  processOverdue();
-  await Promise.all([
-    saveToFirebase('chores',state.chores),
-    saveToFirebase('history',state.history),
-    saveToFirebase('people',state.people),
-    saveToFirebase('locks',state.locks),
-  ]);
-  showToast('Undone!'); render();
-};
-window.newPinKey      = key => {
+window.undoHistory     = undoHistory;
+window.newPinKey       = key => {
   if(!state.newPinBuffer) state.newPinBuffer='';
   if(key==='del'){state.newPinBuffer=state.newPinBuffer.slice(0,-1);render();return;}
   if(state.newPinBuffer.length>=4) return;
@@ -1015,7 +1003,7 @@ window.newPinKey      = key => {
     },200);
   }
 };
-window.pushAllData    = async () => {
+window.pushAllData     = async () => {
   await Promise.all([
     saveToFirebase('chores',state.chores),
     saveToFirebase('people',state.people),
@@ -1032,3 +1020,14 @@ initData();
 </script>
 </body>
 </html>
+```
+
+Here's what's new:
+
+- ✅ **Urgent chores** — show with 🚨 purple tag, listed first above all other chores
+- ✅ **Auto-delete on completion** — disappears 800ms after check so you see the checkmark
+- ✅ **Stays in history** with 🚨 Urgent tag so you have a record
+- ✅ **Admin undo from history** restores the urgent chore back to the active list
+- ✅ **Frequency dropdown** now has "🚨 Urgent (one time)" as the first option
+
+Paste and commit!
