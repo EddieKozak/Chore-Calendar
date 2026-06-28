@@ -1,12 +1,10 @@
-Got it — one Admin account, three kids, PIN fix, and Change PIN in settings. Here's the complete fresh script:
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chore Calendar</title>
+<title>Chore Store</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧹</text></svg>">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #eee; min-height: 100vh; }
@@ -42,14 +40,19 @@ Got it — one Admin account, three kids, PIN fix, and Change PIN in settings. H
   .chore-item { display: flex; align-items: center; gap: 12px; padding: 12px; background: #1a1a2e; border-radius: 10px; margin-bottom: 8px; border: 1px solid #0f3460; }
   .chore-item.done { opacity: 0.5; }
   .chore-item.done .chore-name { text-decoration: line-through; }
+  .chore-item.overdue { border-color: #c0392b; background: #2a1a1a; }
+  .chore-item.warning { border-color: #f39c12; background: #2a2210; }
+  .chore-item.exempted { border-color: #f39c12; background: #2a2210; }
   .checkbox { width: 24px; height: 24px; border: 2px solid #e94560; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
   .checkbox.checked { background: #e94560; }
   .chore-info { flex: 1; }
   .chore-name { font-size: 15px; font-weight: 500; }
   .chore-meta { font-size: 11px; color: #aaa; margin-top: 2px; }
   .chore-value { font-size: 14px; font-weight: 700; color: #27ae60; }
-  .person-card { display: flex; align-items: center; gap: 12px; padding: 14px; background: #1a1a2e; border-radius: 10px; margin-bottom: 8px; border: 1px solid #0f3460; cursor: pointer; }
-  .person-avatar { width: 44px; height: 44px; border-radius: 50%; background: #e94560; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .chore-value.zero { color: #e94560; }
+  .person-card { display: flex; align-items: center; gap: 12px; padding: 14px; background: #1a1a2e; border-radius: 10px; margin-bottom: 8px; border: 1px solid #0f3460; }
+  .person-card.locked { border-color: #c0392b; background: #2a1a1a; }
+  .person-avatar { width: 44px; height: 44px; border-radius: 50%; background: #e94560; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; flex-shrink: 0; color: white; }
   .person-info { flex: 1; }
   .person-name { font-size: 16px; font-weight: 600; }
   .person-earnings { font-size: 13px; color: #27ae60; }
@@ -57,8 +60,6 @@ Got it — one Admin account, three kids, PIN fix, and Change PIN in settings. H
   .history-item { padding: 10px; background: #1a1a2e; border-radius: 8px; margin-bottom: 6px; border-left: 3px solid #27ae60; display: flex; justify-content: space-between; align-items: center; }
   .section-title { font-size: 13px; font-weight: 700; color: #aaa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; margin-top: 16px; }
   .fab { position: fixed; bottom: 80px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: #e94560; border: none; color: white; font-size: 28px; cursor: pointer; box-shadow: 0 4px 16px rgba(233,69,96,0.4); z-index: 50; display: flex; align-items: center; justify-content: center; }
-  .emoji-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-top: 10px; }
-  .emoji-btn { font-size: 24px; padding: 8px; border: none; background: #1a1a2e; border-radius: 8px; cursor: pointer; text-align: center; }
   .pin-dots { display: flex; gap: 12px; justify-content: center; margin: 16px 0; }
   .pin-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #e94560; background: transparent; transition: all 0.2s; }
   .pin-dot.filled { background: #e94560; }
@@ -76,12 +77,16 @@ Got it — one Admin account, three kids, PIN fix, and Change PIN in settings. H
   .progress-fill { height: 100%; background: #27ae60; border-radius: 3px; transition: width 0.3s; }
   .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; background: #0f3460; color: #aaa; margin-left: 6px; }
   .tag.admin { background: #3d1f1f; color: #e94560; }
+  .tag.locked { background: #3d1f1f; color: #e94560; }
+  .tag.overdue { background: #3d1000; color: #f39c12; }
   .empty-state { text-align: center; padding: 40px 20px; color: #555; }
   .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
   .row { display: flex; gap: 10px; align-items: center; }
   .row.between { justify-content: space-between; }
   .text-sm { font-size: 13px; color: #aaa; }
   .text-green { color: #27ae60; }
+  .text-red { color: #e94560; }
+  .text-orange { color: #f39c12; }
   .mt-8 { margin-top: 8px; }
   .mt-16 { margin-top: 16px; }
   .mb-8 { margin-bottom: 8px; }
@@ -89,8 +94,9 @@ Got it — one Admin account, three kids, PIN fix, and Change PIN in settings. H
   .loading { text-align: center; padding: 40px; color: #aaa; }
   .spinner { width: 32px; height: 32px; border: 3px solid #0f3460; border-top-color: #e94560; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #27ae60; color: white; padding: 10px 20px; border-radius: 20px; font-size: 14px; z-index: 200; animation: fadeInOut 2.2s ease; pointer-events: none; }
+  .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #27ae60; color: white; padding: 10px 20px; border-radius: 20px; font-size: 14px; z-index: 200; animation: fadeInOut 2.2s ease; pointer-events: none; white-space: nowrap; }
   @keyframes fadeInOut { 0%,100%{opacity:0;} 15%,85%{opacity:1;} }
+  .lock-banner { background: #2a1a1a; border: 1px solid #c0392b; border-radius: 10px; padding: 12px; margin-bottom: 12px; font-size: 13px; color: #e94560; }
 </style>
 </head>
 <body>
@@ -113,9 +119,7 @@ const firebaseConfig = {
 
 const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp);
-
 const DEFAULT_PIN = '1234';
-const EMOJIS = ['🛋️','🍳','🛁','🛏️','🧹','🌿','🚗','📦','🐕','🐈','🧺','🪣','🧴','🪴','⭐','🏠','🔧','🎮','📚','🧸','👨','👩','👦','👧','🧑','👴','👵','🧒'];
 
 const PROVERBS = {
   1:  { text: "The fear of the Lord is the beginning of knowledge; fools despise wisdom and instruction.", ref: "Proverbs 1:7" },
@@ -151,42 +155,27 @@ const PROVERBS = {
   31: { text: "Charm is deceitful and beauty is vain, but a woman who fears the Lord, she shall be praised.", ref: "Proverbs 31:30" },
 };
 
-function getTodaysProverb() {
-  return PROVERBS[new Date().getDate()] || PROVERBS[1];
-}
+function getTodaysProverb() { return PROVERBS[new Date().getDate()] || PROVERBS[1]; }
 
-// SINGLE screen state — only one screen shows at a time
-const SCREEN = {
-  USER_SELECT: 'user_select',
-  PIN: 'pin',
-  MAIN: 'main',
-};
+const SCREEN = { USER_SELECT: 'user_select', PIN: 'pin', MAIN: 'main' };
 
 let state = {
   screen: SCREEN.USER_SELECT,
   tab: 'calendar',
   chores: [], people: [], history: [], rooms: [],
   settings: { adminPin: DEFAULT_PIN },
-  currentUser: null,
-  isAdmin: false,
-  pinBuffer: '',
-  pinAction: null,
-  showAddChore: false,
-  showAddPerson: false,
-  showAddRoom: false,
-  showChoreList: false,
-  showEmojiPicker: false,
-  showCashOutConfirm: null,
-  showChangePinModal: false,
-  selectedDate: new Date(),
-  calendarDate: new Date(),
-  editingChore: null,
-  editingPerson: null,
-  editingRoom: null,
-  emojiTarget: null,
+  // locks: { choreId: { personId, exemptToday } }
+  locks: {},
+  currentUser: null, isAdmin: false,
+  pinBuffer: '', pinAction: null, newPinBuffer: '',
+  showAddChore: false, showAddPerson: false, showAddRoom: false,
+  showChoreList: false, showCashOutConfirm: null, showChangePinModal: false,
+  selectedDate: new Date(), calendarDate: new Date(),
+  editingChore: null, editingPerson: null, editingRoom: null,
   loading: true,
 };
 
+// ── DATE HELPERS ─────────────────────────────────────────────────────────────
 function todayKey() {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -197,6 +186,11 @@ function dateKey(d) {
 function formatDate(d) {
   return d.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
 }
+function daysBetween(dateStr1, dateStr2) {
+  const d1 = new Date(dateStr1), d2 = new Date(dateStr2);
+  return Math.round((d2 - d1) / 86400000);
+}
+
 function showToast(msg, color) {
   const t = document.createElement('div');
   t.className = 'toast';
@@ -206,6 +200,7 @@ function showToast(msg, color) {
   setTimeout(() => t.remove(), 2200);
 }
 
+// ── FIREBASE ─────────────────────────────────────────────────────────────────
 async function saveToFirebase(key, data) {
   try { await setDoc(doc(db, 'family', key), { data: JSON.stringify(data) }); }
   catch(e) { console.error('Save error', e); }
@@ -219,66 +214,185 @@ async function loadFromFirebase(key) {
 }
 
 async function initData() {
-  const [chores, people, history, rooms, settings] = await Promise.all([
+  const [chores, people, history, rooms, settings, locks] = await Promise.all([
     loadFromFirebase('chores'), loadFromFirebase('people'),
-    loadFromFirebase('history'), loadFromFirebase('rooms'), loadFromFirebase('settings'),
+    loadFromFirebase('history'), loadFromFirebase('rooms'),
+    loadFromFirebase('settings'), loadFromFirebase('locks'),
   ]);
   state.chores   = chores   || getDefaultChores();
   state.people   = people   || getDefaultPeople();
   state.history  = history  || [];
   state.rooms    = rooms    || getDefaultRooms();
   state.settings = settings || { adminPin: DEFAULT_PIN };
+  state.locks    = locks    || {};
   state.loading  = false;
-  ['chores','people','history','rooms','settings'].forEach(key => {
+
+  ['chores','people','history','rooms','settings','locks'].forEach(key => {
     onSnapshot(doc(db, 'family', key), snap => {
-      if (snap.exists()) { state[key] = JSON.parse(snap.data().data); render(); }
+      if (snap.exists()) { state[key] = JSON.parse(snap.data().data); processOverdue(); render(); }
     });
   });
+
+  processOverdue();
   render();
 }
 
 function getDefaultRooms() {
   return [
-    { id:1, name:'Kitchen',     emoji:'🍳', owner:null },
-    { id:2, name:'Living Room', emoji:'🛋️', owner:null },
-    { id:3, name:'Bathrooms',   emoji:'🛁', owner:null },
-    { id:4, name:'Bedrooms',    emoji:'🛏️', owner:null },
-    { id:5, name:'Outdoors',    emoji:'🌿', owner:null },
+    { id:1, name:'Kitchen' },
+    { id:2, name:'Living Room' },
+    { id:3, name:'Bathrooms' },
+    { id:4, name:'Bedrooms' },
+    { id:5, name:'Outdoors' },
   ];
 }
 function getDefaultPeople() {
   return [
-    { id:0,  name:'Admin', emoji:'👑', isAdmin:true,  totalEarned:0 },
-    { id:10, name:'Eli',   emoji:'👦', isAdmin:false, totalEarned:0 },
-    { id:11, name:'Kid 2', emoji:'👧', isAdmin:false, totalEarned:0 },
-    { id:12, name:'Kid 3', emoji:'🧒', isAdmin:false, totalEarned:0 },
+    { id:0,  name:'Admin', isAdmin:true,  totalEarned:0 },
+    { id:10, name:'Eli',   isAdmin:false, totalEarned:0 },
+    { id:11, name:'Kid 2', isAdmin:false, totalEarned:0 },
+    { id:12, name:'Kid 3', isAdmin:false, totalEarned:0 },
   ];
 }
 function getDefaultChores() {
   return [
-    { id:1, name:'Wash Dishes',    room:'Kitchen',     freq:1, value:2, doneBy:{}, asNeeded:false },
-    { id:2, name:'Vacuum',         room:'Living Room', freq:3, value:3, doneBy:{}, asNeeded:false },
-    { id:3, name:'Clean Toilet',   room:'Bathrooms',   freq:7, value:3, doneBy:{}, asNeeded:false },
-    { id:4, name:'Mow Lawn',       room:'Outdoors',    freq:7, value:5, doneBy:{}, asNeeded:false },
-    { id:5, name:'Take Out Trash', room:'Kitchen',     freq:2, value:2, doneBy:{}, asNeeded:false },
+    { id:1, name:'Wash Dishes',    room:'Kitchen',     freq:1, value:2, doneBy:{}, asNeeded:false, lastCompleted:null },
+    { id:2, name:'Vacuum',         room:'Living Room', freq:3, value:3, doneBy:{}, asNeeded:false, lastCompleted:null },
+    { id:3, name:'Clean Toilet',   room:'Bathrooms',   freq:7, value:3, doneBy:{}, asNeeded:false, lastCompleted:null },
+    { id:4, name:'Mow Lawn',       room:'Outdoors',    freq:7, value:5, doneBy:{}, asNeeded:false, lastCompleted:null },
+    { id:5, name:'Take Out Trash', room:'Kitchen',     freq:2, value:2, doneBy:{}, asNeeded:false, lastCompleted:null },
   ];
 }
 
+// ── OVERDUE LOGIC ─────────────────────────────────────────────────────────────
+function getDaysOverdue(chore) {
+  if (chore.asNeeded || chore.freq === 1) return 0;
+  const dk = todayKey();
+  if (chore.doneBy && chore.doneBy[dk]) return 0; // done today
+  if (!chore.lastCompleted) {
+    // Never completed — count from first day
+    return 0;
+  }
+  const daysSince = daysBetween(chore.lastCompleted, dk);
+  return Math.max(0, daysSince - chore.freq);
+}
+
+function getChoreStatus(chore) {
+  // 'normal' | 'warning' | 'overdue' | 'exempted'
+  if (chore.asNeeded) return 'normal';
+  const dk = todayKey();
+  if (chore.doneBy && chore.doneBy[dk]) return 'normal';
+  if (chore.freq === 1) return 'normal';
+  if (!chore.lastCompleted) return 'normal';
+
+  const daysSince = daysBetween(chore.lastCompleted, dk);
+  const pct = daysSince / chore.freq;
+
+  // Check if exempted today
+  const lock = state.locks[chore.id];
+  if (lock && lock.exemptToday === dk) return 'exempted';
+
+  if (pct >= 1) return 'overdue';
+  if (pct >= 0.5) return 'warning';
+  return 'normal';
+}
+
+function shouldChoreShow(chore) {
+  if (chore.asNeeded) return true;
+  const dk = todayKey();
+  if (chore.doneBy && chore.doneBy[dk]) return true; // show completed ones
+
+  if (chore.freq === 1) return true; // daily always shows
+
+  if (!chore.lastCompleted) return true; // never done, show it
+
+  const daysSince = daysBetween(chore.lastCompleted, dk);
+
+  // If overdue (past due date), always carry over and show
+  if (daysSince >= chore.freq) return true;
+
+  // Show when it's due
+  return daysSince >= chore.freq;
+}
+
 function getChoresForDate(date) {
-  const today = new Date(); today.setHours(0,0,0,0);
-  const target = new Date(date); target.setHours(0,0,0,0);
-  const diffDays = Math.round((target - today) / 86400000);
+  const dk = dateKey(date);
+  const todayDk = todayKey();
+  const isToday = dk === todayDk;
+
   return state.chores.filter(chore => {
     if (chore.asNeeded) return true;
-    if (diffDays === 0) return true;
-    if (diffDays > 0) return chore.freq <= diffDays + 1;
-    const vals = chore.doneBy ? Object.values(chore.doneBy) : [];
-    const lastDone = vals.length ? Math.max(0, ...vals.map(v => {
-      const d = new Date(v); return isNaN(d) ? 0 : Math.round((today - d) / 86400000);
-    })) : 999;
-    return lastDone >= chore.freq;
+    if (chore.doneBy && chore.doneBy[dk]) return true;
+    if (chore.freq === 1) return true;
+    if (!chore.lastCompleted) return true;
+
+    const daysSince = daysBetween(chore.lastCompleted, dk);
+    return daysSince >= chore.freq;
   });
 }
+
+// Assign overdue chores to last place kid
+function processOverdue() {
+  const kids = state.people.filter(p => !p.isAdmin);
+  if (!kids.length) return;
+
+  const dk = todayKey();
+  let changed = false;
+
+  // Find all overdue chores (100%+) not already locked
+  const overdueChores = state.chores.filter(chore => {
+    if (chore.asNeeded || chore.freq === 1) return false;
+    if (chore.doneBy && chore.doneBy[dk]) return false;
+    if (!chore.lastCompleted) return false;
+    const daysSince = daysBetween(chore.lastCompleted, dk);
+    return daysSince >= chore.freq;
+  });
+
+  // Sort kids by earnings ascending (last place first)
+  const sortedKids = [...kids].sort((a,b) => (a.totalEarned||0) - (b.totalEarned||0));
+
+  overdueChores.forEach((chore, idx) => {
+    if (state.locks[chore.id] && state.locks[chore.id].personId !== undefined) return; // already assigned
+    const kid = sortedKids[idx % sortedKids.length];
+    state.locks[chore.id] = { personId: kid.id, assignedDate: dk, exemptToday: null };
+    changed = true;
+  });
+
+  // Clear locks for completed chores
+  Object.keys(state.locks).forEach(choreId => {
+    const chore = state.chores.find(c => c.id === parseInt(choreId));
+    if (!chore) { delete state.locks[choreId]; changed = true; return; }
+    if (chore.doneBy && chore.doneBy[dk]) { delete state.locks[choreId]; changed = true; }
+  });
+
+  if (changed) saveToFirebase('locks', state.locks);
+}
+
+function isPersonLocked(personId) {
+  return Object.values(state.locks).some(lock => {
+    if (lock.personId !== personId) return false;
+    if (lock.exemptToday === todayKey()) return false;
+    return true;
+  });
+}
+
+function getLockedChoresForPerson(personId) {
+  return Object.entries(state.locks)
+    .filter(([,lock]) => lock.personId === personId && lock.exemptToday !== todayKey())
+    .map(([choreId]) => state.chores.find(c => c.id === parseInt(choreId)))
+    .filter(Boolean);
+}
+
+function getChoreValueForUser(chore, personId) {
+  if (!personId || personId === 0) return chore.value;
+  // If this chore itself is the locked chore for this person, worth $0
+  const lock = state.locks[chore.id];
+  if (lock && lock.personId === personId && lock.exemptToday !== todayKey()) return 0;
+  // If person is locked by any overdue chore, all other chores worth $0
+  if (isPersonLocked(personId)) return 0;
+  return chore.value;
+}
+
 function isChoreAvailableToUser(chore) {
   if (state.isAdmin) return true;
   if (!state.currentUser) return false;
@@ -293,33 +407,53 @@ function canUndo(h) {
   return h.who === state.currentUser.name;
 }
 
+// ── ACTIONS ───────────────────────────────────────────────────────────────────
 async function toggleChore(choreId) {
   const dk = todayKey();
   const chore = state.chores.find(c => c.id === choreId);
   if (!chore) return;
   if (!isChoreAvailableToUser(chore)) { showToast('This room belongs to someone else', '#e94560'); return; }
   if (!chore.doneBy) chore.doneBy = {};
+
   if (isDoneToday(chore)) {
     if (!state.isAdmin && chore.doneBy[dk] !== state.currentUser?.name) {
       showToast('Only the person who did this (or admin) can uncheck it', '#e94560'); return;
     }
     delete chore.doneBy[dk];
+    chore.lastCompleted = null; // revert
     state.history = state.history.filter(h => !(h.choreId === choreId && h.date === dk));
+    // Restore earnings
+    const entry = state.history.find(h => h.choreId === choreId && h.date === dk);
+    if (entry && entry.who !== 'Someone') {
+      const person = state.people.find(p => p.name === entry.who);
+      if (person) person.totalEarned = Math.max(0, (person.totalEarned||0) - entry.value);
+    }
   } else {
     const who = state.currentUser ? state.currentUser.name : 'Someone';
+    const personId = state.currentUser ? state.currentUser.id : null;
+    const earnedValue = personId !== null ? getChoreValueForUser(chore, personId) : chore.value;
+
     chore.doneBy[dk] = who;
-    state.history.unshift({ id: Date.now(), choreId, choreName: chore.name, date: dk, who, value: chore.value, room: chore.room });
+    chore.lastCompleted = dk;
+
+    state.history.unshift({ id: Date.now(), choreId, choreName: chore.name, date: dk, who, value: earnedValue, room: chore.room });
     if (state.history.length > 200) state.history = state.history.slice(0, 200);
+
     if (state.currentUser && state.currentUser.id !== 0) {
       const person = state.people.find(p => p.id === state.currentUser.id);
-      if (person) person.totalEarned = (person.totalEarned || 0) + chore.value;
+      if (person && earnedValue > 0) person.totalEarned = (person.totalEarned || 0) + earnedValue;
     }
-    showToast(`+$${chore.value} earned! 🎉`);
+
+    if (earnedValue === 0) showToast(`Completed (Restricted Pay) — $0`, '#e94560');
+    else showToast(`+$${earnedValue} earned! 🎉`);
   }
+
+  processOverdue();
   await Promise.all([
     saveToFirebase('chores', state.chores),
     saveToFirebase('history', state.history),
     saveToFirebase('people', state.people),
+    saveToFirebase('locks', state.locks),
   ]);
   render();
 }
@@ -334,56 +468,51 @@ async function cashOut(personId) {
   render();
 }
 
-// PIN handling
-function startPin(action) {
-  state.pinAction = action;
-  state.pinBuffer = '';
-  state.screen = SCREEN.PIN;
+async function adminExemptChore(choreId) {
+  const dk = todayKey();
+  if (state.locks[choreId]) {
+    state.locks[choreId].exemptToday = dk;
+  }
+  await saveToFirebase('locks', state.locks);
+  showToast('Restriction lifted for today', '#f39c12');
   render();
 }
+
+// ── PIN ───────────────────────────────────────────────────────────────────────
+function startPin(action) { state.pinAction=action; state.pinBuffer=''; state.screen=SCREEN.PIN; render(); }
 function handlePinKey(key) {
-  if (key === 'del') { state.pinBuffer = state.pinBuffer.slice(0,-1); render(); return; }
-  if (state.pinBuffer.length >= 4) return;
-  state.pinBuffer += key;
-  render();
-  if (state.pinBuffer.length === 4) setTimeout(checkPin, 200);
+  if (key==='del') { state.pinBuffer=state.pinBuffer.slice(0,-1); render(); return; }
+  if (state.pinBuffer.length>=4) return;
+  state.pinBuffer+=key; render();
+  if (state.pinBuffer.length===4) setTimeout(checkPin,200);
 }
 function checkPin() {
   const pin = state.settings.adminPin || DEFAULT_PIN;
-  if (state.pinBuffer === pin) {
-    state.pinBuffer = '';
-    if (state.pinAction === 'login') {
-      state.currentUser = state.people.find(p => p.isAdmin) || { id:0, name:'Admin', emoji:'👑', isAdmin:true };
-      state.isAdmin = true;
-      state.screen = SCREEN.MAIN;
-      showToast('Welcome, Admin!');
-    } else if (state.pinAction === 'changePin') {
-      state.screen = SCREEN.MAIN;
-      state.showChangePinModal = true;
-    }
+  if (state.pinBuffer===pin) {
+    state.pinBuffer='';
+    state.currentUser = state.people.find(p=>p.isAdmin) || {id:0,name:'Admin',isAdmin:true};
+    state.isAdmin=true; state.screen=SCREEN.MAIN;
+    showToast('Welcome, Admin!');
   } else {
-    showToast('Wrong PIN', '#e94560');
-    state.pinBuffer = '';
-    state.screen = SCREEN.USER_SELECT;
+    showToast('Wrong PIN','#e94560');
+    state.pinBuffer=''; state.screen=SCREEN.USER_SELECT;
   }
   render();
 }
 
+// ── RENDER ────────────────────────────────────────────────────────────────────
 function render() {
   const app = document.getElementById('app');
-  if (state.loading) { app.innerHTML = '<div class="loading"><div class="spinner"></div>Loading...</div>'; return; }
+  if (state.loading) { app.innerHTML='<div class="loading"><div class="spinner"></div>Loading...</div>'; return; }
+  if (state.screen===SCREEN.USER_SELECT) { app.innerHTML=renderUserSelectScreen(); return; }
+  if (state.screen===SCREEN.PIN)         { app.innerHTML=renderPinScreen(); return; }
 
-  // Route to correct top-level screen
-  if (state.screen === SCREEN.USER_SELECT) { app.innerHTML = renderUserSelectScreen(); return; }
-  if (state.screen === SCREEN.PIN)         { app.innerHTML = renderPinScreen(); return; }
-
-  // MAIN app
   let html = `
     <div class="header">
-      <h1>🏠 Chore Calendar</h1>
+      <h1>🧹 Chore Store</h1>
       <div class="date">${formatDate(new Date())}</div>
       <div class="text-sm mt-8" style="cursor:pointer" onclick="switchUser()">
-        ${state.currentUser.emoji} ${state.currentUser.name}${state.isAdmin?' <span class="tag admin">Admin</span>':''} &nbsp;(switch)
+        ${getInitialAvatar(state.currentUser)} ${state.currentUser.name}${state.isAdmin?' <span class="tag admin">Admin</span>':''} &nbsp;(switch)
       </div>
     </div>
     <div class="tabs">
@@ -394,45 +523,53 @@ function render() {
         </div>`).join('')}
     </div>
     <div class="content">`;
-  if      (state.tab==='calendar') html += renderCalendar();
-  else if (state.tab==='chores')   html += renderChores();
-  else if (state.tab==='people')   html += renderPeople();
-  else if (state.tab==='history')  html += renderHistory();
-  else if (state.tab==='settings') html += renderSettings();
-  html += '</div>';
 
-  if (state.tab==='chores' && state.isAdmin) html += `<button class="fab" onclick="addChore()">+</button>`;
-  if (state.tab==='people' && state.isAdmin) html += `<button class="fab" onclick="addPerson()">+</button>`;
+  if      (state.tab==='calendar') html+=renderCalendar();
+  else if (state.tab==='chores')   html+=renderChores();
+  else if (state.tab==='people')   html+=renderPeople();
+  else if (state.tab==='history')  html+=renderHistory();
+  else if (state.tab==='settings') html+=renderSettings();
+  html+='</div>';
 
-  if (state.showChoreList)      html += renderDayModal();
-  if (state.showAddChore)       html += renderAddChoreModal();
-  if (state.showAddPerson)      html += renderAddPersonModal();
-  if (state.showAddRoom)        html += renderAddRoomModal();
-  if (state.showEmojiPicker)    html += renderEmojiPicker();
-  if (state.showCashOutConfirm) html += renderCashOutConfirm();
-  if (state.showChangePinModal) html += renderChangePinModal();
+  if (state.tab==='chores' && state.isAdmin) html+=`<button class="fab" onclick="addChore()">+</button>`;
+  if (state.tab==='people' && state.isAdmin) html+=`<button class="fab" onclick="addPerson()">+</button>`;
 
-  app.innerHTML = html;
+  if (state.showChoreList)      html+=renderDayModal();
+  if (state.showAddChore)       html+=renderAddChoreModal();
+  if (state.showAddPerson)      html+=renderAddPersonModal();
+  if (state.showAddRoom)        html+=renderAddRoomModal();
+  if (state.showCashOutConfirm) html+=renderCashOutConfirm();
+  if (state.showChangePinModal) html+=renderChangePinModal();
+
+  app.innerHTML=html;
+}
+
+function getInitialAvatar(person) {
+  if (!person) return '';
+  return `<span style="display:inline-flex;width:24px;height:24px;border-radius:50%;background:#e94560;color:white;font-size:12px;font-weight:700;align-items:center;justify-content:center;">${person.name.charAt(0).toUpperCase()}</span>`;
 }
 
 function renderUserSelectScreen() {
-  const kids = state.people.filter(p => !p.isAdmin);
+  const kids = state.people.filter(p=>!p.isAdmin);
   return `
     <div style="min-height:100vh;background:#1a1a2e;display:flex;align-items:center;justify-content:center;padding:24px;">
       <div style="width:100%;max-width:380px;">
-        <h1 style="text-align:center;color:#e94560;font-size:26px;margin-bottom:4px;">🏠 Chore Calendar</h1>
-        <p style="text-align:center;color:#aaa;font-size:13px;margin-bottom:28px;">${formatDate(new Date())}</p>
+        <div style="text-align:center;margin-bottom:28px;">
+          <div style="font-size:48px;margin-bottom:8px;">🧹</div>
+          <h1 style="color:#e94560;font-size:26px;margin-bottom:4px;">Chore Store</h1>
+          <p style="color:#aaa;font-size:13px;">${formatDate(new Date())}</p>
+        </div>
         <p style="color:#aaa;font-size:12px;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Who are you?</p>
         ${kids.map(p=>`
           <div class="person-card" onclick="loginAsKid(${p.id})">
-            <div class="person-avatar">${p.emoji}</div>
+            <div class="person-avatar">${p.name.charAt(0).toUpperCase()}</div>
             <div class="person-info">
               <div class="person-name">${p.name}</div>
               <div class="text-sm">Tap to enter</div>
             </div>
           </div>`).join('')}
-        <div class="person-card mt-16" onclick="startPin('login')" style="border-color:#e94560;">
-          <div class="person-avatar" style="background:#3d1f1f;">👑</div>
+        <div class="person-card mt-16" onclick="startPin('login')" style="border-color:#e94560;cursor:pointer;">
+          <div class="person-avatar" style="background:#3d1f1f;font-size:20px;">👑</div>
           <div class="person-info">
             <div class="person-name" style="color:#e94560;">Admin</div>
             <div class="text-sm">🔐 PIN required</div>
@@ -446,7 +583,8 @@ function renderPinScreen() {
   return `
     <div style="min-height:100vh;background:#1a1a2e;display:flex;align-items:center;justify-content:center;padding:24px;">
       <div style="width:100%;max-width:320px;text-align:center;">
-        <h2 style="color:#e94560;margin-bottom:8px;">🔐 Admin PIN</h2>
+        <div style="font-size:40px;margin-bottom:12px;">🔐</div>
+        <h2 style="color:#e94560;margin-bottom:8px;">Admin PIN</h2>
         <p style="color:#aaa;font-size:13px;margin-bottom:16px;">Enter your PIN to continue</p>
         <div class="pin-dots">
           ${[0,1,2,3].map(i=>`<div class="pin-dot ${i<state.pinBuffer.length?'filled':''}"></div>`).join('')}
@@ -464,12 +602,13 @@ function renderPinScreen() {
 function renderCalendar() {
   const proverb = getTodaysProverb();
   const now = state.calendarDate;
-  const year = now.getFullYear(), month = now.getMonth();
-  const firstDay = new Date(year, month, 1).getDay();
-  const daysInMonth = new Date(year, month+1, 0).getDate();
-  const today = new Date(); today.setHours(0,0,0,0);
-  const monthName = now.toLocaleDateString('en-US',{month:'long',year:'numeric'});
-  let html = `
+  const year=now.getFullYear(), month=now.getMonth();
+  const firstDay=new Date(year,month,1).getDay();
+  const daysInMonth=new Date(year,month+1,0).getDate();
+  const today=new Date(); today.setHours(0,0,0,0);
+  const monthName=now.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+
+  let html=`
     <div class="proverb-card">
       <div class="proverb-label">📖 Proverbs ${new Date().getDate()}</div>
       <div class="proverb-text">"${proverb.text}"</div>
@@ -482,8 +621,8 @@ function renderCalendar() {
     </div>
     <div class="calendar-grid">
       ${['Su','Mo','Tu','We','Th','Fr','Sa'].map(d=>`<div class="cal-header">${d}</div>`).join('')}`;
-  for (let i=0;i<firstDay;i++) html+=`<div class="cal-day other-month"></div>`;
-  for (let d=1;d<=daysInMonth;d++) {
+  for(let i=0;i<firstDay;i++) html+=`<div class="cal-day other-month"></div>`;
+  for(let d=1;d<=daysInMonth;d++){
     const date=new Date(year,month,d);
     const isToday=date.toDateString()===today.toDateString();
     const choresOnDay=getChoresForDate(date);
@@ -505,26 +644,48 @@ function renderCalendar() {
 }
 
 function renderChores() {
-  const rooms=[...new Set(state.chores.map(c=>c.room))];
-  if (!state.chores.length) return `<div class="empty-state"><div class="icon">✅</div><p>No chores yet!</p>${state.isAdmin?'<button class="btn btn-primary mt-16" onclick="addChore()">Add Chore</button>':''}</div>`;
+  const todayChores = getChoresForDate(new Date());
+  if (!todayChores.length) return `<div class="empty-state"><div class="icon">✅</div><p>No chores today!</p></div>`;
+
+  // Show lock banner if current user is locked
   let html='';
+  if (state.currentUser && !state.isAdmin) {
+    const lockedChores = getLockedChoresForPerson(state.currentUser.id);
+    if (lockedChores.length) {
+      html+=`<div class="lock-banner">🔒 Restricted Pay Mode — Complete overdue chore${lockedChores.length>1?'s':''} first: ${lockedChores.map(c=>c.name).join(', ')}</div>`;
+    }
+  }
+
+  const rooms=[...new Set(todayChores.map(c=>c.room))];
   rooms.forEach(room=>{
-    const roomChores=state.chores.filter(c=>c.room===room);
+    const roomChores=todayChores.filter(c=>c.room===room);
     const roomObj=state.rooms.find(r=>r.name===room);
-    html+=`<div class="section-title">${roomObj?roomObj.emoji:''} ${room}</div>`;
+    html+=`<div class="section-title">${roomObj?roomObj.name:room}</div>`;
     roomChores.forEach(chore=>{
       const done=isDoneToday(chore);
       const available=isChoreAvailableToUser(chore);
+      const status=done?'normal':getChoreStatus(chore);
+      const personId=state.currentUser?.id;
+      const earnedValue=personId!==undefined?getChoreValueForUser(chore,personId):chore.value;
+      const lock=state.locks[chore.id];
+      const assignedPerson=lock?state.people.find(p=>p.id===lock.personId):null;
+
+      let statusLabel='';
+      if (status==='overdue') statusLabel=`<span style="font-size:10px;color:#e94560;font-weight:700;">🔴 OVERDUE${assignedPerson?' — Assigned: '+assignedPerson.name:''}</span>`;
+      else if (status==='warning') statusLabel=`<span style="font-size:10px;color:#f39c12;font-weight:700;">⚠️ Due Soon</span>`;
+      else if (status==='exempted') statusLabel=`<span style="font-size:10px;color:#f39c12;font-weight:700;">🟡 Exempt Today</span>`;
+
       html+=`
-        <div class="chore-item ${done?'done':''}">
+        <div class="chore-item ${done?'done':status}">
           <div class="checkbox ${done?'checked':''}" onclick="${available?`toggleChore(${chore.id})`:''}">
             ${done?'✓':''}
           </div>
           <div class="chore-info">
             <div class="chore-name">${chore.name}</div>
             <div class="chore-meta">${chore.asNeeded?'As Needed':`Every ${chore.freq} day${chore.freq>1?'s':''}`} • ${room}</div>
+            ${statusLabel}
           </div>
-          <div class="chore-value">$${chore.value}</div>
+          <div class="chore-value ${earnedValue===0&&!done?'zero':''}">$${done?chore.value:earnedValue}</div>
           ${state.isAdmin?`<button class="btn btn-secondary btn-sm" onclick="editChore(${chore.id})">✏️</button>`:''}
         </div>`;
     });
@@ -533,22 +694,26 @@ function renderChores() {
 }
 
 function renderPeople() {
-  const kids = state.people.filter(p => !p.isAdmin);
-  if (!kids.length) return `<div class="empty-state"><div class="icon">👥</div><p>No kids yet!</p></div>`;
+  const kids=state.people.filter(p=>!p.isAdmin);
+  if(!kids.length) return `<div class="empty-state"><div class="icon">👥</div><p>No kids yet!</p></div>`;
   const sorted=[...kids].sort((a,b)=>(b.totalEarned||0)-(a.totalEarned||0));
   let html='<div class="section-title">Leaderboard</div>';
   sorted.forEach((person,i)=>{
+    const locked=isPersonLocked(person.id);
+    const lockedChores=getLockedChoresForPerson(person.id);
     html+=`
-      <div class="person-card">
+      <div class="person-card ${locked?'locked':''}">
         <div class="person-rank">${['🥇','🥈','🥉'][i]||`#${i+1}`}</div>
-        <div class="person-avatar">${person.emoji||'👤'}</div>
+        <div class="person-avatar">${person.name.charAt(0).toUpperCase()}</div>
         <div class="person-info">
-          <div class="person-name">${person.name}</div>
+          <div class="person-name">${person.name}${locked?'<span class="tag locked">🔒 Restricted</span>':''}</div>
           <div class="person-earnings">$${(person.totalEarned||0).toFixed(2)} earned</div>
+          ${locked&&lockedChores.length?`<div style="font-size:11px;color:#e94560;margin-top:4px;">Overdue: ${lockedChores.map(c=>c.name).join(', ')}</div>`:''}
         </div>
-        <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;flex-direction:column;gap:6px;">
           ${state.isAdmin?`<button class="btn btn-secondary btn-sm" onclick="editPerson(${person.id})">✏️</button>`:''}
           ${state.isAdmin?`<button class="btn btn-warning btn-sm" onclick="confirmCashOut(${person.id})">💸</button>`:''}
+          ${state.isAdmin&&locked?lockedChores.map(c=>`<button class="btn btn-sm" style="background:#f39c12;color:white;font-size:11px;" onclick="adminExemptChore(${c.id})">Lift: ${c.name}</button>`).join(''):''}
         </div>
       </div>`;
   });
@@ -556,7 +721,7 @@ function renderPeople() {
 }
 
 function renderHistory() {
-  if (!state.history.length) return `<div class="empty-state"><div class="icon">📋</div><p>No history yet!</p></div>`;
+  if(!state.history.length) return `<div class="empty-state"><div class="icon">📋</div><p>No history yet!</p></div>`;
   let html='<div class="section-title">Recent Activity</div>';
   state.history.slice(0,50).forEach(h=>{
     const canU=canUndo(h);
@@ -567,7 +732,7 @@ function renderHistory() {
           <div class="text-sm">${h.who} • ${h.date} • ${h.room}</div>
         </div>
         <div style="display:flex;gap:8px;align-items:center">
-          <span class="text-green">+$${h.value}</span>
+          <span class="${h.value===0?'text-red':'text-green'}">$${h.value}</span>
           ${canU?`<button class="btn btn-danger btn-sm" onclick="undoHistory(${h.id})">↩</button>`:''}
         </div>
       </div>`;
@@ -581,8 +746,8 @@ function renderSettings() {
     ${state.rooms.map(room=>`
       <div class="card">
         <div class="row between">
-          <span>${room.emoji} ${room.name}</span>
-          <div style="display:flex;gap:8px">
+          <span style="font-weight:600">${room.name}</span>
+          <div style="display:flex;gap:8px;">
             ${state.isAdmin?`<button class="btn btn-secondary btn-sm" onclick="editRoom(${room.id})">✏️</button><button class="btn btn-danger btn-sm" onclick="deleteRoom(${room.id})">🗑</button>`:''}
           </div>
         </div>
@@ -590,13 +755,13 @@ function renderSettings() {
       </div>`).join('')}
     ${state.isAdmin?`<button class="btn btn-primary w-full" onclick="addRoom()">+ Add Room</button>`:''}
     ${state.isAdmin?`
-    <div class="section-title mt-16">Admin Tools</div>
-    <div class="card">
-      <div class="text-green mb-8">✓ Admin mode active</div>
-      <button class="btn btn-secondary w-full mb-8" onclick="state.showChangePinModal=true;render()">🔐 Change PIN</button>
-      <button class="btn btn-success w-full mb-8" onclick="pushAllData()">☁️ Push All Data to Cloud</button>
-      <button class="btn btn-danger w-full" onclick="switchUser()">Exit Admin</button>
-    </div>`:''}`;
+      <div class="section-title mt-16">Admin Tools</div>
+      <div class="card">
+        <div class="text-green mb-8">✓ Admin mode active</div>
+        <button class="btn btn-secondary w-full mb-8" onclick="state.showChangePinModal=true;render()">🔐 Change PIN</button>
+        <button class="btn btn-success w-full mb-8" onclick="pushAllData()">☁️ Push All Data to Cloud</button>
+        <button class="btn btn-danger w-full" onclick="switchUser()">Exit Admin</button>
+      </div>`:''}`;
 }
 
 function renderDayModal() {
@@ -618,8 +783,9 @@ function renderDayModal() {
         ${chores.map(chore=>{
           const done=chore.doneBy&&chore.doneBy[dk];
           const available=isChoreAvailableToUser(chore);
+          const status=done?'normal':getChoreStatus(chore);
           return `
-            <div class="chore-item ${done?'done':''}">
+            <div class="chore-item ${done?'done':status}">
               <div class="checkbox ${done?'checked':''}" onclick="${available&&isToday?`toggleChore(${chore.id})`:''}">
                 ${done?'✓':''}
               </div>
@@ -644,7 +810,7 @@ function renderAddChoreModal() {
         <div class="form-group"><label>Chore Name</label><input class="input" id="choreName" placeholder="e.g. Wash Dishes" value="${e?e.name:''}"></div>
         <div class="form-group"><label>Room</label>
           <select class="input" id="choreRoom">
-            ${state.rooms.map(r=>`<option value="${r.name}" ${e&&e.room===r.name?'selected':''}>${r.emoji} ${r.name}</option>`).join('')}
+            ${state.rooms.map(r=>`<option value="${r.name}" ${e&&e.room===r.name?'selected':''}>${r.name}</option>`).join('')}
           </select>
         </div>
         <div class="form-group"><label>Dollar Value</label>
@@ -674,12 +840,6 @@ function renderAddPersonModal() {
       <div class="modal">
         <h2>${e?'Edit':'Add'} Person</h2>
         <div class="form-group"><label>Name</label><input class="input" id="personName" placeholder="e.g. Eli" value="${e?e.name:''}"></div>
-        <div class="form-group"><label>Emoji</label>
-          <div class="row">
-            <span id="selectedEmoji" style="font-size:32px">${e?e.emoji:'👤'}</span>
-            <button class="btn btn-secondary btn-sm" onclick="openEmojiPicker('person')">Change</button>
-          </div>
-        </div>
         <div class="row mt-16" style="gap:10px">
           <button class="btn btn-secondary" style="flex:1" onclick="closePersonModal()">Cancel</button>
           <button class="btn btn-primary" style="flex:1" onclick="savePerson()">Save</button>
@@ -696,16 +856,10 @@ function renderAddRoomModal() {
       <div class="modal">
         <h2>${e?'Edit':'Add'} Room</h2>
         <div class="form-group"><label>Room Name</label><input class="input" id="roomName" placeholder="e.g. Kitchen" value="${e?e.name:''}"></div>
-        <div class="form-group"><label>Emoji</label>
-          <div class="row">
-            <span id="roomEmoji" style="font-size:32px">${e?e.emoji:'🏠'}</span>
-            <button class="btn btn-secondary btn-sm" onclick="openEmojiPicker('room')">Change</button>
-          </div>
-        </div>
         <div class="form-group"><label>Room Owner (optional)</label>
           <select class="input" id="roomOwner">
             <option value="">No owner</option>
-            ${state.people.filter(p=>!p.isAdmin).map(p=>`<option value="${p.id}" ${e&&e.owner===p.id?'selected':''}>${p.emoji} ${p.name}</option>`).join('')}
+            ${state.people.filter(p=>!p.isAdmin).map(p=>`<option value="${p.id}" ${e&&e.owner===p.id?'selected':''}>${p.name}</option>`).join('')}
           </select>
         </div>
         <div class="row mt-16" style="gap:10px">
@@ -716,22 +870,9 @@ function renderAddRoomModal() {
     </div>`;
 }
 
-function renderEmojiPicker() {
-  return `
-    <div class="modal-overlay">
-      <div class="modal">
-        <h2>Pick Emoji</h2>
-        <div class="emoji-grid">
-          ${EMOJIS.map(e=>`<div class="emoji-btn" onclick="selectEmoji('${e}')">${e}</div>`).join('')}
-        </div>
-        <button class="btn btn-secondary w-full mt-16" onclick="state.showEmojiPicker=false;render()">Cancel</button>
-      </div>
-    </div>`;
-}
-
 function renderCashOutConfirm() {
   const person=state.people.find(p=>p.id===state.showCashOutConfirm);
-  if (!person) return '';
+  if(!person) return '';
   return `
     <div class="modal-overlay">
       <div class="modal" style="text-align:center">
@@ -764,24 +905,25 @@ function renderChangePinModal() {
     </div>`;
 }
 
-// Global functions
-window.loginAsKid    = id => { state.currentUser=state.people.find(p=>p.id===id); state.isAdmin=false; state.screen=SCREEN.MAIN; render(); };
-window.startPin      = startPin;
-window.handlePinKey  = handlePinKey;
-window.cancelPin     = () => { state.screen=SCREEN.USER_SELECT; state.pinBuffer=''; render(); };
-window.switchUser    = () => { state.currentUser=null; state.isAdmin=false; state.screen=SCREEN.USER_SELECT; render(); };
-window.setTab        = t => { state.tab=t; render(); };
-window.prevMonth     = () => { state.calendarDate=new Date(state.calendarDate.getFullYear(),state.calendarDate.getMonth()-1,1); render(); };
-window.nextMonth     = () => { state.calendarDate=new Date(state.calendarDate.getFullYear(),state.calendarDate.getMonth()+1,1); render(); };
-window.openDay       = (y,m,d) => { state.selectedDate=new Date(y,m,d); state.showChoreList=true; render(); };
-window.closeDayModal = e => { if(e.target.classList.contains('modal-overlay')){state.showChoreList=false;render();} };
-window.toggleChore   = toggleChore;
-window.confirmCashOut= id => { state.showCashOutConfirm=id; render(); };
-window.cashOut       = cashOut;
-window.addChore      = () => { state.editingChore=null; state.showAddChore=true; render(); };
-window.editChore     = id => { state.editingChore=state.chores.find(c=>c.id===id); state.showAddChore=true; render(); };
-window.closeChoreModal=() => { state.showAddChore=false; state.editingChore=null; render(); };
-window.saveChore     = async () => {
+// ── GLOBAL FUNCTIONS ──────────────────────────────────────────────────────────
+window.loginAsKid     = id => { state.currentUser=state.people.find(p=>p.id===id); state.isAdmin=false; state.screen=SCREEN.MAIN; render(); };
+window.startPin       = startPin;
+window.handlePinKey   = handlePinKey;
+window.cancelPin      = () => { state.screen=SCREEN.USER_SELECT; state.pinBuffer=''; render(); };
+window.switchUser     = () => { state.currentUser=null; state.isAdmin=false; state.screen=SCREEN.USER_SELECT; render(); };
+window.setTab         = t => { state.tab=t; render(); };
+window.prevMonth      = () => { state.calendarDate=new Date(state.calendarDate.getFullYear(),state.calendarDate.getMonth()-1,1); render(); };
+window.nextMonth      = () => { state.calendarDate=new Date(state.calendarDate.getFullYear(),state.calendarDate.getMonth()+1,1); render(); };
+window.openDay        = (y,m,d) => { state.selectedDate=new Date(y,m,d); state.showChoreList=true; render(); };
+window.closeDayModal  = e => { if(e.target.classList.contains('modal-overlay')){state.showChoreList=false;render();} };
+window.toggleChore    = toggleChore;
+window.adminExemptChore = adminExemptChore;
+window.confirmCashOut = id => { state.showCashOutConfirm=id; render(); };
+window.cashOut        = cashOut;
+window.addChore       = () => { state.editingChore=null; state.showAddChore=true; render(); };
+window.editChore      = id => { state.editingChore=state.chores.find(c=>c.id===id); state.showAddChore=true; render(); };
+window.closeChoreModal= () => { state.showAddChore=false; state.editingChore=null; render(); };
+window.saveChore      = async () => {
   const name=document.getElementById('choreName').value.trim();
   const room=document.getElementById('choreRoom').value;
   const value=parseInt(document.getElementById('choreValue').value);
@@ -790,104 +932,97 @@ window.saveChore     = async () => {
   const freq=asNeeded?1:parseInt(freqVal);
   if(!name){showToast('Enter a chore name','#e94560');return;}
   if(state.editingChore){Object.assign(state.editingChore,{name,room,value,freq,asNeeded});}
-  else{state.chores.push({id:Date.now(),name,room,value,freq,asNeeded,doneBy:{}});}
+  else{state.chores.push({id:Date.now(),name,room,value,freq,asNeeded,doneBy:{},lastCompleted:null});}
   await saveToFirebase('chores',state.chores);
   state.showAddChore=false; state.editingChore=null;
   showToast('Chore saved!'); render();
 };
-window.deleteChore   = async id => {
+window.deleteChore    = async id => {
   state.chores=state.chores.filter(c=>c.id!==id);
-  await saveToFirebase('chores',state.chores);
+  delete state.locks[id];
+  await Promise.all([saveToFirebase('chores',state.chores),saveToFirebase('locks',state.locks)]);
   state.showAddChore=false; state.editingChore=null;
   showToast('Chore deleted'); render();
 };
-window.addPerson     = () => { state.editingPerson=null; state.showAddPerson=true; render(); };
-window.editPerson    = id => { state.editingPerson=state.people.find(p=>p.id===id); state.showAddPerson=true; render(); };
+window.addPerson      = () => { state.editingPerson=null; state.showAddPerson=true; render(); };
+window.editPerson     = id => { state.editingPerson=state.people.find(p=>p.id===id); state.showAddPerson=true; render(); };
 window.closePersonModal=() => { state.showAddPerson=false; state.editingPerson=null; render(); };
-window.savePerson    = async () => {
+window.savePerson     = async () => {
   const name=document.getElementById('personName').value.trim();
-  const emoji=document.getElementById('selectedEmoji')?.textContent||'👤';
   if(!name){showToast('Enter a name','#e94560');return;}
-  if(state.editingPerson){Object.assign(state.editingPerson,{name,emoji});}
-  else{state.people.push({id:Date.now(),name,emoji,isAdmin:false,totalEarned:0});}
+  if(state.editingPerson){state.editingPerson.name=name;}
+  else{state.people.push({id:Date.now(),name,isAdmin:false,totalEarned:0});}
   await saveToFirebase('people',state.people);
   state.showAddPerson=false; state.editingPerson=null;
   showToast('Saved!'); render();
 };
-window.deletePerson  = async id => {
+window.deletePerson   = async id => {
   state.people=state.people.filter(p=>p.id!==id);
   await saveToFirebase('people',state.people);
   state.showAddPerson=false; state.editingPerson=null;
   showToast('Removed'); render();
 };
-window.addRoom       = () => { state.editingRoom=null; state.showAddRoom=true; render(); };
-window.editRoom      = id => { state.editingRoom=state.rooms.find(r=>r.id===id); state.showAddRoom=true; render(); };
-window.closeRoomModal= () => { state.showAddRoom=false; state.editingRoom=null; render(); };
-window.saveRoom      = async () => {
+window.addRoom        = () => { state.editingRoom=null; state.showAddRoom=true; render(); };
+window.editRoom       = id => { state.editingRoom=state.rooms.find(r=>r.id===id); state.showAddRoom=true; render(); };
+window.closeRoomModal = () => { state.showAddRoom=false; state.editingRoom=null; render(); };
+window.saveRoom       = async () => {
   const name=document.getElementById('roomName').value.trim();
-  const emoji=document.getElementById('roomEmoji')?.textContent||'🏠';
   const owner=document.getElementById('roomOwner').value||null;
   if(!name){showToast('Enter a room name','#e94560');return;}
-  if(state.editingRoom){Object.assign(state.editingRoom,{name,emoji,owner:owner?parseInt(owner):null});}
-  else{state.rooms.push({id:Date.now(),name,emoji,owner:owner?parseInt(owner):null});}
+  if(state.editingRoom){Object.assign(state.editingRoom,{name,owner:owner?parseInt(owner):null});}
+  else{state.rooms.push({id:Date.now(),name,owner:owner?parseInt(owner):null});}
   await saveToFirebase('rooms',state.rooms);
   state.showAddRoom=false; state.editingRoom=null;
   showToast('Room saved!'); render();
 };
-window.deleteRoom    = async id => {
+window.deleteRoom     = async id => {
   state.rooms=state.rooms.filter(r=>r.id!==id);
   await saveToFirebase('rooms',state.rooms);
   showToast('Room deleted'); render();
 };
-window.openEmojiPicker=target=>{state.emojiTarget=target;state.showEmojiPicker=true;render();};
-window.selectEmoji   = emoji => {
-  state.showEmojiPicker=false;
-  const el=document.getElementById(state.emojiTarget==='person'?'selectedEmoji':'roomEmoji');
-  if(el) el.textContent=emoji;
-  render();
-};
-window.undoHistory   = async id => {
+window.undoHistory    = async id => {
   const h=state.history.find(x=>x.id===id);
   if(!h) return;
   if(!canUndo(h)){showToast("You can't undo someone else's chore",'#e94560');return;}
   const chore=state.chores.find(c=>c.id===h.choreId);
   if(chore&&chore.doneBy) delete chore.doneBy[h.date];
+  if(chore) chore.lastCompleted=null;
   if(h.who!=='Someone'){
     const person=state.people.find(p=>p.name===h.who);
-    if(person) person.totalEarned=Math.max(0,(person.totalEarned||0)-h.value);
+    if(person&&h.value>0) person.totalEarned=Math.max(0,(person.totalEarned||0)-h.value);
   }
   state.history=state.history.filter(x=>x.id!==id);
+  processOverdue();
   await Promise.all([
     saveToFirebase('chores',state.chores),
     saveToFirebase('history',state.history),
     saveToFirebase('people',state.people),
+    saveToFirebase('locks',state.locks),
   ]);
   showToast('Undone!'); render();
 };
-window.newPinKey     = key => {
+window.newPinKey      = key => {
   if(!state.newPinBuffer) state.newPinBuffer='';
   if(key==='del'){state.newPinBuffer=state.newPinBuffer.slice(0,-1);render();return;}
   if(state.newPinBuffer.length>=4) return;
-  state.newPinBuffer+=key;
-  render();
+  state.newPinBuffer+=key; render();
   if(state.newPinBuffer.length===4){
     setTimeout(async()=>{
       state.settings.adminPin=state.newPinBuffer;
       await saveToFirebase('settings',state.settings);
-      state.showChangePinModal=false;
-      state.newPinBuffer='';
-      showToast('PIN updated! ✓');
-      render();
+      state.showChangePinModal=false; state.newPinBuffer='';
+      showToast('PIN updated! ✓'); render();
     },200);
   }
 };
-window.pushAllData   = async () => {
+window.pushAllData    = async () => {
   await Promise.all([
     saveToFirebase('chores',state.chores),
     saveToFirebase('people',state.people),
     saveToFirebase('history',state.history),
     saveToFirebase('rooms',state.rooms),
     saveToFirebase('settings',state.settings),
+    saveToFirebase('locks',state.locks),
   ]);
   showToast('All data pushed! ☁️');
 };
@@ -897,6 +1032,3 @@ initData();
 </script>
 </body>
 </html>
-```
-
-The big change here is the PIN now gets its **own full screen** — completely separate from the user select screen. No more overlap issues. Tap Admin → full screen PIN pad appears → enter 1234 → you're in. Let me know how it goes!
