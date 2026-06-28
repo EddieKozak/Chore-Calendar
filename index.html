@@ -1,4 +1,4 @@
-Here's the complete updated script:
+Here it is — complete script, paste and replace everything in GitHub:
 
 ```html
 <!DOCTYPE html>
@@ -16,16 +16,17 @@ Here's the complete updated script:
   .header h1 { font-size: 22px; color: #e94560; }
   .header .date { font-size: 13px; color: #aaa; margin-top: 4px; }
   .tabs { display: flex; background: #16213e; border-bottom: 2px solid #0f3460; }
-  .tab { flex: 1; padding: 12px 4px; text-align: center; font-size: 11px; cursor: pointer; color: #aaa; border-bottom: 3px solid transparent; transition: all 0.2s; }
+  .tab { flex: 1; padding: 12px 4px; text-align: center; font-size: 11px; cursor: pointer; color: #aaa; border-bottom: 3px solid transparent; }
   .tab.active { color: #e94560; border-bottom-color: #e94560; }
   .tab .icon { font-size: 18px; display: block; }
   .content { flex: 1; overflow-y: auto; padding: 16px; }
-  .btn { padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.2s; }
+  .btn { padding: 10px 16px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; }
   .btn-primary { background: #e94560; color: white; }
   .btn-secondary { background: #0f3460; color: white; }
   .btn-success { background: #27ae60; color: white; }
   .btn-danger { background: #c0392b; color: white; }
   .btn-warning { background: #f39c12; color: white; }
+  .btn-purple { background: #8e44ad; color: white; }
   .btn-sm { padding: 6px 12px; font-size: 12px; }
   .card { background: #16213e; border-radius: 12px; padding: 16px; margin-bottom: 12px; border: 1px solid #0f3460; }
   .proverb-card { background: linear-gradient(135deg, #1a1a3e, #0f3460); border-radius: 12px; padding: 18px; margin-bottom: 16px; border: 1px solid #3a5080; }
@@ -36,7 +37,7 @@ Here's the complete updated script:
   .input:focus { outline: none; border-color: #e94560; }
   select.input { cursor: pointer; }
   .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 16px; }
-  .modal { background: #16213e; border-radius: 16px; padding: 24px; width: 100%; max-width: 400px; border: 1px solid #0f3460; max-height: 80vh; overflow-y: auto; }
+  .modal { background: #16213e; border-radius: 16px; padding: 24px; width: 100%; max-width: 400px; border: 1px solid #0f3460; max-height: 85vh; overflow-y: auto; }
   .modal h2 { margin-bottom: 16px; color: #e94560; }
   .form-group { margin-bottom: 14px; }
   .form-group label { display: block; font-size: 12px; color: #aaa; margin-bottom: 6px; }
@@ -47,7 +48,7 @@ Here's the complete updated script:
   .chore-item.warning { border-color: #f39c12; background: #2a2210; }
   .chore-item.exempted { border-color: #f39c12; background: #2a2210; }
   .chore-item.urgent { border-color: #9b59b6; background: #1e1a2e; }
-  .checkbox { width: 24px; height: 24px; border: 2px solid #e94560; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; }
+  .checkbox { width: 24px; height: 24px; border: 2px solid #e94560; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .checkbox.checked { background: #e94560; }
   .chore-info { flex: 1; }
   .chore-name { font-size: 15px; font-weight: 500; }
@@ -56,17 +57,18 @@ Here's the complete updated script:
   .chore-value.zero { color: #e94560; }
   .person-card { display: flex; align-items: center; gap: 12px; padding: 14px; background: #1a1a2e; border-radius: 10px; margin-bottom: 8px; border: 1px solid #0f3460; }
   .person-card.locked { border-color: #c0392b; background: #2a1a1a; }
-  .person-avatar { width: 44px; height: 44px; border-radius: 50%; background: #e94560; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; flex-shrink: 0; color: white; }
   .person-info { flex: 1; }
   .person-name { font-size: 16px; font-weight: 600; }
   .person-earnings { font-size: 13px; color: #27ae60; }
   .person-rank { font-size: 24px; font-weight: 700; color: #e94560; }
   .history-item { padding: 10px; background: #1a1a2e; border-radius: 8px; margin-bottom: 6px; border-left: 3px solid #27ae60; display: flex; justify-content: space-between; align-items: center; }
   .history-item.urgent-history { border-left-color: #9b59b6; }
+  .history-item.debit { border-left-color: #e94560; }
+  .history-item.transfer { border-left-color: #3498db; }
   .section-title { font-size: 13px; font-weight: 700; color: #aaa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; margin-top: 16px; }
   .fab { position: fixed; bottom: 80px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: #e94560; border: none; color: white; font-size: 28px; cursor: pointer; box-shadow: 0 4px 16px rgba(233,69,96,0.4); z-index: 50; display: flex; align-items: center; justify-content: center; }
   .pin-dots { display: flex; gap: 12px; justify-content: center; margin: 16px 0; }
-  .pin-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #e94560; background: transparent; transition: all 0.2s; }
+  .pin-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #e94560; background: transparent; }
   .pin-dot.filled { background: #e94560; }
   .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
   .pin-key { padding: 16px; border: 1px solid #0f3460; border-radius: 10px; background: #1a1a2e; color: white; font-size: 20px; font-weight: 600; cursor: pointer; text-align: center; }
@@ -79,7 +81,7 @@ Here's the complete updated script:
   .cal-day.today.has-chores::after { background: white; }
   .cal-day.other-month { color: #555; }
   .progress-bar { height: 6px; background: #0f3460; border-radius: 3px; overflow: hidden; margin-top: 8px; }
-  .progress-fill { height: 100%; background: #27ae60; border-radius: 3px; transition: width 0.3s; }
+  .progress-fill { height: 100%; background: #27ae60; border-radius: 3px; }
   .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; background: #0f3460; color: #aaa; margin-left: 6px; }
   .tag.admin { background: #3d1f1f; color: #e94560; }
   .tag.locked { background: #3d1f1f; color: #e94560; }
@@ -91,8 +93,8 @@ Here's the complete updated script:
   .text-sm { font-size: 13px; color: #aaa; }
   .text-green { color: #27ae60; }
   .text-red { color: #e94560; }
+  .text-blue { color: #3498db; }
   .text-orange { color: #f39c12; }
-  .text-purple { color: #9b59b6; }
   .mt-8 { margin-top: 8px; }
   .mt-16 { margin-top: 16px; }
   .mb-8 { margin-bottom: 8px; }
@@ -103,6 +105,20 @@ Here's the complete updated script:
   .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #27ae60; color: white; padding: 10px 20px; border-radius: 20px; font-size: 14px; z-index: 200; animation: fadeInOut 2.2s ease; pointer-events: none; white-space: nowrap; }
   @keyframes fadeInOut { 0%,100%{opacity:0;} 15%,85%{opacity:1;} }
   .lock-banner { background: #2a1a1a; border: 1px solid #c0392b; border-radius: 10px; padding: 12px; margin-bottom: 12px; font-size: 13px; color: #e94560; }
+  .avatar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 12px; }
+  .avatar-option { border: 3px solid transparent; border-radius: 12px; cursor: pointer; padding: 4px; text-align: center; }
+  .avatar-option.selected { border-color: #e94560; }
+  .balance-card { border-radius: 12px; padding: 20px; margin-bottom: 12px; text-align: center; }
+  .balance-card.account { background: linear-gradient(135deg, #1e3a2e, #27ae60); border: 1px solid #27ae60; }
+  .balance-card.savings { background: linear-gradient(135deg, #1a2a3e, #3498db); border: 1px solid #3498db; }
+  .balance-amount { font-size: 32px; font-weight: 700; color: white; }
+  .balance-label { font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
+  .txn-item { padding: 10px 12px; background: #1a1a2e; border-radius: 8px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid #555; }
+  .txn-item.credit { border-left-color: #27ae60; }
+  .txn-item.debit { border-left-color: #e94560; }
+  .txn-item.transfer-out { border-left-color: #3498db; }
+  .txn-item.transfer-in { border-left-color: #9b59b6; }
+  .profile-header { text-align: center; padding: 24px 16px 16px; background: #16213e; border-bottom: 1px solid #0f3460; }
 </style>
 </head>
 <body>
@@ -127,404 +143,420 @@ const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp);
 const DEFAULT_PIN = '1234';
 
+// ── AVATARS ───────────────────────────────────────────────────────────────────
+const AVATARS = [
+  // Boy (blue tones)
+  { id:'b1', label:'Boy 1', svg:`<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="30" fill="#1a6eb5"/><circle cx="30" cy="22" r="11" fill="#fcd5b0"/><path d="M10 52c0-11 9-18 20-18s20 7 20 18" fill="#fcd5b0"/><rect x="18" y="10" width="24" height="10" rx="5" fill="#1a3a6e"/><circle cx="25" cy="22" r="2" fill="#333"/><circle cx="35" cy="22" r="2" fill="#333"/><path d="M26 28 q4 4 8 0" stroke="#c0392b" stroke-width="1.5" fill="none"/></svg>` },
+  { id:'b2', label:'Boy 2', svg:`<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="30" fill="#27ae60"/><circle cx="30" cy="22" r="11" fill="#fcd5b0"/><path d="M10 52c0-11 9-18 20-18s20 7 20 18" fill="#fcd5b0"/><path d="M19 14 q11-8 22 0" fill="#5d3a1a"/><circle cx="25" cy="22" r="2" fill="#333"/><circle cx="35" cy="22" r="2" fill="#333"/><path d="M26 28 q4 4 8 0" stroke="#c0392b" stroke-width="1.5" fill="none"/><path d="M24 18 q6-4 12 0" fill="#5d3a1a"/></svg>` },
+  { id:'b3', label:'Boy 3', svg:`<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="30" fill="#8e44ad"/><circle cx="30" cy="22" r="11" fill="#ffe0bd"/><path d="M10 52c0-11 9-18 20-18s20 7 20 18" fill="#ffe0bd"/><rect x="17" y="11" width="26" height="8" rx="4" fill="#2c1a0e"/><circle cx="25" cy="22" r="2" fill="#333"/><circle cx="35" cy="22" r="2" fill="#333"/><path d="M26 28 q4 3 8 0" stroke="#e74c3c" stroke-width="1.5" fill="none"/><path d="M30 11 v-4 M24 12 l-2-4 M36 12 l2-4" stroke="#2c1a0e" stroke-width="2"/></svg>` },
+  { id:'b4', label:'Boy 4', svg:`<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="30" fill="#e67e22"/><circle cx="30" cy="22" r="11" fill="#f5cba7"/><path d="M10 52c0-11 9-18 20-18s20 7 20 18" fill="#f5cba7"/><path d="M19 15 q11-6 22 2 q-3-10-22-2z" fill="#c0392b"/><circle cx="25" cy="22" r="2" fill="#333"/><circle cx="35" cy="22" r="2" fill="#333"/><path d="M26 28 q4 4 8 0" stroke="#922b21" stroke-width="1.5" fill="none"/></svg>` },
+  // Girl (warm tones)
+  { id:'g1', label:'Girl 1', svg:`<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="30" fill="#e91e8c"/><circle cx="30" cy="22" r="11" fill="#fcd5b0"/><path d="M10 52c0-11 9-18 20-18s20 7 20 18" fill="#fcd5b0"/><path d="M19 14 q11-10 22 0 q0 4-11 2 q-11 2-11-2z" fill="#f39c12"/><circle cx="25" cy="22" r="2" fill="#333"/><circle cx="35" cy="22" r="2" fill="#333"/><path d="M26 28 q4 4 8 0" stroke="#e91e8c" stroke-width="1.5" fill="none"/><circle cx="24" cy="24" r="2" fill="#f1948a" opacity="0.6"/><circle cx="36" cy="24" r="2" fill="#f1948a" opacity="0.6"/></svg>` },
+  { id:'g2', label:'Girl 2', svg:`<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="30" fill="#9b59b6"/><circle cx="30" cy="22" r="11" fill="#fdebd0"/><path d="M10 52c0-11 9-18 20-18s20 7 20 18" fill="#fdebd0"/><path d="M19 22 q0-12 11-10 q11-2 11 10" fill="#8B4513"/><path d="M19 22 q-2 4 0 8 q2-6 11-4 q9-2 11 4 q2-4 0-8" fill="#6B3410"/><circle cx="25" cy="22" r="2" fill="#333"/><circle cx="35" cy="22" r="2" fill="#333"/><path d="M26 28 q4 4 8 0" stroke="#9b59b6" stroke-width="1.5" fill="none"/><circle cx="24" cy="24" r="2" fill="#f1948a" opacity="0.5"/><circle cx="36" cy="24" r="2" fill="#f1948a" opacity="0.5"/></svg>` },
+  { id:'g3', label:'Girl 3', svg:`<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="30" fill="#e74c3c"/><circle cx="30" cy="22" r="11" fill="#fcd5b0"/><path d="M10 52c0-11 9-18 20-18s20 7 20 18" fill="#fcd5b0"/><path d="M18 16 q12-8 24 0 l2 8 q-14-6-28 0z" fill="#f4d03f"/><circle cx="25" cy="22" r="2" fill="#333"/><circle cx="35" cy="22" r="2" fill="#333"/><path d="M26 28 q4 4 8 0" stroke="#e74c3c" stroke-width="1.5" fill="none"/><path d="M30 8 q-8 0-12 6 M30 8 q8 0 12 6" stroke="#f4d03f" stroke-width="3" fill="none"/></svg>` },
+  { id:'g4', label:'Girl 4', svg:`<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="30" fill="#16a085"/><circle cx="30" cy="22" r="11" fill="#fdebd0"/><path d="M10 52c0-11 9-18 20-18s20 7 20 18" fill="#fdebd0"/><path d="M20 20 q0-10 10-10 q10 0 10 10" fill="#2c1a0e"/><path d="M20 20 l-3 10 M40 20 l3 10" stroke="#2c1a0e" stroke-width="3"/><circle cx="25" cy="22" r="2" fill="#333"/><circle cx="35" cy="22" r="2" fill="#333"/><path d="M26 28 q4 4 8 0" stroke="#16a085" stroke-width="1.5" fill="none"/><circle cx="24" cy="24" r="1.5" fill="#e8a0a0" opacity="0.7"/><circle cx="36" cy="24" r="1.5" fill="#e8a0a0" opacity="0.7"/></svg>` },
+  // Neutral
+  { id:'n1', label:'Neutral 1', svg:`<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="30" fill="#2c3e50"/><circle cx="30" cy="22" r="11" fill="#fcd5b0"/><path d="M10 52c0-11 9-18 20-18s20 7 20 18" fill="#fcd5b0"/><circle cx="25" cy="22" r="2" fill="#333"/><circle cx="35" cy="22" r="2" fill="#333"/><path d="M25 28 h10" stroke="#777" stroke-width="1.5"/><path d="M22 14 q8-6 16 0 q0 3-8 2 q-8 1-8-2z" fill="#555"/></svg>` },
+  { id:'n2', label:'Neutral 2', svg:`<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="30" fill="#27ae60"/><circle cx="30" cy="22" r="11" fill="#ffe0bd"/><path d="M10 52c0-11 9-18 20-18s20 7 20 18" fill="#ffe0bd"/><circle cx="25" cy="22" r="2" fill="#333"/><circle cx="35" cy="22" r="2" fill="#333"/><path d="M26 28 q4 3 8 0" stroke="#555" stroke-width="1.5" fill="none"/><rect x="20" y="10" width="20" height="7" rx="3.5" fill="#1a5c34"/><path d="M20 13 h20" stroke="#27ae60" stroke-width="1"/></svg>` },
+  { id:'n3', label:'Neutral 3', svg:`<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="30" fill="#d35400"/><circle cx="30" cy="22" r="11" fill="#f5cba7"/><path d="M10 52c0-11 9-18 20-18s20 7 20 18" fill="#f5cba7"/><circle cx="25" cy="22" r="2" fill="#333"/><circle cx="35" cy="22" r="2" fill="#333"/><path d="M26 28 q4 4 8 0" stroke="#d35400" stroke-width="1.5" fill="none"/><path d="M18 15 q12-7 24 0" fill="none" stroke="#8B4513" stroke-width="4"/></svg>` },
+  { id:'n4', label:'Neutral 4', svg:`<svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="30" fill="#7f8c8d"/><circle cx="30" cy="22" r="11" fill="#fdebd0"/><path d="M10 52c0-11 9-18 20-18s20 7 20 18" fill="#fdebd0"/><circle cx="25" cy="22" r="2" fill="#333"/><circle cx="35" cy="22" r="2" fill="#333"/><path d="M26 28 q4 3 8 0" stroke="#555" stroke-width="1.5" fill="none"/><circle cx="30" cy="13" r="5" fill="none" stroke="#555" stroke-width="2"/><path d="M25 13 h10" stroke="#555" stroke-width="1.5"/></svg>` },
+];
+
+function getAvatar(avatarId, size) {
+  const s = size || 44;
+  const av = AVATARS.find(a => a.id === avatarId);
+  if (!av) {
+    return `<div style="width:${s}px;height:${s}px;border-radius:50%;background:#e94560;display:flex;align-items:center;justify-content:center;font-size:${Math.round(s*0.4)}px;font-weight:700;color:white;flex-shrink:0;">?</div>`;
+  }
+  return `<div style="width:${s}px;height:${s}px;border-radius:50%;overflow:hidden;flex-shrink:0;">${av.svg}</div>`;
+}
+
 const PROVERBS = {
-  1:  { text: "The fear of the Lord is the beginning of knowledge; fools despise wisdom and instruction.", ref: "Proverbs 1:7" },
-  2:  { text: "For the Lord gives wisdom; from His mouth come knowledge and understanding.", ref: "Proverbs 2:6" },
-  3:  { text: "Trust in the Lord with all your heart and do not lean on your own understanding.", ref: "Proverbs 3:5" },
-  4:  { text: "Watch over your heart with all diligence, for from it flow the springs of life.", ref: "Proverbs 4:23" },
-  5:  { text: "Let your fountain be blessed, and rejoice in the wife of your youth.", ref: "Proverbs 5:18" },
-  6:  { text: "Go to the ant, O sluggard, observe her ways and be wise.", ref: "Proverbs 6:6" },
-  7:  { text: "Say to wisdom, you are my sister, and call understanding your intimate friend.", ref: "Proverbs 7:4" },
-  8:  { text: "For wisdom is better than jewels; and all desirable things cannot compare with her.", ref: "Proverbs 8:11" },
-  9:  { text: "Give instruction to a wise man and he will be still wiser; teach a righteous man and he will increase his learning.", ref: "Proverbs 9:9" },
-  10: { text: "The blessing of the Lord — it makes rich, and He adds no sorrow to it.", ref: "Proverbs 10:22" },
-  11: { text: "Where there is no guidance the people fall, but in abundance of counselors there is victory.", ref: "Proverbs 11:14" },
-  12: { text: "Anxiety in a man's heart weighs it down, but a good word makes it glad.", ref: "Proverbs 12:25" },
-  13: { text: "Hope deferred makes the heart sick, but desire fulfilled is a tree of life.", ref: "Proverbs 13:12" },
-  14: { text: "There is a way which seems right to a man, but its end is the way of death.", ref: "Proverbs 14:12" },
-  15: { text: "A gentle answer turns away wrath, but a harsh word stirs up anger.", ref: "Proverbs 15:1" },
-  16: { text: "Commit your works to the Lord and your plans will be established.", ref: "Proverbs 16:3" },
-  17: { text: "A friend loves at all times, and a brother is born for adversity.", ref: "Proverbs 17:17" },
-  18: { text: "The name of the Lord is a strong tower; the righteous runs into it and is safe.", ref: "Proverbs 18:10" },
-  19: { text: "Many plans are in a man's heart, but the counsel of the Lord will stand.", ref: "Proverbs 19:21" },
-  20: { text: "It is by his deeds that a lad distinguishes himself, if his conduct is pure and right.", ref: "Proverbs 20:11" },
-  21: { text: "To do righteousness and justice is desired by the Lord more than sacrifice.", ref: "Proverbs 21:3" },
-  22: { text: "Train up a child in the way he should go; even when he is old he will not depart from it.", ref: "Proverbs 22:6" },
-  23: { text: "Do not let your heart envy sinners, but live in the fear of the Lord always.", ref: "Proverbs 23:17" },
-  24: { text: "For a righteous man falls seven times, and rises again, but the wicked stumble in time of calamity.", ref: "Proverbs 24:16" },
-  25: { text: "Like cold water to a weary soul, so is good news from a distant land.", ref: "Proverbs 25:25" },
-  26: { text: "Like a dog that returns to its vomit is a fool who repeats his folly.", ref: "Proverbs 26:11" },
-  27: { text: "Iron sharpens iron, so one man sharpens another.", ref: "Proverbs 27:17" },
-  28: { text: "He who trusts in his own heart is a fool, but he who walks wisely will be delivered.", ref: "Proverbs 28:26" },
-  29: { text: "Where there is no vision, the people are unrestrained, but happy is he who keeps the law.", ref: "Proverbs 29:18" },
-  30: { text: "Every word of God is tested; He is a shield to those who take refuge in Him.", ref: "Proverbs 30:5" },
-  31: { text: "Charm is deceitful and beauty is vain, but a woman who fears the Lord, she shall be praised.", ref: "Proverbs 31:30" },
+  1:{text:"The fear of the Lord is the beginning of knowledge; fools despise wisdom and instruction.",ref:"Proverbs 1:7"},
+  2:{text:"For the Lord gives wisdom; from His mouth come knowledge and understanding.",ref:"Proverbs 2:6"},
+  3:{text:"Trust in the Lord with all your heart and do not lean on your own understanding.",ref:"Proverbs 3:5"},
+  4:{text:"Watch over your heart with all diligence, for from it flow the springs of life.",ref:"Proverbs 4:23"},
+  5:{text:"Let your fountain be blessed, and rejoice in the wife of your youth.",ref:"Proverbs 5:18"},
+  6:{text:"Go to the ant, O sluggard, observe her ways and be wise.",ref:"Proverbs 6:6"},
+  7:{text:"Say to wisdom, you are my sister, and call understanding your intimate friend.",ref:"Proverbs 7:4"},
+  8:{text:"For wisdom is better than jewels; and all desirable things cannot compare with her.",ref:"Proverbs 8:11"},
+  9:{text:"Give instruction to a wise man and he will be still wiser; teach a righteous man and he will increase his learning.",ref:"Proverbs 9:9"},
+  10:{text:"The blessing of the Lord — it makes rich, and He adds no sorrow to it.",ref:"Proverbs 10:22"},
+  11:{text:"Where there is no guidance the people fall, but in abundance of counselors there is victory.",ref:"Proverbs 11:14"},
+  12:{text:"Anxiety in a man's heart weighs it down, but a good word makes it glad.",ref:"Proverbs 12:25"},
+  13:{text:"Hope deferred makes the heart sick, but desire fulfilled is a tree of life.",ref:"Proverbs 13:12"},
+  14:{text:"There is a way which seems right to a man, but its end is the way of death.",ref:"Proverbs 14:12"},
+  15:{text:"A gentle answer turns away wrath, but a harsh word stirs up anger.",ref:"Proverbs 15:1"},
+  16:{text:"Commit your works to the Lord and your plans will be established.",ref:"Proverbs 16:3"},
+  17:{text:"A friend loves at all times, and a brother is born for adversity.",ref:"Proverbs 17:17"},
+  18:{text:"The name of the Lord is a strong tower; the righteous runs into it and is safe.",ref:"Proverbs 18:10"},
+  19:{text:"Many plans are in a man's heart, but the counsel of the Lord will stand.",ref:"Proverbs 19:21"},
+  20:{text:"It is by his deeds that a lad distinguishes himself, if his conduct is pure and right.",ref:"Proverbs 20:11"},
+  21:{text:"To do righteousness and justice is desired by the Lord more than sacrifice.",ref:"Proverbs 21:3"},
+  22:{text:"Train up a child in the way he should go; even when he is old he will not depart from it.",ref:"Proverbs 22:6"},
+  23:{text:"Do not let your heart envy sinners, but live in the fear of the Lord always.",ref:"Proverbs 23:17"},
+  24:{text:"For a righteous man falls seven times, and rises again, but the wicked stumble in time of calamity.",ref:"Proverbs 24:16"},
+  25:{text:"Like cold water to a weary soul, so is good news from a distant land.",ref:"Proverbs 25:25"},
+  26:{text:"Like a dog that returns to its vomit is a fool who repeats his folly.",ref:"Proverbs 26:11"},
+  27:{text:"Iron sharpens iron, so one man sharpens another.",ref:"Proverbs 27:17"},
+  28:{text:"He who trusts in his own heart is a fool, but he who walks wisely will be delivered.",ref:"Proverbs 28:26"},
+  29:{text:"Where there is no vision, the people are unrestrained, but happy is he who keeps the law.",ref:"Proverbs 29:18"},
+  30:{text:"Every word of God is tested; He is a shield to those who take refuge in Him.",ref:"Proverbs 30:5"},
+  31:{text:"Charm is deceitful and beauty is vain, but a woman who fears the Lord, she shall be praised.",ref:"Proverbs 31:30"},
+};
+function getTodaysProverb(){return PROVERBS[new Date().getDate()]||PROVERBS[1];}
+
+const SCREEN={USER_SELECT:'user_select',PIN:'pin',MAIN:'main',PROFILE:'profile'};
+
+let state={
+  screen:SCREEN.USER_SELECT,
+  tab:'calendar',
+  chores:[],people:[],history:[],rooms:[],transactions:[],
+  settings:{adminPin:DEFAULT_PIN},
+  locks:{},
+  currentUser:null,isAdmin:false,
+  pinBuffer:'',pinAction:null,newPinBuffer:'',
+  showAddChore:false,showAddPerson:false,showAddRoom:false,
+  showChoreList:false,showCashOutConfirm:null,showChangePinModal:false,
+  showAdminFundsModal:null,showTransferModal:false,showOverdraftModal:null,
+  showAvatarPicker:false,
+  selectedDate:new Date(),calendarDate:new Date(),
+  editingChore:null,editingPerson:null,editingRoom:null,
+  loading:true,
+  profilePersonId:null,
 };
 
-function getTodaysProverb() { return PROVERBS[new Date().getDate()] || PROVERBS[1]; }
-
-const SCREEN = { USER_SELECT:'user_select', PIN:'pin', MAIN:'main' };
-
-let state = {
-  screen: SCREEN.USER_SELECT,
-  tab: 'calendar',
-  chores: [], people: [], history: [], rooms: [],
-  settings: { adminPin: DEFAULT_PIN },
-  locks: {},
-  currentUser: null, isAdmin: false,
-  pinBuffer: '', pinAction: null, newPinBuffer: '',
-  showAddChore: false, showAddPerson: false, showAddRoom: false,
-  showChoreList: false, showCashOutConfirm: null, showChangePinModal: false,
-  selectedDate: new Date(), calendarDate: new Date(),
-  editingChore: null, editingPerson: null, editingRoom: null,
-  loading: true,
-};
-
-function todayKey() {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
-function dateKey(d) {
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
-function formatDate(d) {
-  return d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
-}
-function daysBetween(d1str, d2str) {
-  return Math.round((new Date(d2str) - new Date(d1str)) / 86400000);
-}
-function showToast(msg, color) {
-  const t = document.createElement('div');
-  t.className = 'toast';
-  if (color) t.style.background = color;
-  t.textContent = msg;
-  document.body.appendChild(t);
-  setTimeout(() => t.remove(), 2200);
+function todayKey(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function dateKey(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function formatDate(d){return d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});}
+function daysBetween(d1,d2){return Math.round((new Date(d2)-new Date(d1))/86400000);}
+function showToast(msg,color){
+  const t=document.createElement('div');t.className='toast';
+  if(color)t.style.background=color;t.textContent=msg;
+  document.body.appendChild(t);setTimeout(()=>t.remove(),2200);
 }
 
-async function saveToFirebase(key, data) {
-  try { await setDoc(doc(db,'family',key),{data:JSON.stringify(data)}); }
-  catch(e) { console.error('Save error',e); }
+async function saveToFirebase(key,data){
+  try{await setDoc(doc(db,'family',key),{data:JSON.stringify(data)});}
+  catch(e){console.error('Save error',e);}
 }
-async function loadFromFirebase(key) {
-  try {
-    const snap = await getDoc(doc(db,'family',key));
-    if (snap.exists()) return JSON.parse(snap.data().data);
-  } catch(e) { console.error('Load error',e); }
-  return null;
+async function loadFromFirebase(key){
+  try{const snap=await getDoc(doc(db,'family',key));if(snap.exists())return JSON.parse(snap.data().data);}
+  catch(e){console.error('Load error',e);}return null;
 }
 
-async function initData() {
-  const [chores,people,history,rooms,settings,locks] = await Promise.all([
-    loadFromFirebase('chores'), loadFromFirebase('people'),
-    loadFromFirebase('history'), loadFromFirebase('rooms'),
-    loadFromFirebase('settings'), loadFromFirebase('locks'),
+async function initData(){
+  const [chores,people,history,rooms,settings,locks,transactions]=await Promise.all([
+    loadFromFirebase('chores'),loadFromFirebase('people'),
+    loadFromFirebase('history'),loadFromFirebase('rooms'),
+    loadFromFirebase('settings'),loadFromFirebase('locks'),
+    loadFromFirebase('transactions'),
   ]);
-  state.chores   = chores   || getDefaultChores();
-  state.people   = people   || getDefaultPeople();
-  state.history  = history  || [];
-  state.rooms    = rooms    || getDefaultRooms();
-  state.settings = settings || {adminPin:DEFAULT_PIN};
-  state.locks    = locks    || {};
-  state.loading  = false;
-  ['chores','people','history','rooms','settings','locks'].forEach(key => {
-    onSnapshot(doc(db,'family',key), snap => {
-      if (snap.exists()) { state[key]=JSON.parse(snap.data().data); processOverdue(); render(); }
+  state.chores=chores||getDefaultChores();
+  state.people=people||getDefaultPeople();
+  state.history=history||[];
+  state.rooms=rooms||getDefaultRooms();
+  state.settings=settings||{adminPin:DEFAULT_PIN};
+  state.locks=locks||{};
+  state.transactions=transactions||[];
+  state.loading=false;
+  ['chores','people','history','rooms','settings','locks','transactions'].forEach(key=>{
+    onSnapshot(doc(db,'family',key),snap=>{
+      if(snap.exists()){state[key]=JSON.parse(snap.data().data);processOverdue();render();}
     });
   });
-  processOverdue();
-  render();
+  processOverdue();render();
 }
 
-function getDefaultRooms() {
+function getDefaultRooms(){return [{id:1,name:'Kitchen',owner:null},{id:2,name:'Living Room',owner:null},{id:3,name:'Bathrooms',owner:null},{id:4,name:'Bedrooms',owner:null},{id:5,name:'Outdoors',owner:null}];}
+function getDefaultPeople(){
   return [
-    {id:1,name:'Kitchen',owner:null},
-    {id:2,name:'Living Room',owner:null},
-    {id:3,name:'Bathrooms',owner:null},
-    {id:4,name:'Bedrooms',owner:null},
-    {id:5,name:'Outdoors',owner:null},
+    {id:0,name:'Admin',isAdmin:true,totalEarned:0,account:0,savings:0,avatarId:'n1'},
+    {id:10,name:'Eli',isAdmin:false,totalEarned:0,account:0,savings:0,avatarId:'b1'},
+    {id:11,name:'Kid 2',isAdmin:false,totalEarned:0,account:0,savings:0,avatarId:'g1'},
+    {id:12,name:'Kid 3',isAdmin:false,totalEarned:0,account:0,savings:0,avatarId:'n2'},
   ];
 }
-function getDefaultPeople() {
+function getDefaultChores(){
   return [
-    {id:0, name:'Admin', isAdmin:true,  totalEarned:0},
-    {id:10,name:'Eli',   isAdmin:false, totalEarned:0},
-    {id:11,name:'Kid 2', isAdmin:false, totalEarned:0},
-    {id:12,name:'Kid 3', isAdmin:false, totalEarned:0},
-  ];
-}
-function getDefaultChores() {
-  return [
-    {id:1,name:'Wash Dishes',   room:'Kitchen',     freq:1, value:2,doneBy:{},urgent:false,lastCompleted:null},
-    {id:2,name:'Vacuum',        room:'Living Room', freq:3, value:3,doneBy:{},urgent:false,lastCompleted:null},
-    {id:3,name:'Clean Toilet',  room:'Bathrooms',   freq:7, value:3,doneBy:{},urgent:false,lastCompleted:null},
-    {id:4,name:'Mow Lawn',      room:'Outdoors',    freq:7, value:5,doneBy:{},urgent:false,lastCompleted:null},
-    {id:5,name:'Take Out Trash',room:'Kitchen',     freq:2, value:2,doneBy:{},urgent:false,lastCompleted:null},
+    {id:1,name:'Wash Dishes',room:'Kitchen',freq:1,value:2,doneBy:{},urgent:false,lastCompleted:null},
+    {id:2,name:'Vacuum',room:'Living Room',freq:3,value:3,doneBy:{},urgent:false,lastCompleted:null},
+    {id:3,name:'Clean Toilet',room:'Bathrooms',freq:7,value:3,doneBy:{},urgent:false,lastCompleted:null},
+    {id:4,name:'Mow Lawn',room:'Outdoors',freq:7,value:5,doneBy:{},urgent:false,lastCompleted:null},
+    {id:5,name:'Take Out Trash',room:'Kitchen',freq:2,value:2,doneBy:{},urgent:false,lastCompleted:null},
   ];
 }
 
-// ── CHORE STATUS ──────────────────────────────────────────────────────────────
-function getChoreStatus(chore) {
-  if (chore.urgent) return 'urgent';
-  if (chore.freq === 1) return 'normal';
-  const dk = todayKey();
-  if (chore.doneBy && chore.doneBy[dk]) return 'normal';
-  if (!chore.lastCompleted) return 'normal';
-  const daysSince = daysBetween(chore.lastCompleted, dk);
-  const pct = daysSince / chore.freq;
-  const lock = state.locks[chore.id];
-  if (lock && lock.exemptToday === dk) return 'exempted';
-  if (pct >= 1) return 'overdue';
-  if (pct >= 0.5) return 'warning';
+// ── TRANSACTIONS ──────────────────────────────────────────────────────────────
+function addTransaction(personId,type,amount,note,account){
+  // type: 'chore_earn'|'admin_credit'|'admin_debit'|'transfer_to_savings'|'transfer_from_savings'
+  // account: 'account'|'savings'
+  const txn={
+    id:Date.now(),personId,type,amount,note:note||'',
+    account:account||'account',date:todayKey(),
+  };
+  state.transactions.unshift(txn);
+  if(state.transactions.length>500)state.transactions=state.transactions.slice(0,500);
+}
+
+function getPersonTransactions(personId){
+  return state.transactions.filter(t=>t.personId===personId);
+}
+
+// ── OVERDUE LOGIC ─────────────────────────────────────────────────────────────
+function getChoreStatus(chore){
+  if(chore.urgent)return 'urgent';
+  if(chore.freq===1)return 'normal';
+  const dk=todayKey();
+  if(chore.doneBy&&chore.doneBy[dk])return 'normal';
+  if(!chore.lastCompleted)return 'normal';
+  const daysSince=daysBetween(chore.lastCompleted,dk);
+  const pct=daysSince/chore.freq;
+  const lock=state.locks[chore.id];
+  if(lock&&lock.exemptToday===dk)return 'exempted';
+  if(pct>=1)return 'overdue';
+  if(pct>=0.5)return 'warning';
   return 'normal';
 }
 
-function getChoresForDate(date) {
-  const dk = dateKey(date);
-  return state.chores.filter(chore => {
-    if (chore.urgent) return true;
-    if (chore.doneBy && chore.doneBy[dk]) return true;
-    if (chore.freq === 1) return true;
-    if (!chore.lastCompleted) return true;
-    const daysSince = daysBetween(chore.lastCompleted, dk);
-    return daysSince >= chore.freq;
+function getChoresForDate(date){
+  const dk=dateKey(date);
+  return state.chores.filter(chore=>{
+    if(chore.urgent)return true;
+    if(chore.doneBy&&chore.doneBy[dk])return true;
+    if(chore.freq===1)return true;
+    if(!chore.lastCompleted)return true;
+    return daysBetween(chore.lastCompleted,dk)>=chore.freq;
   });
 }
 
-// ── OVERDUE / LOCKS ───────────────────────────────────────────────────────────
-function processOverdue() {
-  const kids = state.people.filter(p => !p.isAdmin);
-  if (!kids.length) return;
-  const dk = todayKey();
-  let changed = false;
-
-  const overdueChores = state.chores.filter(chore => {
-    if (chore.urgent || chore.freq === 1) return false;
-    if (chore.doneBy && chore.doneBy[dk]) return false;
-    if (!chore.lastCompleted) return false;
-    return daysBetween(chore.lastCompleted, dk) >= chore.freq;
+function processOverdue(){
+  const kids=state.people.filter(p=>!p.isAdmin);
+  if(!kids.length)return;
+  const dk=todayKey();let changed=false;
+  const overdueChores=state.chores.filter(chore=>{
+    if(chore.urgent||chore.freq===1)return false;
+    if(chore.doneBy&&chore.doneBy[dk])return false;
+    if(!chore.lastCompleted)return false;
+    return daysBetween(chore.lastCompleted,dk)>=chore.freq;
   });
-
-  const sortedKids = [...kids].sort((a,b) => (a.totalEarned||0)-(b.totalEarned||0));
-  overdueChores.forEach((chore, idx) => {
-    if (state.locks[chore.id] && state.locks[chore.id].personId !== undefined) return;
-    const kid = sortedKids[idx % sortedKids.length];
-    state.locks[chore.id] = {personId:kid.id, assignedDate:dk, exemptToday:null};
-    changed = true;
+  const sortedKids=[...kids].sort((a,b)=>(a.totalEarned||0)-(b.totalEarned||0));
+  overdueChores.forEach((chore,idx)=>{
+    if(state.locks[chore.id]&&state.locks[chore.id].personId!==undefined)return;
+    const kid=sortedKids[idx%sortedKids.length];
+    state.locks[chore.id]={personId:kid.id,assignedDate:dk,exemptToday:null};changed=true;
   });
-
-  Object.keys(state.locks).forEach(choreId => {
-    const chore = state.chores.find(c => c.id === parseInt(choreId));
-    if (!chore) { delete state.locks[choreId]; changed = true; return; }
-    if (chore.doneBy && chore.doneBy[dk]) { delete state.locks[choreId]; changed = true; }
+  Object.keys(state.locks).forEach(choreId=>{
+    const chore=state.chores.find(c=>c.id===parseInt(choreId));
+    if(!chore){delete state.locks[choreId];changed=true;return;}
+    if(chore.doneBy&&chore.doneBy[dk]){delete state.locks[choreId];changed=true;}
   });
-
-  if (changed) saveToFirebase('locks', state.locks);
+  if(changed)saveToFirebase('locks',state.locks);
 }
 
-function isPersonLocked(personId) {
-  return Object.values(state.locks).some(lock =>
-    lock.personId === personId && lock.exemptToday !== todayKey()
-  );
-}
-function getLockedChoresForPerson(personId) {
+function isPersonLocked(personId){return Object.values(state.locks).some(l=>l.personId===personId&&l.exemptToday!==todayKey());}
+function getLockedChoresForPerson(personId){
   return Object.entries(state.locks)
-    .filter(([,lock]) => lock.personId === personId && lock.exemptToday !== todayKey())
-    .map(([choreId]) => state.chores.find(c => c.id === parseInt(choreId)))
-    .filter(Boolean);
+    .filter(([,l])=>l.personId===personId&&l.exemptToday!==todayKey())
+    .map(([id])=>state.chores.find(c=>c.id===parseInt(id))).filter(Boolean);
 }
-function getChoreValueForUser(chore, personId) {
-  if (!personId && personId !== 0) return chore.value;
-  if (personId === 0) return chore.value;
-  const lock = state.locks[chore.id];
-  if (lock && lock.personId === personId && lock.exemptToday !== todayKey()) return 0;
-  if (isPersonLocked(personId)) return 0;
+function getChoreValueForUser(chore,personId){
+  if(!personId&&personId!==0)return chore.value;
+  if(personId===0)return chore.value;
+  const lock=state.locks[chore.id];
+  if(lock&&lock.personId===personId&&lock.exemptToday!==todayKey())return 0;
+  if(isPersonLocked(personId))return 0;
   return chore.value;
 }
-function isChoreAvailableToUser(chore) {
-  if (state.isAdmin) return true;
-  if (!state.currentUser) return false;
-  const room = state.rooms.find(r => r.name === chore.room);
-  if (room && room.owner && room.owner !== state.currentUser.id) return false;
+function isChoreAvailableToUser(chore){
+  if(state.isAdmin)return true;
+  if(!state.currentUser)return false;
+  const room=state.rooms.find(r=>r.name===chore.room);
+  if(room&&room.owner&&room.owner!==state.currentUser.id)return false;
   return true;
 }
-function isDoneToday(chore) { return chore.doneBy && chore.doneBy[todayKey()]; }
-function canUndo(h) {
-  if (state.isAdmin) return true;
-  if (!state.currentUser) return false;
-  return h.who === state.currentUser.name;
-}
+function isDoneToday(chore){return chore.doneBy&&chore.doneBy[todayKey()];}
+function canUndo(h){if(state.isAdmin)return true;if(!state.currentUser)return false;return h.who===state.currentUser.name;}
 
 // ── TOGGLE CHORE ──────────────────────────────────────────────────────────────
-async function toggleChore(choreId) {
-  const dk = todayKey();
-  const chore = state.chores.find(c => c.id === choreId);
-  if (!chore) return;
-  if (!isChoreAvailableToUser(chore)) { showToast('This room belongs to someone else','#e94560'); return; }
-  if (!chore.doneBy) chore.doneBy = {};
+async function toggleChore(choreId){
+  const dk=todayKey();
+  const chore=state.chores.find(c=>c.id===choreId);
+  if(!chore)return;
+  if(!isChoreAvailableToUser(chore)){showToast('This room belongs to someone else','#e94560');return;}
+  if(!chore.doneBy)chore.doneBy={};
 
-  if (isDoneToday(chore)) {
-    // Unchecking
-    if (!state.isAdmin && chore.doneBy[dk] !== state.currentUser?.name) {
-      showToast('Only the person who did this (or admin) can uncheck it','#e94560'); return;
+  if(isDoneToday(chore)){
+    if(!state.isAdmin&&chore.doneBy[dk]!==state.currentUser?.name){showToast('Only the person who did this (or admin) can uncheck it','#e94560');return;}
+    const entry=state.history.find(h=>h.choreId===choreId&&h.date===dk);
+    if(entry){
+      const person=state.people.find(p=>p.name===entry.who);
+      if(person&&entry.value>0){
+        person.account=Math.max(0,(person.account||0)-entry.value);
+        person.totalEarned=Math.max(0,(person.totalEarned||0)-entry.value);
+      }
     }
-    const entry = state.history.find(h => h.choreId === choreId && h.date === dk);
-    if (entry) {
-      const person = state.people.find(p => p.name === entry.who);
-      if (person && entry.value > 0) person.totalEarned = Math.max(0,(person.totalEarned||0)-entry.value);
-    }
-    delete chore.doneBy[dk];
-    chore.lastCompleted = null;
-    state.history = state.history.filter(h => !(h.choreId === choreId && h.date === dk));
-
-    // If urgent was restored via undo and unchecked again, put it back
-    if (chore.urgent && !state.chores.find(c => c.id === choreId)) {
-      state.chores.push(chore);
-    }
+    delete chore.doneBy[dk];chore.lastCompleted=null;
+    state.history=state.history.filter(h=>!(h.choreId===choreId&&h.date===dk));
+    state.transactions=state.transactions.filter(t=>!(t.type==='chore_earn'&&t.personId===state.currentUser?.id&&t.date===dk&&t.note===chore.name));
   } else {
-    // Checking
-    const who = state.currentUser ? state.currentUser.name : 'Someone';
-    const personId = state.currentUser ? state.currentUser.id : null;
-    const earnedValue = personId !== null ? getChoreValueForUser(chore, personId) : chore.value;
-
-    chore.doneBy[dk] = who;
-    chore.lastCompleted = dk;
-
-    state.history.unshift({
-      id: Date.now(), choreId, choreName: chore.name,
-      date: dk, who, value: earnedValue, room: chore.room,
-      urgent: chore.urgent || false,
-      // Store chore snapshot for undo of urgent chores
-      choreSnapshot: chore.urgent ? JSON.parse(JSON.stringify(chore)) : null,
-    });
-    if (state.history.length > 200) state.history = state.history.slice(0,200);
-
-    if (state.currentUser && state.currentUser.id !== 0 && earnedValue > 0) {
-      const person = state.people.find(p => p.id === state.currentUser.id);
-      if (person) person.totalEarned = (person.totalEarned||0) + earnedValue;
+    const who=state.currentUser?state.currentUser.name:'Someone';
+    const personId=state.currentUser?state.currentUser.id:null;
+    const earnedValue=personId!==null?getChoreValueForUser(chore,personId):chore.value;
+    chore.doneBy[dk]=who;chore.lastCompleted=dk;
+    state.history.unshift({id:Date.now(),choreId,choreName:chore.name,date:dk,who,value:earnedValue,room:chore.room,urgent:chore.urgent||false,choreSnapshot:chore.urgent?JSON.parse(JSON.stringify(chore)):null});
+    if(state.history.length>200)state.history=state.history.slice(0,200);
+    if(state.currentUser&&state.currentUser.id!==0&&earnedValue>0){
+      const person=state.people.find(p=>p.id===state.currentUser.id);
+      if(person){
+        person.account=(person.account||0)+earnedValue;
+        person.totalEarned=(person.totalEarned||0)+earnedValue;
+        addTransaction(person.id,'chore_earn',earnedValue,chore.name,'account');
+      }
     }
-
-    if (earnedValue === 0) showToast('Completed (Restricted Pay) — $0','#e94560');
+    if(earnedValue===0)showToast('Completed (Restricted Pay) — $0','#e94560');
     else showToast(`+$${earnedValue} earned! 🎉`);
-
-    // If urgent — delete after short delay so user sees the check
-    if (chore.urgent) {
-      setTimeout(async () => {
-        state.chores = state.chores.filter(c => c.id !== choreId);
+    if(chore.urgent){
+      setTimeout(async()=>{
+        state.chores=state.chores.filter(c=>c.id!==choreId);
         delete state.locks[choreId];
-        await Promise.all([
-          saveToFirebase('chores', state.chores),
-          saveToFirebase('locks', state.locks),
-        ]);
+        await Promise.all([saveToFirebase('chores',state.chores),saveToFirebase('locks',state.locks)]);
         render();
-      }, 800);
+      },800);
     }
   }
-
   processOverdue();
-  await Promise.all([
-    saveToFirebase('chores', state.chores),
-    saveToFirebase('history', state.history),
-    saveToFirebase('people', state.people),
-    saveToFirebase('locks', state.locks),
-  ]);
+  await Promise.all([saveToFirebase('chores',state.chores),saveToFirebase('history',state.history),saveToFirebase('people',state.people),saveToFirebase('locks',state.locks),saveToFirebase('transactions',state.transactions)]);
   render();
 }
 
-async function undoHistory(id) {
-  const h = state.history.find(x => x.id === id);
-  if (!h) return;
-  if (!canUndo(h)) { showToast("You can't undo someone else's chore",'#e94560'); return; }
-
-  // Reverse earnings
-  if (h.who !== 'Someone' && h.value > 0) {
-    const person = state.people.find(p => p.name === h.who);
-    if (person) person.totalEarned = Math.max(0,(person.totalEarned||0)-h.value);
+async function undoHistory(id){
+  const h=state.history.find(x=>x.id===id);if(!h)return;
+  if(!canUndo(h)){showToast("You can't undo someone else's chore",'#e94560');return;}
+  if(h.who!=='Someone'&&h.value>0){
+    const person=state.people.find(p=>p.name===h.who);
+    if(person){person.account=Math.max(0,(person.account||0)-h.value);person.totalEarned=Math.max(0,(person.totalEarned||0)-h.value);}
   }
-
-  // If urgent — restore chore from snapshot
-  if (h.urgent && h.choreSnapshot) {
-    const exists = state.chores.find(c => c.id === h.choreId);
-    if (!exists) {
-      const restored = JSON.parse(JSON.stringify(h.choreSnapshot));
-      restored.doneBy = {};
-      restored.lastCompleted = null;
-      state.chores.push(restored);
-    }
+  if(h.urgent&&h.choreSnapshot){
+    const exists=state.chores.find(c=>c.id===h.choreId);
+    if(!exists){const r=JSON.parse(JSON.stringify(h.choreSnapshot));r.doneBy={};r.lastCompleted=null;state.chores.push(r);}
   } else {
-    // Regular chore — uncheck it
-    const chore = state.chores.find(c => c.id === h.choreId);
-    if (chore && chore.doneBy) { delete chore.doneBy[h.date]; chore.lastCompleted = null; }
+    const chore=state.chores.find(c=>c.id===h.choreId);
+    if(chore&&chore.doneBy){delete chore.doneBy[h.date];chore.lastCompleted=null;}
   }
-
-  state.history = state.history.filter(x => x.id !== id);
+  state.history=state.history.filter(x=>x.id!==id);
   processOverdue();
-  await Promise.all([
-    saveToFirebase('chores', state.chores),
-    saveToFirebase('history', state.history),
-    saveToFirebase('people', state.people),
-    saveToFirebase('locks', state.locks),
-  ]);
-  showToast('Undone!'); render();
+  await Promise.all([saveToFirebase('chores',state.chores),saveToFirebase('history',state.history),saveToFirebase('people',state.people),saveToFirebase('locks',state.locks),saveToFirebase('transactions',state.transactions)]);
+  showToast('Undone!');render();
 }
 
-async function cashOut(personId) {
-  const person = state.people.find(p => p.id === personId);
-  if (!person) return;
-  person.totalEarned = 0;
-  await saveToFirebase('people', state.people);
-  state.showCashOutConfirm = null;
-  showToast(`${person.name} cashed out! 💸`);
-  render();
+// ── BANKING ───────────────────────────────────────────────────────────────────
+async function adminAdjustFunds(personId,accountType,amount,note,isCredit){
+  const person=state.people.find(p=>p.id===personId);if(!person)return;
+  const field=accountType;
+  if(isCredit){
+    person[field]=(person[field]||0)+amount;
+    if(accountType==='account')person.totalEarned=(person.totalEarned||0)+amount;
+    addTransaction(personId,'admin_credit',amount,note||'Admin credit',accountType);
+    showToast(`+$${amount} added to ${person.name}'s ${accountType}`,'#27ae60');
+  } else {
+    const balance=person[field]||0;
+    if(amount>balance){
+      // Check overdraft from savings if deducting from account
+      if(accountType==='account'){
+        const savingsBalance=person.savings||0;
+        const shortfall=amount-balance;
+        if(shortfall>savingsBalance){showToast('Not enough funds in account or savings','#e94560');return;}
+        // Show overdraft confirm
+        state.showOverdraftModal={personId,amount,note,shortfall,accountBalance:balance,savingsBalance};
+        render();return;
+      } else {
+        showToast('Not enough funds in savings','#e94560');return;
+      }
+    }
+    person[field]=Math.max(0,(person[field]||0)-amount);
+    if(accountType==='account')person.totalEarned=Math.max(0,(person.totalEarned||0)-amount);
+    addTransaction(personId,'admin_debit',amount,note||'Admin debit',accountType);
+    showToast(`-$${amount} removed from ${person.name}'s ${accountType}`,'#e94560');
+  }
+  await Promise.all([saveToFirebase('people',state.people),saveToFirebase('transactions',state.transactions)]);
+  state.showAdminFundsModal=null;render();
 }
 
-async function adminExemptChore(choreId) {
-  if (state.locks[choreId]) state.locks[choreId].exemptToday = todayKey();
-  await saveToFirebase('locks', state.locks);
-  showToast('Restriction lifted for today','#f39c12');
-  render();
+async function confirmOverdraft(){
+  const od=state.showOverdraftModal;if(!od)return;
+  const person=state.people.find(p=>p.id===od.personId);if(!person)return;
+  // Zero account, pull shortfall from savings
+  addTransaction(od.personId,'admin_debit',od.accountBalance,od.note||'Admin debit','account');
+  addTransaction(od.personId,'admin_debit',od.shortfall,od.note+' (from savings)','savings');
+  person.account=0;
+  person.savings=Math.max(0,(person.savings||0)-od.shortfall);
+  person.totalEarned=Math.max(0,(person.totalEarned||0)-od.accountBalance);
+  await Promise.all([saveToFirebase('people',state.people),saveToFirebase('transactions',state.transactions)]);
+  state.showOverdraftModal=null;state.showAdminFundsModal=null;
+  showToast('Withdrawal complete','#27ae60');render();
+}
+
+async function transferToSavings(personId,amount){
+  const person=state.people.find(p=>p.id===personId);if(!person)return;
+  if(amount>(person.account||0)){showToast('Not enough in account','#e94560');return;}
+  person.account=Math.max(0,(person.account||0)-amount);
+  person.savings=(person.savings||0)+amount;
+  addTransaction(personId,'transfer_to_savings',amount,'Transfer to savings','account');
+  addTransaction(personId,'transfer_from_savings',-amount,'Transfer from account','savings');
+  // Fix: use positive for savings
+  state.transactions=state.transactions.map(t=>{
+    if(t.type==='transfer_from_savings'&&t.amount===-amount&&t.personId===personId)return {...t,amount,type:'savings_deposit'};
+    return t;
+  });
+  await Promise.all([saveToFirebase('people',state.people),saveToFirebase('transactions',state.transactions)]);
+  state.showTransferModal=false;
+  showToast(`$${amount} moved to savings 💰`,'#3498db');render();
+}
+
+async function selectAvatar(avatarId){
+  if(!state.currentUser||state.isAdmin)return;
+  const person=state.people.find(p=>p.id===state.currentUser.id);
+  if(person){person.avatarId=avatarId;state.currentUser.avatarId=avatarId;}
+  await saveToFirebase('people',state.people);
+  state.showAvatarPicker=false;
+  showToast('Avatar updated!');render();
 }
 
 // ── PIN ───────────────────────────────────────────────────────────────────────
-function startPin(action) { state.pinAction=action; state.pinBuffer=''; state.screen=SCREEN.PIN; render(); }
-function handlePinKey(key) {
-  if (key==='del') { state.pinBuffer=state.pinBuffer.slice(0,-1); render(); return; }
-  if (state.pinBuffer.length>=4) return;
-  state.pinBuffer+=key; render();
-  if (state.pinBuffer.length===4) setTimeout(checkPin,200);
+function startPin(action){state.pinAction=action;state.pinBuffer='';state.screen=SCREEN.PIN;render();}
+function handlePinKey(key){
+  if(key==='del'){state.pinBuffer=state.pinBuffer.slice(0,-1);render();return;}
+  if(state.pinBuffer.length>=4)return;
+  state.pinBuffer+=key;render();
+  if(state.pinBuffer.length===4)setTimeout(checkPin,200);
 }
-function checkPin() {
-  const pin = state.settings.adminPin || DEFAULT_PIN;
-  if (state.pinBuffer===pin) {
+function checkPin(){
+  const pin=state.settings.adminPin||DEFAULT_PIN;
+  if(state.pinBuffer===pin){
     state.pinBuffer='';
-    state.currentUser = state.people.find(p=>p.isAdmin)||{id:0,name:'Admin',isAdmin:true};
-    state.isAdmin=true; state.screen=SCREEN.MAIN;
-    showToast('Welcome, Admin!');
+    state.currentUser=state.people.find(p=>p.isAdmin)||{id:0,name:'Admin',isAdmin:true};
+    state.isAdmin=true;state.screen=SCREEN.MAIN;showToast('Welcome, Admin!');
   } else {
-    showToast('Wrong PIN','#e94560');
-    state.pinBuffer=''; state.screen=SCREEN.USER_SELECT;
+    showToast('Wrong PIN','#e94560');state.pinBuffer='';state.screen=SCREEN.USER_SELECT;
   }
   render();
 }
 
 // ── RENDER ────────────────────────────────────────────────────────────────────
-function getInitialAvatar(person, size) {
-  const s = size||44;
-  return `<div style="width:${s}px;height:${s}px;border-radius:50%;background:#e94560;display:flex;align-items:center;justify-content:center;font-size:${Math.round(s*0.4)}px;font-weight:700;color:white;flex-shrink:0;">${person.name.charAt(0).toUpperCase()}</div>`;
-}
+function render(){
+  const app=document.getElementById('app');
+  if(state.loading){app.innerHTML='<div class="loading"><div class="spinner"></div>Loading...</div>';return;}
+  if(state.screen===SCREEN.USER_SELECT){app.innerHTML=renderUserSelectScreen();return;}
+  if(state.screen===SCREEN.PIN){app.innerHTML=renderPinScreen();return;}
+  if(state.screen===SCREEN.PROFILE){app.innerHTML=renderProfileScreen();return;}
 
-function render() {
-  const app = document.getElementById('app');
-  if (state.loading) { app.innerHTML='<div class="loading"><div class="spinner"></div>Loading...</div>'; return; }
-  if (state.screen===SCREEN.USER_SELECT) { app.innerHTML=renderUserSelectScreen(); return; }
-  if (state.screen===SCREEN.PIN)         { app.innerHTML=renderPinScreen(); return; }
-
-  let html = `
+  let html=`
     <div class="header">
       <h1>🧹 Chore Store</h1>
       <div class="date">${formatDate(new Date())}</div>
       <div class="text-sm mt-8" style="cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;" onclick="switchUser()">
-        ${getInitialAvatar(state.currentUser,24)} ${state.currentUser.name}${state.isAdmin?' <span class="tag admin">Admin</span>':''} &nbsp;(switch)
+        ${getAvatar(state.currentUser.avatarId,24)} ${state.currentUser.name}${state.isAdmin?' <span class="tag admin">Admin</span>':''} &nbsp;(switch)
       </div>
     </div>
     <div class="tabs">
@@ -535,28 +567,29 @@ function render() {
         </div>`).join('')}
     </div>
     <div class="content">`;
-  if      (state.tab==='calendar') html+=renderCalendar();
-  else if (state.tab==='chores')   html+=renderChores();
-  else if (state.tab==='people')   html+=renderPeople();
-  else if (state.tab==='history')  html+=renderHistory();
-  else if (state.tab==='settings') html+=renderSettings();
+  if(state.tab==='calendar')html+=renderCalendar();
+  else if(state.tab==='chores')html+=renderChores();
+  else if(state.tab==='people')html+=renderPeople();
+  else if(state.tab==='history')html+=renderHistory();
+  else if(state.tab==='settings')html+=renderSettings();
   html+='</div>';
-
-  if (state.tab==='chores' && state.isAdmin) html+=`<button class="fab" onclick="addChore()">+</button>`;
-  if (state.tab==='people' && state.isAdmin) html+=`<button class="fab" onclick="addPerson()">+</button>`;
-
-  if (state.showChoreList)      html+=renderDayModal();
-  if (state.showAddChore)       html+=renderAddChoreModal();
-  if (state.showAddPerson)      html+=renderAddPersonModal();
-  if (state.showAddRoom)        html+=renderAddRoomModal();
-  if (state.showCashOutConfirm) html+=renderCashOutConfirm();
-  if (state.showChangePinModal) html+=renderChangePinModal();
-
+  if(state.tab==='chores'&&state.isAdmin)html+=`<button class="fab" onclick="addChore()">+</button>`;
+  if(state.tab==='people'&&state.isAdmin)html+=`<button class="fab" onclick="addPerson()">+</button>`;
+  if(state.showChoreList)html+=renderDayModal();
+  if(state.showAddChore)html+=renderAddChoreModal();
+  if(state.showAddPerson)html+=renderAddPersonModal();
+  if(state.showAddRoom)html+=renderAddRoomModal();
+  if(state.showCashOutConfirm)html+=renderCashOutConfirm();
+  if(state.showChangePinModal)html+=renderChangePinModal();
+  if(state.showAdminFundsModal)html+=renderAdminFundsModal();
+  if(state.showTransferModal)html+=renderTransferModal();
+  if(state.showOverdraftModal)html+=renderOverdraftModal();
+  if(state.showAvatarPicker)html+=renderAvatarPicker();
   app.innerHTML=html;
 }
 
-function renderUserSelectScreen() {
-  const kids = state.people.filter(p=>!p.isAdmin);
+function renderUserSelectScreen(){
+  const kids=state.people.filter(p=>!p.isAdmin);
   return `
     <div style="min-height:100vh;background:#1a1a2e;display:flex;align-items:center;justify-content:center;padding:24px;">
       <div style="width:100%;max-width:380px;">
@@ -568,14 +601,14 @@ function renderUserSelectScreen() {
         <p style="color:#aaa;font-size:12px;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Who are you?</p>
         ${kids.map(p=>`
           <div class="person-card" style="cursor:pointer;" onclick="loginAsKid(${p.id})">
-            ${getInitialAvatar(p)}
+            ${getAvatar(p.avatarId,44)}
             <div class="person-info">
               <div class="person-name">${p.name}</div>
               <div class="text-sm">Tap to enter</div>
             </div>
           </div>`).join('')}
         <div class="person-card mt-16" onclick="startPin('login')" style="border-color:#e94560;cursor:pointer;">
-          <div class="person-avatar" style="background:#3d1f1f;font-size:20px;">👑</div>
+          <div style="width:44px;height:44px;border-radius:50%;background:#3d1f1f;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">👑</div>
           <div class="person-info">
             <div class="person-name" style="color:#e94560;">Admin</div>
             <div class="text-sm">🔐 PIN required</div>
@@ -585,7 +618,7 @@ function renderUserSelectScreen() {
     </div>`;
 }
 
-function renderPinScreen() {
+function renderPinScreen(){
   return `
     <div style="min-height:100vh;background:#1a1a2e;display:flex;align-items:center;justify-content:center;padding:24px;">
       <div style="width:100%;max-width:320px;text-align:center;">
@@ -605,13 +638,83 @@ function renderPinScreen() {
     </div>`;
 }
 
-function renderCalendar() {
-  const proverb = getTodaysProverb();
+function renderProfileScreen(){
+  const personId=state.profilePersonId||state.currentUser?.id;
+  const person=state.people.find(p=>p.id===personId);
+  if(!person)return'';
+  const txns=getPersonTransactions(personId);
+  const isOwnProfile=state.currentUser?.id===personId;
+  const isAdminViewing=state.isAdmin;
+
+  return `
+    <div style="min-height:100vh;background:#1a1a2e;">
+      <div class="profile-header">
+        <button class="btn btn-secondary btn-sm" style="position:absolute;left:16px;top:16px;" onclick="closeProfile()">← Back</button>
+        <div style="cursor:${isOwnProfile&&!isAdminViewing?'pointer':'default'}" onclick="${isOwnProfile&&!isAdminViewing?'openAvatarPicker()':''}">
+          ${getAvatar(person.avatarId,80)}
+          ${isOwnProfile&&!isAdminViewing?'<div style="font-size:11px;color:#aaa;margin-top:4px;">Tap to change avatar</div>':''}
+        </div>
+        <h2 style="margin-top:12px;font-size:22px;">${person.name}</h2>
+        <div style="font-size:13px;color:#aaa;">Total earned: $${(person.totalEarned||0).toFixed(2)}</div>
+      </div>
+      <div style="padding:16px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+          <div class="balance-card account">
+            <div class="balance-amount">$${(person.account||0).toFixed(2)}</div>
+            <div class="balance-label">💵 Account</div>
+          </div>
+          <div class="balance-card savings">
+            <div class="balance-amount">$${(person.savings||0).toFixed(2)}</div>
+            <div class="balance-label">🏦 Savings</div>
+          </div>
+        </div>
+
+        ${isOwnProfile&&!isAdminViewing?`
+          <button class="btn btn-secondary w-full mb-8" onclick="openTransferModal()">💰 Transfer to Savings</button>
+        `:''}
+
+        ${isAdminViewing?`
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
+            <button class="btn btn-success btn-sm" onclick="openAdminFunds(${personId},'account',true)">+ Account</button>
+            <button class="btn btn-danger btn-sm" onclick="openAdminFunds(${personId},'account',false)">- Account</button>
+            <button class="btn btn-purple btn-sm" onclick="openAdminFunds(${personId},'savings',true)">+ Savings</button>
+            <button class="btn btn-warning btn-sm" onclick="openAdminFunds(${personId},'savings',false)">- Savings</button>
+          </div>
+        `:''}
+
+        <div class="section-title">Transaction History</div>
+        ${txns.length===0?'<div class="empty-state"><div class="icon">📊</div><p>No transactions yet</p></div>':''}
+        ${txns.slice(0,50).map(t=>{
+          let label='',colorClass='text-green',sign='+',borderClass='credit';
+          if(t.type==='chore_earn'){label=`✅ ${t.note}`;colorClass='text-green';sign='+';borderClass='credit';}
+          else if(t.type==='admin_credit'){label=`⬆️ ${t.note||'Admin credit'}`;colorClass='text-green';sign='+';borderClass='credit';}
+          else if(t.type==='admin_debit'){label=`⬇️ ${t.note||'Admin debit'}`;colorClass='text-red';sign='-';borderClass='debit';}
+          else if(t.type==='transfer_to_savings'){label=`💰 To savings`;colorClass='text-blue';sign='-';borderClass='transfer-out';}
+          else if(t.type==='savings_deposit'){label=`💰 From account`;colorClass='text-blue';sign='+';borderClass='transfer-out';}
+          return `
+            <div class="txn-item ${borderClass}">
+              <div>
+                <div style="font-weight:500;font-size:14px;">${label}</div>
+                <div class="text-sm">${t.date} • ${t.account}</div>
+              </div>
+              <div class="${colorClass}" style="font-weight:700;">${sign}$${Math.abs(t.amount).toFixed(2)}</div>
+            </div>`;
+        }).join('')}
+      </div>
+      ${state.showAvatarPicker?renderAvatarPicker():''}
+      ${state.showTransferModal?renderTransferModal():''}
+      ${state.showAdminFundsModal?renderAdminFundsModal():''}
+      ${state.showOverdraftModal?renderOverdraftModal():''}
+    </div>`;
+}
+
+function renderCalendar(){
+  const proverb=getTodaysProverb();
   const now=state.calendarDate;
-  const year=now.getFullYear(), month=now.getMonth();
+  const year=now.getFullYear(),month=now.getMonth();
   const firstDay=new Date(year,month,1).getDay();
   const daysInMonth=new Date(year,month+1,0).getDate();
-  const today=new Date(); today.setHours(0,0,0,0);
+  const today=new Date();today.setHours(0,0,0,0);
   const monthName=now.toLocaleDateString('en-US',{month:'long',year:'numeric'});
   let html=`
     <div class="proverb-card">
@@ -626,7 +729,7 @@ function renderCalendar() {
     </div>
     <div class="calendar-grid">
       ${['Su','Mo','Tu','We','Th','Fr','Sa'].map(d=>`<div class="cal-header">${d}</div>`).join('')}`;
-  for(let i=0;i<firstDay;i++) html+=`<div class="cal-day other-month"></div>`;
+  for(let i=0;i<firstDay;i++)html+=`<div class="cal-day other-month"></div>`;
   for(let d=1;d<=daysInMonth;d++){
     const date=new Date(year,month,d);
     const isToday=date.toDateString()===today.toDateString();
@@ -648,23 +751,20 @@ function renderCalendar() {
   return html;
 }
 
-function renderChoreItem(chore, showEditBtn, isToday) {
-  const done = isDoneToday(chore);
-  const status = done ? 'normal' : getChoreStatus(chore);
-  const personId = state.currentUser?.id;
-  const earnedValue = (personId !== undefined && personId !== null) ? getChoreValueForUser(chore, personId) : chore.value;
-  const available = isChoreAvailableToUser(chore);
-  const lock = state.locks[chore.id];
-  const assignedPerson = lock ? state.people.find(p=>p.id===lock.personId) : null;
-
-  let statusLabel = '';
-  if (status==='urgent') statusLabel=`<span style="font-size:10px;color:#9b59b6;font-weight:700;">🚨 URGENT — one time</span>`;
-  else if (status==='overdue') statusLabel=`<span style="font-size:10px;color:#e94560;font-weight:700;">🔴 OVERDUE${assignedPerson?' — Assigned: '+assignedPerson.name:''}</span>`;
-  else if (status==='warning') statusLabel=`<span style="font-size:10px;color:#f39c12;font-weight:700;">⚠️ Due Soon</span>`;
-  else if (status==='exempted') statusLabel=`<span style="font-size:10px;color:#f39c12;font-weight:700;">🟡 Exempt Today</span>`;
-
-  const canCheck = available && (isToday !== false);
-
+function renderChoreItem(chore,showEditBtn,isToday){
+  const done=isDoneToday(chore);
+  const status=done?'normal':getChoreStatus(chore);
+  const personId=state.currentUser?.id;
+  const earnedValue=(personId!==undefined&&personId!==null)?getChoreValueForUser(chore,personId):chore.value;
+  const available=isChoreAvailableToUser(chore);
+  const lock=state.locks[chore.id];
+  const assignedPerson=lock?state.people.find(p=>p.id===lock.personId):null;
+  let statusLabel='';
+  if(status==='urgent')statusLabel=`<span style="font-size:10px;color:#9b59b6;font-weight:700;">🚨 URGENT — one time</span>`;
+  else if(status==='overdue')statusLabel=`<span style="font-size:10px;color:#e94560;font-weight:700;">🔴 OVERDUE${assignedPerson?' — Assigned: '+assignedPerson.name:''}</span>`;
+  else if(status==='warning')statusLabel=`<span style="font-size:10px;color:#f39c12;font-weight:700;">⚠️ Due Soon</span>`;
+  else if(status==='exempted')statusLabel=`<span style="font-size:10px;color:#f39c12;font-weight:700;">🟡 Exempt Today</span>`;
+  const canCheck=available&&(isToday!==false);
   return `
     <div class="chore-item ${done?'done':status}">
       <div class="checkbox ${done?'checked':''}" onclick="${canCheck?`toggleChore(${chore.id})`:''}">
@@ -680,72 +780,63 @@ function renderChoreItem(chore, showEditBtn, isToday) {
     </div>`;
 }
 
-function renderChores() {
-  const todayChores = getChoresForDate(new Date());
-  if (!todayChores.length) return `<div class="empty-state"><div class="icon">✅</div><p>No chores today!</p></div>`;
-
+function renderChores(){
+  const todayChores=getChoresForDate(new Date());
+  if(!todayChores.length)return`<div class="empty-state"><div class="icon">✅</div><p>No chores today!</p></div>`;
   let html='';
-  if (state.currentUser && !state.isAdmin) {
-    const lockedChores = getLockedChoresForPerson(state.currentUser.id);
-    if (lockedChores.length) {
-      html+=`<div class="lock-banner">🔒 Restricted Pay Mode — Complete overdue chore${lockedChores.length>1?'s':''} first: ${lockedChores.map(c=>c.name).join(', ')}</div>`;
-    }
+  if(state.currentUser&&!state.isAdmin){
+    const lockedChores=getLockedChoresForPerson(state.currentUser.id);
+    if(lockedChores.length)html+=`<div class="lock-banner">🔒 Restricted Pay Mode — Complete: ${lockedChores.map(c=>c.name).join(', ')}</div>`;
   }
-
-  // Urgent first
-  const urgentChores = todayChores.filter(c=>c.urgent);
-  const regularChores = todayChores.filter(c=>!c.urgent);
-
-  if (urgentChores.length) {
+  const urgentChores=todayChores.filter(c=>c.urgent);
+  const regularChores=todayChores.filter(c=>!c.urgent);
+  if(urgentChores.length){
     html+=`<div class="section-title" style="color:#9b59b6;">🚨 Urgent</div>`;
-    urgentChores.forEach(c => { html+=renderChoreItem(c,true,true); });
+    urgentChores.forEach(c=>{html+=renderChoreItem(c,true,true);});
   }
-
   const rooms=[...new Set(regularChores.map(c=>c.room))];
   rooms.forEach(room=>{
-    const roomChores=regularChores.filter(c=>c.room===room);
     html+=`<div class="section-title">${room}</div>`;
-    roomChores.forEach(c=>{ html+=renderChoreItem(c,true,true); });
+    regularChores.filter(c=>c.room===room).forEach(c=>{html+=renderChoreItem(c,true,true);});
   });
   return html;
 }
 
-function renderPeople() {
+function renderPeople(){
   const kids=state.people.filter(p=>!p.isAdmin);
-  if(!kids.length) return `<div class="empty-state"><div class="icon">👥</div><p>No kids yet!</p></div>`;
+  if(!kids.length)return`<div class="empty-state"><div class="icon">👥</div><p>No kids yet!</p></div>`;
   const sorted=[...kids].sort((a,b)=>(b.totalEarned||0)-(a.totalEarned||0));
   let html='<div class="section-title">Leaderboard</div>';
   sorted.forEach((person,i)=>{
     const locked=isPersonLocked(person.id);
     const lockedChores=getLockedChoresForPerson(person.id);
     html+=`
-      <div class="person-card ${locked?'locked':''}">
+      <div class="person-card ${locked?'locked':''}" style="cursor:pointer;" onclick="openProfile(${person.id})">
         <div class="person-rank">${['🥇','🥈','🥉'][i]||`#${i+1}`}</div>
-        ${getInitialAvatar(person)}
+        ${getAvatar(person.avatarId,44)}
         <div class="person-info">
-          <div class="person-name">${person.name}${locked?'<span class="tag locked">🔒 Restricted</span>':''}</div>
-          <div class="person-earnings">$${(person.totalEarned||0).toFixed(2)} earned</div>
+          <div class="person-name">${person.name}${locked?'<span class="tag locked">🔒</span>':''}</div>
+          <div class="person-earnings">💵 $${(person.account||0).toFixed(2)} &nbsp; 🏦 $${(person.savings||0).toFixed(2)}</div>
           ${locked&&lockedChores.length?`<div style="font-size:11px;color:#e94560;margin-top:4px;">Overdue: ${lockedChores.map(c=>c.name).join(', ')}</div>`:''}
         </div>
         <div style="display:flex;flex-direction:column;gap:6px;">
-          ${state.isAdmin?`<button class="btn btn-secondary btn-sm" onclick="editPerson(${person.id})">✏️</button>`:''}
-          ${state.isAdmin?`<button class="btn btn-warning btn-sm" onclick="confirmCashOut(${person.id})">💸</button>`:''}
-          ${state.isAdmin&&locked?lockedChores.map(c=>`<button class="btn btn-sm" style="background:#f39c12;color:white;font-size:11px;" onclick="adminExemptChore(${c.id})">Lift: ${c.name}</button>`).join(''):''}
+          ${state.isAdmin?`<button class="btn btn-secondary btn-sm" onclick="event.stopPropagation();editPerson(${person.id})">✏️</button>`:''}
+          ${state.isAdmin&&locked?lockedChores.map(c=>`<button class="btn btn-sm" style="background:#f39c12;color:white;font-size:10px;" onclick="event.stopPropagation();adminExemptChore(${c.id})">Lift</button>`).join(''):''}
         </div>
       </div>`;
   });
   return html;
 }
 
-function renderHistory() {
-  if(!state.history.length) return `<div class="empty-state"><div class="icon">📋</div><p>No history yet!</p></div>`;
+function renderHistory(){
+  if(!state.history.length)return`<div class="empty-state"><div class="icon">📋</div><p>No history yet!</p></div>`;
   let html='<div class="section-title">Recent Activity</div>';
   state.history.slice(0,50).forEach(h=>{
     const canU=canUndo(h);
     html+=`
       <div class="history-item ${h.urgent?'urgent-history':''}">
         <div>
-          <div style="font-weight:500">${h.choreName}${h.urgent?'<span class="tag urgent">🚨 Urgent</span>':''}</div>
+          <div style="font-weight:500">${h.choreName}${h.urgent?'<span class="tag urgent">🚨</span>':''}</div>
           <div class="text-sm">${h.who} • ${h.date} • ${h.room}</div>
         </div>
         <div style="display:flex;gap:8px;align-items:center">
@@ -757,7 +848,7 @@ function renderHistory() {
   return html;
 }
 
-function renderSettings() {
+function renderSettings(){
   return `
     <div class="section-title">Rooms</div>
     ${state.rooms.map(room=>`
@@ -781,7 +872,7 @@ function renderSettings() {
       </div>`:''}`;
 }
 
-function renderDayModal() {
+function renderDayModal(){
   const date=state.selectedDate;
   const chores=getChoresForDate(date);
   const dk=dateKey(date);
@@ -797,21 +888,85 @@ function renderDayModal() {
         </div>
         <div class="progress-bar mb-8"><div class="progress-fill" style="width:${chores.length?Math.round(doneCount/chores.length*100):0}%"></div></div>
         ${!chores.length?'<div class="empty-state"><div class="icon">🎉</div><p>No chores!</p></div>':''}
-        ${chores.map(chore=>renderChoreItem(chore,false,isToday)).join('')}
+        ${chores.map(c=>renderChoreItem(c,false,isToday)).join('')}
         <button class="btn btn-secondary w-full mt-16" onclick="state.showChoreList=false;render()">Close</button>
       </div>
     </div>`;
 }
 
-function renderAddChoreModal() {
+function renderAdminFundsModal(){
+  const m=state.showAdminFundsModal;if(!m)return'';
+  const person=state.people.find(p=>p.id===m.personId);if(!person)return'';
+  const isCredit=m.isCredit;
+  const accountLabel=m.accountType==='account'?'Account':'Savings';
+  return `
+    <div class="modal-overlay">
+      <div class="modal">
+        <h2>${isCredit?'➕ Add':'➖ Deduct'} ${accountLabel} — ${person.name}</h2>
+        <div class="text-sm mb-8">Current ${accountLabel}: $${(person[m.accountType]||0).toFixed(2)}</div>
+        <div class="form-group"><label>Amount ($)</label>
+          <input class="input" type="number" id="fundAmount" placeholder="0.00" min="0.01" step="0.01">
+        </div>
+        <div class="form-group"><label>Note (optional)</label>
+          <input class="input" type="text" id="fundNote" placeholder="e.g. Allowance, Birthday gift, Store purchase">
+        </div>
+        <div class="row mt-16" style="gap:10px">
+          <button class="btn btn-secondary" style="flex:1" onclick="state.showAdminFundsModal=null;render()">Cancel</button>
+          <button class="btn ${isCredit?'btn-success':'btn-danger'}" style="flex:1" onclick="submitAdminFunds()">
+            ${isCredit?'Add Funds':'Deduct'}
+          </button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderTransferModal(){
+  const person=state.people.find(p=>p.id===state.currentUser?.id);if(!person)return'';
+  return `
+    <div class="modal-overlay">
+      <div class="modal">
+        <h2>💰 Transfer to Savings</h2>
+        <div class="text-sm mb-8">Account balance: $${(person.account||0).toFixed(2)}</div>
+        <div class="form-group"><label>Amount to transfer ($)</label>
+          <input class="input" type="number" id="transferAmount" placeholder="0.00" min="0.01" step="0.01" max="${person.account||0}">
+        </div>
+        <div class="row mt-16" style="gap:10px">
+          <button class="btn btn-secondary" style="flex:1" onclick="state.showTransferModal=false;render()">Cancel</button>
+          <button class="btn btn-primary" style="flex:1" onclick="submitTransfer()">Transfer</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderOverdraftModal(){
+  const od=state.showOverdraftModal;if(!od)return'';
+  const person=state.people.find(p=>p.id===od.personId);if(!person)return'';
+  return `
+    <div class="modal-overlay">
+      <div class="modal" style="text-align:center">
+        <h2>⚠️ Overdraft</h2>
+        <p style="margin-bottom:16px;line-height:1.6;">
+          <strong>${person.name}'s</strong> account has <span class="text-green">$${od.accountBalance.toFixed(2)}</span>.<br>
+          This $${(od.accountBalance+od.shortfall).toFixed(2)} withdrawal will zero the account and pull 
+          <span class="text-blue">$${od.shortfall.toFixed(2)}</span> from savings 
+          ($${od.savingsBalance.toFixed(2)} → $${(od.savingsBalance-od.shortfall).toFixed(2)}).<br><br>
+          Proceed?
+        </p>
+        <div class="row" style="gap:10px">
+          <button class="btn btn-secondary" style="flex:1" onclick="state.showOverdraftModal=null;render()">Cancel</button>
+          <button class="btn btn-danger" style="flex:1" onclick="confirmOverdraft()">Yes, Proceed</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderAddChoreModal(){
   const e=state.editingChore;
   return `
     <div class="modal-overlay">
       <div class="modal">
         <h2>${e?'Edit':'Add'} Chore</h2>
-        <div class="form-group"><label>Chore Name</label>
-          <input class="input" id="choreName" placeholder="e.g. Wash Dishes" value="${e?e.name:''}">
-        </div>
+        <div class="form-group"><label>Chore Name</label><input class="input" id="choreName" placeholder="e.g. Wash Dishes" value="${e?e.name:''}"></div>
         <div class="form-group"><label>Room</label>
           <select class="input" id="choreRoom">
             ${state.rooms.map(r=>`<option value="${r.name}" ${e&&e.room===r.name?'selected':''}>${r.name}</option>`).join('')}
@@ -837,15 +992,13 @@ function renderAddChoreModal() {
     </div>`;
 }
 
-function renderAddPersonModal() {
+function renderAddPersonModal(){
   const e=state.editingPerson;
   return `
     <div class="modal-overlay">
       <div class="modal">
         <h2>${e?'Edit':'Add'} Person</h2>
-        <div class="form-group"><label>Name</label>
-          <input class="input" id="personName" placeholder="e.g. Eli" value="${e?e.name:''}">
-        </div>
+        <div class="form-group"><label>Name</label><input class="input" id="personName" placeholder="e.g. Eli" value="${e?e.name:''}"></div>
         <div class="row mt-16" style="gap:10px">
           <button class="btn btn-secondary" style="flex:1" onclick="closePersonModal()">Cancel</button>
           <button class="btn btn-primary" style="flex:1" onclick="savePerson()">Save</button>
@@ -855,15 +1008,13 @@ function renderAddPersonModal() {
     </div>`;
 }
 
-function renderAddRoomModal() {
+function renderAddRoomModal(){
   const e=state.editingRoom;
   return `
     <div class="modal-overlay">
       <div class="modal">
         <h2>${e?'Edit':'Add'} Room</h2>
-        <div class="form-group"><label>Room Name</label>
-          <input class="input" id="roomName" placeholder="e.g. Kitchen" value="${e?e.name:''}">
-        </div>
+        <div class="form-group"><label>Room Name</label><input class="input" id="roomName" placeholder="e.g. Kitchen" value="${e?e.name:''}"></div>
         <div class="form-group"><label>Room Owner (optional)</label>
           <select class="input" id="roomOwner">
             <option value="">No owner</option>
@@ -878,23 +1029,22 @@ function renderAddRoomModal() {
     </div>`;
 }
 
-function renderCashOutConfirm() {
-  const person=state.people.find(p=>p.id===state.showCashOutConfirm);
-  if(!person) return '';
+function renderCashOutConfirm(){
+  const person=state.people.find(p=>p.id===state.showCashOutConfirm);if(!person)return'';
   return `
     <div class="modal-overlay">
       <div class="modal" style="text-align:center">
         <h2>💸 Cash Out</h2>
-        <p style="margin-bottom:16px">Pay <strong>${person.name}</strong> their <span class="text-green">$${(person.totalEarned||0).toFixed(2)}</span> and reset to $0?</p>
+        <p style="margin-bottom:16px">Pay <strong>${person.name}</strong> and reset account to $0?<br>Current balance: <span class="text-green">$${(person.account||0).toFixed(2)}</span></p>
         <div class="row" style="gap:10px">
           <button class="btn btn-secondary" style="flex:1" onclick="state.showCashOutConfirm=null;render()">Cancel</button>
-          <button class="btn btn-success" style="flex:1" onclick="cashOut(${person.id})">Yes, Pay Out!</button>
+          <button class="btn btn-success" style="flex:1" onclick="cashOut(${person.id})">Pay Out!</button>
         </div>
       </div>
     </div>`;
 }
 
-function renderChangePinModal() {
+function renderChangePinModal(){
   return `
     <div class="modal-overlay">
       <div class="modal" style="text-align:center">
@@ -913,109 +1063,149 @@ function renderChangePinModal() {
     </div>`;
 }
 
+function renderAvatarPicker(){
+  const boyAvatars=AVATARS.filter(a=>a.id.startsWith('b'));
+  const girlAvatars=AVATARS.filter(a=>a.id.startsWith('g'));
+  const neutralAvatars=AVATARS.filter(a=>a.id.startsWith('n'));
+  const currentAvatarId=state.currentUser?.avatarId;
+  const renderGroup=(label,avatars)=>`
+    <div style="font-size:12px;color:#aaa;margin-bottom:8px;margin-top:12px;">${label}</div>
+    <div class="avatar-grid">
+      ${avatars.map(av=>`
+        <div class="avatar-option ${currentAvatarId===av.id?'selected':''}" onclick="selectAvatar('${av.id}')">
+          ${getAvatar(av.id,52)}
+        </div>`).join('')}
+    </div>`;
+  return `
+    <div class="modal-overlay">
+      <div class="modal">
+        <h2>Choose Avatar</h2>
+        ${renderGroup('👦 Boy',boyAvatars)}
+        ${renderGroup('👧 Girl',girlAvatars)}
+        ${renderGroup('🧑 Neutral',neutralAvatars)}
+        <button class="btn btn-secondary w-full mt-16" onclick="state.showAvatarPicker=false;render()">Cancel</button>
+      </div>
+    </div>`;
+}
+
 // ── GLOBAL FUNCTIONS ──────────────────────────────────────────────────────────
-window.loginAsKid      = id => { state.currentUser=state.people.find(p=>p.id===id); state.isAdmin=false; state.screen=SCREEN.MAIN; render(); };
-window.startPin        = startPin;
-window.handlePinKey    = handlePinKey;
-window.cancelPin       = () => { state.screen=SCREEN.USER_SELECT; state.pinBuffer=''; render(); };
-window.switchUser      = () => { state.currentUser=null; state.isAdmin=false; state.screen=SCREEN.USER_SELECT; render(); };
-window.setTab          = t => { state.tab=t; render(); };
-window.prevMonth       = () => { state.calendarDate=new Date(state.calendarDate.getFullYear(),state.calendarDate.getMonth()-1,1); render(); };
-window.nextMonth       = () => { state.calendarDate=new Date(state.calendarDate.getFullYear(),state.calendarDate.getMonth()+1,1); render(); };
-window.openDay         = (y,m,d) => { state.selectedDate=new Date(y,m,d); state.showChoreList=true; render(); };
-window.closeDayModal   = e => { if(e.target.classList.contains('modal-overlay')){state.showChoreList=false;render();} };
-window.toggleChore     = toggleChore;
-window.adminExemptChore= adminExemptChore;
-window.confirmCashOut  = id => { state.showCashOutConfirm=id; render(); };
-window.cashOut         = cashOut;
-window.addChore        = () => { state.editingChore=null; state.showAddChore=true; render(); };
-window.editChore       = id => { state.editingChore=state.chores.find(c=>c.id===id); state.showAddChore=true; render(); };
-window.closeChoreModal = () => { state.showAddChore=false; state.editingChore=null; render(); };
-window.saveChore       = async () => {
+window.loginAsKid     = id=>{state.currentUser=state.people.find(p=>p.id===id);state.isAdmin=false;state.screen=SCREEN.MAIN;render();};
+window.startPin       = startPin;
+window.handlePinKey   = handlePinKey;
+window.cancelPin      = ()=>{state.screen=SCREEN.USER_SELECT;state.pinBuffer='';render();};
+window.switchUser     = ()=>{state.currentUser=null;state.isAdmin=false;state.screen=SCREEN.USER_SELECT;render();};
+window.setTab         = t=>{state.tab=t;render();};
+window.prevMonth      = ()=>{state.calendarDate=new Date(state.calendarDate.getFullYear(),state.calendarDate.getMonth()-1,1);render();};
+window.nextMonth      = ()=>{state.calendarDate=new Date(state.calendarDate.getFullYear(),state.calendarDate.getMonth()+1,1);render();};
+window.openDay        = (y,m,d)=>{state.selectedDate=new Date(y,m,d);state.showChoreList=true;render();};
+window.closeDayModal  = e=>{if(e.target.classList.contains('modal-overlay')){state.showChoreList=false;render();}};
+window.toggleChore    = toggleChore;
+window.undoHistory    = undoHistory;
+window.adminExemptChore = async id=>{
+  if(state.locks[id])state.locks[id].exemptToday=todayKey();
+  await saveToFirebase('locks',state.locks);showToast('Restriction lifted for today','#f39c12');render();
+};
+window.openProfile    = id=>{state.profilePersonId=id;state.screen=SCREEN.PROFILE;render();};
+window.closeProfile   = ()=>{state.screen=SCREEN.MAIN;state.profilePersonId=null;state.showTransferModal=false;state.showAdminFundsModal=null;state.showOverdraftModal=null;render();};
+window.openAvatarPicker = ()=>{state.showAvatarPicker=true;render();};
+window.selectAvatar   = selectAvatar;
+window.openAdminFunds = (personId,accountType,isCredit)=>{state.showAdminFundsModal={personId,accountType,isCredit};render();};
+window.submitAdminFunds = ()=>{
+  const amount=parseFloat(document.getElementById('fundAmount')?.value);
+  const note=document.getElementById('fundNote')?.value||'';
+  const m=state.showAdminFundsModal;
+  if(!amount||amount<=0){showToast('Enter a valid amount','#e94560');return;}
+  adminAdjustFunds(m.personId,m.accountType,amount,note,m.isCredit);
+};
+window.openTransferModal = ()=>{state.showTransferModal=true;render();};
+window.submitTransfer = ()=>{
+  const amount=parseFloat(document.getElementById('transferAmount')?.value);
+  if(!amount||amount<=0){showToast('Enter a valid amount','#e94560');return;}
+  transferToSavings(state.currentUser.id,amount);
+};
+window.confirmOverdraft = confirmOverdraft;
+window.confirmCashOut = id=>{state.showCashOutConfirm=id;render();};
+window.cashOut = async id=>{
+  const person=state.people.find(p=>p.id===id);if(!person)return;
+  addTransaction(id,'admin_debit',person.account||0,'Cash out','account');
+  person.account=0;
+  await Promise.all([saveToFirebase('people',state.people),saveToFirebase('transactions',state.transactions)]);
+  state.showCashOutConfirm=null;showToast(`${person.name} cashed out! 💸`);render();
+};
+window.addChore       = ()=>{state.editingChore=null;state.showAddChore=true;render();};
+window.editChore      = id=>{state.editingChore=state.chores.find(c=>c.id===id);state.showAddChore=true;render();};
+window.closeChoreModal= ()=>{state.showAddChore=false;state.editingChore=null;render();};
+window.saveChore      = async()=>{
   const name=document.getElementById('choreName').value.trim();
   const room=document.getElementById('choreRoom').value;
   const value=parseInt(document.getElementById('choreValue').value);
   const freqVal=document.getElementById('choreFreq').value;
-  const urgent=freqVal==='urgent';
-  const freq=urgent?1:parseInt(freqVal);
+  const urgent=freqVal==='urgent';const freq=urgent?1:parseInt(freqVal);
   if(!name){showToast('Enter a chore name','#e94560');return;}
   if(state.editingChore){Object.assign(state.editingChore,{name,room,value,freq,urgent});}
   else{state.chores.push({id:Date.now(),name,room,value,freq,urgent,doneBy:{},lastCompleted:null});}
   await saveToFirebase('chores',state.chores);
-  state.showAddChore=false; state.editingChore=null;
-  showToast('Chore saved!'); render();
+  state.showAddChore=false;state.editingChore=null;showToast('Chore saved!');render();
 };
-window.deleteChore     = async id => {
-  state.chores=state.chores.filter(c=>c.id!==id);
-  delete state.locks[id];
+window.deleteChore    = async id=>{
+  state.chores=state.chores.filter(c=>c.id!==id);delete state.locks[id];
   await Promise.all([saveToFirebase('chores',state.chores),saveToFirebase('locks',state.locks)]);
-  state.showAddChore=false; state.editingChore=null;
-  showToast('Chore deleted'); render();
+  state.showAddChore=false;state.editingChore=null;showToast('Chore deleted');render();
 };
-window.addPerson       = () => { state.editingPerson=null; state.showAddPerson=true; render(); };
-window.editPerson      = id => { state.editingPerson=state.people.find(p=>p.id===id); state.showAddPerson=true; render(); };
-window.closePersonModal= () => { state.showAddPerson=false; state.editingPerson=null; render(); };
-window.savePerson      = async () => {
+window.addPerson      = ()=>{state.editingPerson=null;state.showAddPerson=true;render();};
+window.editPerson     = id=>{state.editingPerson=state.people.find(p=>p.id===id);state.showAddPerson=true;render();};
+window.closePersonModal=()=>{state.showAddPerson=false;state.editingPerson=null;render();};
+window.savePerson     = async()=>{
   const name=document.getElementById('personName').value.trim();
   if(!name){showToast('Enter a name','#e94560');return;}
   if(state.editingPerson){state.editingPerson.name=name;}
-  else{state.people.push({id:Date.now(),name,isAdmin:false,totalEarned:0});}
+  else{state.people.push({id:Date.now(),name,isAdmin:false,totalEarned:0,account:0,savings:0,avatarId:'n1'});}
   await saveToFirebase('people',state.people);
-  state.showAddPerson=false; state.editingPerson=null;
-  showToast('Saved!'); render();
+  state.showAddPerson=false;state.editingPerson=null;showToast('Saved!');render();
 };
-window.deletePerson    = async id => {
+window.deletePerson   = async id=>{
   state.people=state.people.filter(p=>p.id!==id);
   await saveToFirebase('people',state.people);
-  state.showAddPerson=false; state.editingPerson=null;
-  showToast('Removed'); render();
+  state.showAddPerson=false;state.editingPerson=null;showToast('Removed');render();
 };
-window.addRoom         = () => { state.editingRoom=null; state.showAddRoom=true; render(); };
-window.editRoom        = id => { state.editingRoom=state.rooms.find(r=>r.id===id); state.showAddRoom=true; render(); };
-window.closeRoomModal  = () => { state.showAddRoom=false; state.editingRoom=null; render(); };
-window.saveRoom        = async () => {
+window.addRoom        = ()=>{state.editingRoom=null;state.showAddRoom=true;render();};
+window.editRoom       = id=>{state.editingRoom=state.rooms.find(r=>r.id===id);state.showAddRoom=true;render();};
+window.closeRoomModal = ()=>{state.showAddRoom=false;state.editingRoom=null;render();};
+window.saveRoom       = async()=>{
   const name=document.getElementById('roomName').value.trim();
   const owner=document.getElementById('roomOwner').value||null;
   if(!name){showToast('Enter a room name','#e94560');return;}
   if(state.editingRoom){Object.assign(state.editingRoom,{name,owner:owner?parseInt(owner):null});}
   else{state.rooms.push({id:Date.now(),name,owner:owner?parseInt(owner):null});}
   await saveToFirebase('rooms',state.rooms);
-  state.showAddRoom=false; state.editingRoom=null;
-  showToast('Room saved!'); render();
+  state.showAddRoom=false;state.editingRoom=null;showToast('Room saved!');render();
 };
-window.deleteRoom      = async id => {
+window.deleteRoom     = async id=>{
   state.rooms=state.rooms.filter(r=>r.id!==id);
-  await saveToFirebase('rooms',state.rooms);
-  showToast('Room deleted'); render();
+  await saveToFirebase('rooms',state.rooms);showToast('Room deleted');render();
 };
-window.undoHistory     = undoHistory;
-window.newPinKey       = key => {
-  if(!state.newPinBuffer) state.newPinBuffer='';
+window.newPinKey      = key=>{
+  if(!state.newPinBuffer)state.newPinBuffer='';
   if(key==='del'){state.newPinBuffer=state.newPinBuffer.slice(0,-1);render();return;}
-  if(state.newPinBuffer.length>=4) return;
-  state.newPinBuffer+=key; render();
+  if(state.newPinBuffer.length>=4)return;
+  state.newPinBuffer+=key;render();
   if(state.newPinBuffer.length===4){
     setTimeout(async()=>{
       state.settings.adminPin=state.newPinBuffer;
       await saveToFirebase('settings',state.settings);
-      state.showChangePinModal=false; state.newPinBuffer='';
-      showToast('PIN updated! ✓'); render();
+      state.showChangePinModal=false;state.newPinBuffer='';showToast('PIN updated! ✓');render();
     },200);
   }
 };
-window.pushAllData     = async () => {
+window.pushAllData    = async()=>{
   await Promise.all([
-    saveToFirebase('chores',state.chores),
-    saveToFirebase('people',state.people),
-    saveToFirebase('history',state.history),
-    saveToFirebase('rooms',state.rooms),
-    saveToFirebase('settings',state.settings),
-    saveToFirebase('locks',state.locks),
-  ]);
-  showToast('All data pushed! ☁️');
+    saveToFirebase('chores',state.chores),saveToFirebase('people',state.people),
+    saveToFirebase('history',state.history),saveToFirebase('rooms',state.rooms),
+    saveToFirebase('settings',state.settings),saveToFirebase('locks',state.locks),
+    saveToFirebase('transactions',state.transactions),
+  ]);showToast('All data pushed! ☁️');
 };
-window.state=state;
-window.render=render;
+window.state=state;window.render=render;
 initData();
 </script>
 </body>
@@ -1024,10 +1214,14 @@ initData();
 
 Here's what's new:
 
-- ✅ **Urgent chores** — show with 🚨 purple tag, listed first above all other chores
-- ✅ **Auto-delete on completion** — disappears 800ms after check so you see the checkmark
-- ✅ **Stays in history** with 🚨 Urgent tag so you have a record
-- ✅ **Admin undo from history** restores the urgent chore back to the active list
-- ✅ **Frequency dropdown** now has "🚨 Urgent (one time)" as the first option
+- ✅ **12 SVG avatars** — 4 boy, 4 girl, 4 neutral — shown on login screen and leaderboard
+- ✅ **Kids can tap their avatar** on their profile to change it
+- ✅ **Profile screen** with Account and Savings balances, full transaction history
+- ✅ **Kids can transfer to savings** from their profile
+- ✅ **Admin +/- buttons** for both Account and Savings with amount and note
+- ✅ **Overdraft protection** — clear prompt showing exact amounts pulled from savings
+- ✅ **Transaction history** per kid showing chore earnings, credits, debits, transfers
+- ✅ **Admin is just "Admin"** — no Mom/Dad reference anywhere
+- ✅ All previous features intact
 
 Paste and commit!
