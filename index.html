@@ -25,9 +25,9 @@
   .btn-sm { padding: 6px 12px; font-size: 12px; }
   .card { background: #16213e; border-radius: 12px; padding: 16px; margin-bottom: 12px; border: 1px solid #0f3460; }
   .proverb-card { background: linear-gradient(135deg, #1a1a3e, #0f3460); border-radius: 12px; padding: 18px; margin-bottom: 16px; border: 1px solid #3a5080; }
-  .proverb-card .proverb-label { font-size: 11px; color: #e94560; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-  .proverb-card .proverb-text { font-size: 15px; color: #eee; line-height: 1.6; font-style: italic; }
-  .proverb-card .proverb-ref { font-size: 12px; color: #aaa; margin-top: 8px; text-align: right; }
+  .proverb-label { font-size: 11px; color: #e94560; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .proverb-text { font-size: 15px; color: #eee; line-height: 1.6; font-style: italic; }
+  .proverb-ref { font-size: 12px; color: #aaa; margin-top: 8px; text-align: right; }
   .input { width: 100%; padding: 10px 12px; border: 1px solid #0f3460; border-radius: 8px; background: #1a1a2e; color: #eee; font-size: 14px; }
   .input:focus { outline: none; border-color: #e94560; }
   select.input { cursor: pointer; }
@@ -45,7 +45,7 @@
   .chore-name { font-size: 15px; font-weight: 500; }
   .chore-meta { font-size: 11px; color: #aaa; margin-top: 2px; }
   .chore-value { font-size: 14px; font-weight: 700; color: #27ae60; }
-  .person-card { display: flex; align-items: center; gap: 12px; padding: 14px; background: #1a1a2e; border-radius: 10px; margin-bottom: 8px; border: 1px solid #0f3460; }
+  .person-card { display: flex; align-items: center; gap: 12px; padding: 14px; background: #1a1a2e; border-radius: 10px; margin-bottom: 8px; border: 1px solid #0f3460; cursor: pointer; }
   .person-avatar { width: 44px; height: 44px; border-radius: 50%; background: #e94560; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
   .person-info { flex: 1; }
   .person-name { font-size: 16px; font-weight: 600; }
@@ -319,7 +319,7 @@ async function cashOut(personId) {
 
 function openPinModal(action, personId) {
   state.pinAction = action;
-  state.pinTargetPersonId = personId || null;
+  state.pinTargetPersonId = personId !== undefined ? personId : null;
   state.pinBuffer = '';
   state.showPinModal = true;
   render();
@@ -710,11 +710,11 @@ function renderUserSelect() {
         <h2>Who are you?</h2>
         <div class="text-sm mb-8">Select your name to get started.</div>
         ${state.people.map(p=>`
-          <div class="person-card" onclick="${p.isAdmin?`openPinModal('selectAdmin',${p.id})`:`selectUserById(${p.id})`}" style="cursor:pointer">
+          <div class="person-card" onclick="handleUserSelect(${p.id}, ${p.isAdmin === true})">
             <div class="person-avatar">${p.emoji}</div>
             <div class="person-info">
               <div class="person-name">${p.name}</div>
-              <div class="text-sm">${p.isAdmin?'🔐 PIN required':'Tap to select'}</div>
+              <div class="text-sm">${p.isAdmin === true ? '🔐 PIN required' : 'Tap to select'}</div>
             </div>
           </div>`).join('')}
         <button class="btn btn-secondary w-full mt-8" onclick="selectUserById(-1)">Just browsing</button>
@@ -722,6 +722,10 @@ function renderUserSelect() {
     </div>`;
 }
 
+window.handleUserSelect = (id, isAdmin) => {
+  if (isAdmin === true) { openPinModal('selectAdmin', id); }
+  else { selectUserById(id); }
+};
 window.setTab           = t  => { state.tab=t; render(); };
 window.selectUser       = () => { state.currentUser=null; state.isAdmin=false; render(); };
 window.selectUserById   = id => {
